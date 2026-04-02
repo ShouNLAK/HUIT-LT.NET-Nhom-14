@@ -11,6 +11,13 @@
         Background="Transparent"
         WindowStartupLocation="CenterScreen"
         Foreground="#333333">
+    <Window.Resources>
+        <DropShadowEffect 
+         x:Key="ShadowEffect"
+         BlurRadius="15"
+         ShadowDepth="5"
+         Opacity="0.3"/>
+    </Window.Resources>
     <Grid Background="#34495e">
         <!-- Container chính -->
         <StackPanel 
@@ -163,11 +170,5 @@
         </StackPanel>
     </Grid>
 
-    <Window.Resources>
-        <DropShadowEffect 
-            x:Key="ShadowEffect"
-            BlurRadius="15"
-            ShadowDepth="5"
-            Opacity="0.3"/>
-    </Window.Resources>
+   
 </Window>

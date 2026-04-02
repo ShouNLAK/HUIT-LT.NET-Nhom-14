@@ -52,3 +52,7 @@ D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\Doa
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\Doan_NET.csproj.CoreCompileInputs.cache
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\Doan_NET.exe
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\Doan_NET.pdb
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dangky.g.cs
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dangnhap.g.cs
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dangky.baml
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dangnhap.baml

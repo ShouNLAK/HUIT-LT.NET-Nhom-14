@@ -79,22 +79,14 @@
 
                     <!-- Search Box -->
                     <Grid Margin="15,20,15,20" Height="40" Background="#34495e" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="35"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <TextBlock Grid.Column="0" Text="🔍" FontSize="16" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#95a5a6"/>
-
-                        <TextBox 
-                        Grid.Column="1"
-                        Margin="8,0,8,0"
-                        Padding="5"
-                        Background="Transparent"
-                        Foreground="White"
-                        BorderThickness="0"
-                        Text="Tìm kiếm"
-                        VerticalAlignment="Center"/>
+                        <Label
+                            Content="MENU CHỨC NĂNG"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="White"
+                            VerticalAlignment="Center" 
+                            HorizontalContentAlignment="Center" 
+                            VerticalContentAlignment="Center"/>    
                     </Grid>
 
                     <!-- Menu Items -->
@@ -141,18 +133,7 @@
                             Tag="DonHang">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📋" FontSize="18" Margin="0,0,12,0"/>
-                                    <TextBlock Text="Đơn hàng" FontSize="14" VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </Button>
-
-                            <!-- Thanh toán -->
-                            <Button 
-                            x:Name="BtnThanhToan"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="ThanhToan">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="💳" FontSize="18" Margin="0,0,12,0"/>
-                                    <TextBlock Text="Thanh toán" FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Hóa đơn" FontSize="14" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
 

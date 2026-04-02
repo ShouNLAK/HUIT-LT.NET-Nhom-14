@@ -24,6 +24,7 @@ namespace Doan_NET.View
         public string GiaXe { get; set; }
         public string HinhAnhFullPath { get; set; }
         public string MoTa { get; set; }
+        public int NamSX { get; set; }
     }
     public partial class DSXe : UserControl
     {
@@ -44,6 +45,7 @@ namespace Doan_NET.View
                 new Moto {
                     TenDongXe = "Honda Wave RSX",
                     LoaiXe = "Xe số",
+                    NamSX =2024,
                     GiaXe = "22.000.000 VNĐ",
                     HinhAnhFullPath = "https://via.placeholder.com/100",
                     MoTa = "Xe số bền bỉ, tiết kiệm xăng."
@@ -51,6 +53,7 @@ namespace Doan_NET.View
                 new Moto {
                     TenDongXe = "Honda Vision",
                     LoaiXe = "Xe ga",
+                    NamSX =2024,
                     GiaXe = "33.000.000 VNĐ",
                     HinhAnhFullPath = "https://via.placeholder.com/100",
                     MoTa = "Xe ga quốc dân, thiết kế thời trang."
@@ -58,6 +61,7 @@ namespace Doan_NET.View
                 new Moto {
                     TenDongXe = "Honda Winner X",
                     LoaiXe = "Xe tay côn",
+                    NamSX =2024,
                     GiaXe = "46.000.000 VNĐ",
                     HinhAnhFullPath = "https://via.placeholder.com/100",
                     MoTa = "Sức mạnh vượt trội, phong cách thể thao."
@@ -95,12 +99,18 @@ namespace Doan_NET.View
 
             DetailPanel.Children.Add(new TextBlock
             {
-                Text = "Dòng xe: " + moto.LoaiXe,
+                Text = "Loại xe: " + moto.LoaiXe,
                 FontSize = 14,
                 Foreground = Brushes.DimGray,
                 Margin = new Thickness(0, 0, 0, 15)
             });
-
+            DetailPanel.Children.Add(new TextBlock
+            {
+                Text = "Năm sản xuất: " + moto.NamSX,
+                FontSize = 14,
+                Foreground = Brushes.DimGray,
+                Margin = new Thickness(0, 0, 0, 15)
+            });
             DetailPanel.Children.Add(new TextBlock
             {
                 Text = "MÔ TẢ CHI TIẾT",
