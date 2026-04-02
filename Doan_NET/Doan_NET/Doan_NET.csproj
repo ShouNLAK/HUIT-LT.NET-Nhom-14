@@ -59,6 +59,12 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="View\Dangky.xaml.cs">
+      <DependentUpon>Dangky.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\Dangnhap.xaml.cs">
+      <DependentUpon>Dangnhap.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\DSXe.xaml.cs">
       <DependentUpon>DSXe.xaml</DependentUpon>
     </Compile>
@@ -108,6 +114,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="View\Dangky.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Dangnhap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="View\DSXe.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
