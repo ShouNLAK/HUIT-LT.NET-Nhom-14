@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/Doan_NET/Doan_NET/.vs
+/Doan_NET/.vs/Doan_NET.slnx
+/.vs
