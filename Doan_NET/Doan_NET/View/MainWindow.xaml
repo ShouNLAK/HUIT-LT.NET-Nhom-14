@@ -104,6 +104,16 @@
                                 </StackPanel>
                             </Button>
 
+                            <!-- Dịch vụ -->
+                            <Button 
+                            x:Name="BtnDV"
+                            Style="{DynamicResource MenuButtonStyle}"
+                            Tag="DichVu">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🛠️" FontSize="18" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Dịch vụ" FontSize="14" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
                             <!-- Khách hàng -->
                             <Button 
                             x:Name="BtnKhachHang"
@@ -136,7 +146,7 @@
                                     <TextBlock Text="Hóa đơn" FontSize="14" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-
+                            
                             <!-- Thống kê -->
                             <Button 
                             x:Name="BtnThongKe"
