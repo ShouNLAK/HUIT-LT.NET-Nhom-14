@@ -24,5 +24,10 @@ namespace Doan_NET.View
         {
             InitializeComponent();
         }
+
+        private void InitializeComponent()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -94,11 +94,11 @@
                 <UniformGrid Columns="2" Margin="0,0,0,10">
                     <StackPanel>
                         <TextBlock Text="Nhân viên:" FontSize="11" Foreground="Gray"/>
-                        <TextBlock Text="Lê Văn Admin" FontWeight="SemiBold"/>
+                        <TextBox Text="Lê Văn Admin" FontWeight="SemiBold"/>
                     </StackPanel>
                     <StackPanel HorizontalAlignment="Right">
                         <TextBlock Text="Ngày lập:" FontSize="11" Foreground="Gray"/>
-                        <TextBlock Text="02/04/2024" FontWeight="SemiBold"/>
+                        <DatePicker FontWeight="SemiBold"/>
                     </StackPanel>
                 </UniformGrid>
 
@@ -151,10 +151,7 @@
                     <TextBlock Text="Tổng tiền hàng:"/>
                     <TextBlock Text="{Binding TotalOrderPrice, StringFormat={}{0:N0}}" HorizontalAlignment="Right" FontWeight="Bold"/>
                 </Grid>
-                <Grid Margin="0,0,0,8">
-                    <TextBlock Text="Giảm giá (%):"/>
-                    <TextBox Width="50" HorizontalAlignment="Right" Text="0" TextAlignment="Right"/>
-                </Grid>
+               
                 <Grid Margin="0,10,0,20">
                     <TextBlock Text="THÀNH TIỀN:" FontWeight="Bold" FontSize="16" Foreground="#E74C3C" VerticalAlignment="Center"/>
                     <TextBlock Text="{Binding FinalPrice, StringFormat={}{0:N0}}" HorizontalAlignment="Right" FontWeight="Bold" FontSize="22" Foreground="#E74C3C"/>
