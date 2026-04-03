@@ -95,6 +95,9 @@
     <Compile Include="View\Them_Hangxe.xaml.cs">
       <DependentUpon>Them_Hangxe.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Them_suaDV.xaml.cs">
+      <DependentUpon>Them_suaDV.xaml</DependentUpon>
+    </Compile>
     <Compile Include="View\Them_xe.xaml.cs">
       <DependentUpon>Them_xe.xaml</DependentUpon>
     </Compile>
@@ -174,6 +177,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Them_Hangxe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Them_suaDV.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
