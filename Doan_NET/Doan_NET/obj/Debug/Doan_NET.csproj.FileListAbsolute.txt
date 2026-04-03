@@ -58,3 +58,7 @@ D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\Vie
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dangnhap.baml
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Khachhang.g.cs
 D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Khachhang.baml
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dichvu.baml
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Dichvu.g.cs
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Hoadon.g.cs
+D:\visua studio 2022\DATA\CN.NET\Doan_NET_Github\Doan_NET\Doan_NET\obj\Debug\View\Nhanvien.g.cs

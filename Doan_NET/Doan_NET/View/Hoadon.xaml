@@ -160,11 +160,35 @@
                     <TextBlock Text="{Binding FinalPrice, StringFormat={}{0:N0}}" HorizontalAlignment="Right" FontWeight="Bold" FontSize="22" Foreground="#E74C3C"/>
                 </Grid>
 
-                <Button Content="XÁC NHẬN THANH TOÁN" Height="55" Background="#27AE60" Foreground="White" FontSize="16" FontWeight="Bold" BorderThickness="0">
-                    <Button.Effect>
-                        <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.1"/>
-                    </Button.Effect>
-                </Button>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="2*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Content="HỦY" Height="55" Margin="0,0,10,0"
+                    Background="#95a5a6" Foreground="White" FontSize="14" FontWeight="Bold" 
+                    BorderThickness="0" Cursor="Hand" ToolTip="Xóa trắng thông tin và giỏ hàng">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                    </Button>
+
+                    <Button Grid.Column="1" Content="XÁC NHẬN THANH TOÁN" Height="55" 
+                    Background="#27AE60" Foreground="White" FontSize="16" FontWeight="Bold" 
+                    BorderThickness="0" Cursor="Hand">
+                        <Button.Resources>
+                            <Style TargetType="Border">
+                                <Setter Property="CornerRadius" Value="5"/>
+                            </Style>
+                        </Button.Resources>
+                        <Button.Effect>
+                            <DropShadowEffect BlurRadius="8" ShadowDepth="1" Opacity="0.1"/>
+                        </Button.Effect>
+                    </Button>
+                </Grid>
             </StackPanel>
         </Border>
     </Grid>

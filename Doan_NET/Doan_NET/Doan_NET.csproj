@@ -98,6 +98,9 @@
     <Compile Include="View\Them_xe.xaml.cs">
       <DependentUpon>Them_xe.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\Thongke.xaml.cs">
+      <DependentUpon>Thongke.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -175,6 +178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\Them_xe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\Thongke.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
