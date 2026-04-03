@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Doan_NET.View"
              mc:Ignorable="d" 
-             d:DesignHeight="700" d:DesignWidth="1100"
+             d:DesignHeight="700" d:DesignWidth="1200"
              Background="#F5F5F5">
 
     <Grid Margin="15">
@@ -30,16 +30,16 @@
                 <DataGrid x:Name="dgCustomers" AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True" GridLinesVisibility="Horizontal" Background="White" BorderThickness="0" RowHeight="35" FontSize="13">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Mã KH" Binding="{Binding MaKH}" Width="80"/>
-                        <DataGridTextColumn Header="Họ và Tên" Binding="{Binding HoTen}" Width="*"/>
+
+                        <DataGridTextColumn Header="Họ và Tên" Binding="{Binding HoTen}" Width="150"/>
+
                         <DataGridTextColumn Header="Số điện thoại" Binding="{Binding SDT}" Width="110"/>
-                        <DataGridTextColumn Header="Loại KH" Binding="{Binding LoaiKH}" Width="100"/>
-                        <DataGridTemplateColumn Header="Chi tiêu" Width="130">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding TongChiTieu, StringFormat={}{0:N0} VNĐ}" Foreground="#E74C3C" FontWeight="Bold" VerticalAlignment="Center"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
+
+                        <DataGridTextColumn Header="CCCD" Binding="{Binding CCCD}" Width="120"/>
+
+                        <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="150"/>
+
+                        <DataGridTextColumn Header="Địa chỉ" Binding="{Binding DiaChi}" Width="*"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
@@ -64,23 +64,10 @@
                         <TextBox Text="{Binding SelectedCustomer.HoTen, UpdateSourceTrigger=PropertyChanged}" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
                     </StackPanel>
 
-                    <Grid Margin="0,0,0,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,5,0">
-                            <TextBlock Text="Số điện thoại:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
-                            <TextBox Text="{Binding SelectedCustomer.SDT}" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
-                        </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="5,0,0,0">
-                            <TextBlock Text="Loại khách hàng:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
-                            <ComboBox SelectedValue="{Binding SelectedCustomer.LoaiKH}" Height="30">
-                                <ComboBoxItem Content="Cá nhân"/>
-                                <ComboBoxItem Content="Doanh nghiệp"/>
-                            </ComboBox>
-                        </StackPanel>
-                    </Grid>
+                    <StackPanel Grid.Column="0" Margin="0,0,0,10">
+                        <TextBlock Text="Số điện thoại:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
+                        <TextBox Text="{Binding SelectedCustomer.SDT}" Height="30" VerticalContentAlignment="Center" Padding="5,0"/>
+                    </StackPanel>
 
                     <StackPanel Margin="0,0,0,10">
                         <TextBlock Text="Số CCCD / Mã số thuế:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>

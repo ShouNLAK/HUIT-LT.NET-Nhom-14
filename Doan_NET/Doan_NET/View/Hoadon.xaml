@@ -21,7 +21,7 @@
           AutoGenerateColumns="False" Background="Transparent" 
           CanUserAddRows="False" GridLinesVisibility="Horizontal" BorderThickness="0.5">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="STT" Width="40" Binding="{Binding STT}"/>
+                        <DataGridTextColumn Header="MaHD" Width="60" Binding="{Binding MaHD}"/>
 
                         <DataGridTextColumn Header="Ngày lập" Width="100" Binding="{Binding NgayLap, StringFormat=dd/MM/yyyy}">
                             <DataGridTextColumn.ElementStyle>
@@ -32,7 +32,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="NV Quản lý" Width="130" Binding="{Binding TenNhanVien}">
+                        <DataGridTextColumn Header="NV Lập" Width="130" Binding="{Binding TenNhanVien}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -42,7 +42,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="Tên khách" Width="130" Binding="{Binding TenKhachHang}">
+                        <DataGridTextColumn Header="Khách hàng" Width="130" Binding="{Binding TenKhachHang}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -51,7 +51,7 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="SĐT" Width="100" Binding="{Binding SDTKhach}">
+                        <DataGridTextColumn Header="SDT" Width="100" Binding="{Binding SDT}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="VerticalAlignment" Value="Center"/>
@@ -60,19 +60,17 @@
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
 
-                        <DataGridTextColumn Header="Tên sản phẩm / Dịch vụ" Width="*" Binding="{Binding Ten}"/>
+                        <DataGridTextColumn Header="Tên DV/SP" Width="*" Binding="{Binding TenDV_SP}"/>
 
-                        <DataGridTemplateColumn Header="SL" Width="60">
+                        <DataGridTemplateColumn Header="Số lượng" Width="60">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <TextBox Text="{Binding SL}" TextAlignment="Center" BorderThickness="0.5"/>
+                                    <TextBox Text="{Binding SOLUONG}" TextAlignment="Center" BorderThickness="0.5"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
 
-                        <DataGridTextColumn Header="Đơn giá" Width="100" Binding="{Binding Gia, StringFormat={}{0:N0}}"/>
-
-                        <DataGridTextColumn Header="Thành tiền" Width="110" Binding="{Binding Tong, StringFormat={}{0:N0}}">
+                        <DataGridTextColumn Header="Thành tiền" Width="110" Binding="{Binding ThanhTien, StringFormat={}{0:N0}}">
                             <DataGridTextColumn.ElementStyle>
                                 <Style TargetType="TextBlock">
                                     <Setter Property="FontWeight" Value="Bold"/>
@@ -81,6 +79,9 @@
                                 </Style>
                             </DataGridTextColumn.ElementStyle>
                         </DataGridTextColumn>
+
+                        <DataGridTextColumn Header="PT Thanh Toán" Width="90" Binding="{Binding PhuongThucThanhToan}"/>
+
                     </DataGrid.Columns>
                 </DataGrid>
             </DockPanel>
