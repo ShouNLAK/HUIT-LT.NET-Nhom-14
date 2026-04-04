@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B09559A7-F766-43A7-85D2-EDCBB28938B1}</ProjectGuid>
+    <ProjectGuid>{E6959596-2453-410F-B476-3F1E1ED508D5}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>Doan_NET</RootNamespace>
     <AssemblyName>Doan_NET</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
@@ -55,55 +55,126 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
+    <Compile Include="Helper\BaseViewModel.cs" />
+    <Compile Include="Helper\NavigationService.cs" />
+    <Compile Include="Helper\RelayCommand.cs" />
+    <Compile Include="Model\HangXe.cs" />
+    <Compile Include="Model\MoTo.cs" />
+    <Compile Include="ViewModel\DangKy_VM.cs" />
+    <Compile Include="ViewModel\DangNhap_VM.cs" />
+    <Compile Include="ViewModel\DichVu_VM.cs" />
+    <Compile Include="ViewModel\HangXe_VM.cs" />
+    <Compile Include="ViewModel\MainWindows_VM.cs" />
+    <Compile Include="ViewModel\Xe_VM.cs" />
+    <Compile Include="View\UC_ThongKe.xaml.cs">
+      <DependentUpon>UC_ThongKe.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Dangky.xaml.cs">
-      <DependentUpon>Dangky.xaml</DependentUpon>
+    <Compile Include="View\W_DangKy.xaml.cs">
+      <DependentUpon>W_DangKy.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Dangnhap.xaml.cs">
-      <DependentUpon>Dangnhap.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Dichvu.xaml.cs">
-      <DependentUpon>Dichvu.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\DSXe.xaml.cs">
-      <DependentUpon>DSXe.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\HangxeView.xaml.cs">
-      <DependentUpon>HangxeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Hoadon.xaml.cs">
-      <DependentUpon>Hoadon.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="View\Khachhang.xaml.cs">
-      <DependentUpon>Khachhang.xaml</DependentUpon>
+    <Compile Include="View\W_DangNhap.xaml.cs">
+      <DependentUpon>W_DangNhap.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Nhanvien.xaml.cs">
-      <DependentUpon>Nhanvien.xaml</DependentUpon>
+    <Compile Include="View\UC_DichVu.xaml.cs">
+      <DependentUpon>UC_DichVu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Sua_Hangxe.xaml.cs">
-      <DependentUpon>Sua_Hangxe.xaml</DependentUpon>
+    <Compile Include="View\UC_DSHangXe.xaml.cs">
+      <DependentUpon>UC_DSHangXe.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Sua_xe.xaml.cs">
-      <DependentUpon>Sua_xe.xaml</DependentUpon>
+    <Compile Include="View\UC_DSXe.xaml.cs">
+      <DependentUpon>UC_DSXe.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Them_Hangxe.xaml.cs">
-      <DependentUpon>Them_Hangxe.xaml</DependentUpon>
+    <Compile Include="View\UC_HoaDon.xaml.cs">
+      <DependentUpon>UC_HoaDon.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Them_suaDV.xaml.cs">
-      <DependentUpon>Them_suaDV.xaml</DependentUpon>
+    <Compile Include="View\UC_KhachHang.xaml.cs">
+      <DependentUpon>UC_KhachHang.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Them_xe.xaml.cs">
-      <DependentUpon>Them_xe.xaml</DependentUpon>
+    <Compile Include="View\UC_NhanVien.xaml.cs">
+      <DependentUpon>UC_NhanVien.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\Thongke.xaml.cs">
-      <DependentUpon>Thongke.xaml</DependentUpon>
+    <Compile Include="View\W_SuaHangXe.xaml.cs">
+      <DependentUpon>W_SuaHangXe.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\W_SuaXe.xaml.cs">
+      <DependentUpon>W_SuaXe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_ThemHangXe.xaml.cs">
+      <DependentUpon>W_ThemHangXe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_ThemSuaDVxaml.xaml.cs">
+      <DependentUpon>W_ThemSuaDVxaml.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_ThemXe.xaml.cs">
+      <DependentUpon>W_ThemXe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="View\UC_ThongKe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_DangKy.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_DangNhap.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_DichVu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_DSHangXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_DSXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_HoaDon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_KhachHang.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\UC_NhanVien.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_SuaHangXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_SuaXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_ThemHangXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_ThemSuaDVxaml.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\W_ThemXe.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -131,72 +202,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Page Include="View\Dangky.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Dangnhap.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Dichvu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\DSXe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\HangxeView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Hoadon.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Khachhang.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\MainWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Nhanvien.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Sua_Hangxe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Sua_xe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Them_Hangxe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Them_suaDV.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Them_xe.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="View\Thongke.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="images\" />
-    <Folder Include="Model\" />
-    <Folder Include="ViewModel\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

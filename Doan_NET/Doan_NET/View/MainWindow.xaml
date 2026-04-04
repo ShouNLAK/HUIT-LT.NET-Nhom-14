@@ -4,9 +4,14 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Doan_NET.View"
-        xmlns:vm="clr-namespace:Doan_NET.View"
+        xmlns:vm="clr-namespace:Doan_NET.ViewModel"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1400">
+
+    <Window.DataContext>
+        <vm:MainWindows_VM/>
+    </Window.DataContext>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="60"/>
@@ -24,17 +29,17 @@
             <StackPanel Grid.Column="0" Orientation="Horizontal" Margin="30,0,0,0" VerticalAlignment="Center">
                 <TextBlock Text="🛵" FontSize="24" Margin="0,0,15,0"/>
                 <TextBlock 
-                Text="Hệ Thống Quản Lý Bán Xe Máy"
-                FontSize="18"
-                FontWeight="Bold"
-                Foreground="#2c3e50"
-                VerticalAlignment="Center"/>
+            Text="Hệ Thống Quản Lý Bán Xe Máy"
+            FontSize="18"
+            FontWeight="Bold"
+            Foreground="#2c3e50"
+            VerticalAlignment="Center"/>
             </StackPanel>
 
             <!-- Icon thông báo, avatar, tên đăng nhập bên phải -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" Margin="0,0,30,0" VerticalAlignment="Center">
 
-                
+
 
                 <!-- Divider -->
                 <Rectangle Width="1" Height="30" Fill="#ecf0f1" Margin="0,0,20,0"/>
@@ -42,9 +47,9 @@
                 <!-- Avatar và Tên đăng nhập -->
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                     <Ellipse 
-                    Width="40" 
-                    Height="40" 
-                    Margin="0,0,12,0">
+                Width="40" 
+                Height="40" 
+                Margin="0,0,12,0">
                         <Ellipse.Fill>
                             <SolidColorBrush Color="#bdc3c7"/>
                         </Ellipse.Fill>
@@ -52,15 +57,15 @@
 
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock 
-                        x:Name="UserNameTextBlock"
-                        Text="Quản Trị Viên"
-                        FontSize="13"
-                        FontWeight="Bold"
-                        Foreground="#2c3e50"/>
+                    x:Name="UserNameTextBlock"
+                    Text="Quản Trị Viên"
+                    FontSize="13"
+                    FontWeight="Bold"
+                    Foreground="#2c3e50"/>
                         <TextBlock 
-                        Text="Admin"
-                        FontSize="11"
-                        Foreground="#95a5a6"/>
+                    Text="Admin"
+                    FontSize="11"
+                    Foreground="#95a5a6"/>
                     </StackPanel>
                 </StackPanel>
             </StackPanel>
@@ -80,13 +85,13 @@
                     <!-- Search Box -->
                     <Grid Margin="15,20,15,20" Height="40" Background="#34495e" >
                         <Label
-                            Content="MENU CHỨC NĂNG"
-                            FontSize="18"
-                            FontWeight="Bold"
-                            Foreground="White"
-                            VerticalAlignment="Center" 
-                            HorizontalContentAlignment="Center" 
-                            VerticalContentAlignment="Center"/>    
+                        Content="MENU CHỨC NĂNG"
+                        FontSize="18"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        VerticalAlignment="Center" 
+                        HorizontalContentAlignment="Center" 
+                        VerticalContentAlignment="Center"/>
                     </Grid>
 
                     <!-- Menu Items -->
@@ -95,9 +100,11 @@
 
                             <!-- Quản lý xe -->
                             <Button 
-                            x:Name="BtnQuanLyXe"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="QuanLyXe" Click="MENU_Click">
+                        x:Name="BtnQuanLyXe"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="QuanLyXe"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="QuanLyXe">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="🛵" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Quản lý xe" FontSize="14" VerticalAlignment="Center"/>
@@ -106,9 +113,11 @@
 
                             <!-- Dịch vụ -->
                             <Button 
-                            x:Name="BtnDV"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="DichVu">
+                        x:Name="BtnDV"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="DichVu"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="DichVu">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="🛠️" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Dịch vụ" FontSize="14" VerticalAlignment="Center"/>
@@ -116,9 +125,11 @@
                             </Button>
                             <!-- Khách hàng -->
                             <Button 
-                            x:Name="BtnKhachHang"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="KhachHang">
+                        x:Name="BtnKhachHang"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="KhachHang"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="KhachHang">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="👥" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Khách hàng" FontSize="14" VerticalAlignment="Center"/>
@@ -127,9 +138,11 @@
 
                             <!-- Nhân viên -->
                             <Button 
-                            x:Name="BtnNhanVien"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="NhanVien">
+                        x:Name="BtnNhanVien"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="NhanVien"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="NhanVien">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="👨‍💼" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Nhân viên" FontSize="14" VerticalAlignment="Center"/>
@@ -138,20 +151,24 @@
 
                             <!-- Đơn hàng -->
                             <Button 
-                            x:Name="BtnDonHang"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="DonHang">
+                        x:Name="BtnDonHang"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="DonHang"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="DonHang">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📋" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Hóa đơn" FontSize="14" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
-                            
+
                             <!-- Thống kê -->
                             <Button 
-                            x:Name="BtnThongKe"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="ThongKe">
+                        x:Name="BtnThongKe"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="ThongKe"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="ThongKe">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📈" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Thống kê" FontSize="14" VerticalAlignment="Center"/>
@@ -163,9 +180,11 @@
 
                             <!-- Cài đặt -->
                             <Button 
-                            x:Name="BtnCaiDat"
-                            Style="{DynamicResource MenuButtonStyle}"
-                            Tag="CaiDat">
+                        x:Name="BtnCaiDat"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="CaiDat"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="CaiDat">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="⚙️" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Cài đặt" FontSize="14" VerticalAlignment="Center"/>
@@ -174,8 +193,10 @@
 
                             <!-- Đăng xuất -->
                             <Button 
-                            x:Name="BtnDangXuat"
-                            Style="{DynamicResource MenuButtonStyle}">
+                        x:Name="BtnDangXuat"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="DangXuat">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="🚪" FontSize="18" Margin="0,0,12,0"/>
                                     <TextBlock Text="Đăng xuất" FontSize="14" VerticalAlignment="Center"/>
@@ -188,10 +209,11 @@
 
             <!-- ========== MAIN CONTENT ========== -->
             <ContentControl 
-            Grid.Column="1"
-            x:Name="MainContentControl"
-            Background="White"
-            Margin="20"/>
+        Grid.Column="1"
+        x:Name="MainContentControl"
+        Content="{Binding ManHinhHienTai}"
+        Background="White"
+        Margin="20"/>
         </Grid>
     </Grid>
 
