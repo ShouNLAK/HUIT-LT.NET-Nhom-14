@@ -35,7 +35,7 @@
                 VerticalAlignment="Center"/>
 
                     <TextBlock x:Name="TitleTextBlock"
-                   Text="DANH SÁCH XE"
+                   Text="{Binding TieuDeDanhSachXe}"
                    FontSize="22"
                    FontWeight="Bold"
                    Foreground="#2c3e50"
@@ -45,7 +45,7 @@
                 <WrapPanel Orientation="Horizontal">
                     <Button Content="➕ Thêm xe" Background="#27ae60" Foreground="White" Padding="12,8" Margin="0,0,10,5" BorderThickness="0" Cursor="Hand" Command="{Binding LenhMoThemXe}"/>
                     <Button Content="✏️ Sửa xe" Background="#f39c12" Foreground="White" Padding="12,8" Margin="0,0,10,5" BorderThickness="0" Cursor="Hand" Command="{Binding LenhMoSuaXe}"/>
-                    <Button Content="🗑 Xóa xe" Background="#e74c3c" Foreground="White" Padding="12,8" Margin="0,0,20,5" BorderThickness="0" Cursor="Hand"/>
+                    <Button Content="🗑 Xóa xe" Background="#e74c3c" Foreground="White" Padding="12,8" Margin="0,0,20,5" BorderThickness="0" Cursor="Hand" Command="{Binding LenhXoaXe}"/>
 
                     <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
                         <Button Content="🔍 Tìm kiếm" 
@@ -53,10 +53,12 @@
                     Foreground="White" 
                     Padding="12,8" 
                     BorderThickness="0" 
+                    Command="{Binding LenhTimKiemXe}"
                     Cursor="Hand"/>
                         <TextBox x:Name="SearchTextBox" 
                      Width="180" 
                      Margin="5,0,0,0" 
+                     Text="{Binding TuKhoaTimKiem, UpdateSourceTrigger=PropertyChanged}"
                      Padding="5" 
                      VerticalContentAlignment="Center"
                      BorderBrush="#bdc3c7"/>
@@ -81,7 +83,7 @@
 
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="150" Height="220" Margin="0,0,20,20" Background="White" CornerRadius="8" Effect="{StaticResource ShadowEffect}" Cursor="Hand" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+                        <Border Width="150" Height="220" Margin="0,0,20,20" Background="White" CornerRadius="8" Effect="{StaticResource ShadowEffect}" Cursor="Hand">
                             <StackPanel Orientation="Vertical">
                                 <Image Source="{Binding HinhAnhFullPath}" Height="100" Margin="10" Stretch="Uniform"/>
                                 <StackPanel Margin="10,5">
@@ -117,8 +119,23 @@
 
                 <!-- Nội dung chi tiết -->
                 <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="DetailPanel" Margin="20,0,20,20">
-                        <!-- Sẽ được load động khi click xe -->
+                    <StackPanel Margin="20,0,20,20">
+                        <Image Source="{Binding XeDangChon.HinhAnhFullPath}" Height="180" Stretch="Uniform" Margin="0,0,0,20"/>
+
+                        <TextBlock Text="{Binding XeDangChon.TenDongXe}" FontSize="18" FontWeight="Bold" Margin="0,0,0,10"/>
+
+                        <TextBlock Text="{Binding XeDangChon.TenHang, StringFormat=Hãng xe: {0}}" FontSize="13" Foreground="DimGray" Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding XeDangChon.LoaiXe, StringFormat=Loại xe: {0}}" FontSize="13" Foreground="DimGray" Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding XeDangChon.MauSac, StringFormat=Màu sắc: {0}}" FontSize="13" Foreground="DimGray" Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding XeDangChon.NamSX, StringFormat=Năm sản xuất: {0}}" FontSize="13" Foreground="DimGray" Margin="0,0,0,8"/>
+                        <TextBlock Text="{Binding XeDangChon.SoLuongTon, StringFormat=Tồn kho: {0} chiếc}" FontSize="13" Foreground="Green" Margin="0,0,0,8"/>
+
+                        <TextBlock Text="MÔ TẢ" FontSize="12" FontWeight="Bold" Foreground="Gray" Margin="0,5,0,5"/>
+                        <TextBlock Text="{Binding XeDangChon.MoTa}" FontSize="13" TextWrapping="Wrap" Foreground="#34495e" Margin="0,0,0,15"/>
+
+                        <TextBlock Text="{Binding XeDangChon.GiaXe, StringFormat=Giá: {0}}" FontSize="14" FontWeight="Bold" Foreground="Red" Margin="0,0,0,20"/>
+
+                        <Button Content="BÁN NGAY" Background="#e74c3c" Foreground="White" Padding="10" BorderThickness="0" Command="{Binding LenhMoThemXe}"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

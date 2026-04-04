@@ -43,16 +43,16 @@
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
                     <TextBlock Text="Mã dịch vụ / Phụ tùng *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox x:Name="txtMaPT" Style="{StaticResource InputStyle}" Tag="Nhập mã (VD: DV001, PT001)"/>
+                    <TextBox x:Name="txtMaPT" Style="{StaticResource InputStyle}" Tag="Nhập mã (VD: DV001, PT001)" Text="{Binding MaPTNhap, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Tên dịch vụ / Phụ tùng *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox x:Name="txtTen" Style="{StaticResource InputStyle}"/>
+                    <TextBox x:Name="txtTen" Style="{StaticResource InputStyle}" Text="{Binding TenNhap, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Đơn giá (VNĐ) *" Style="{StaticResource LabelStyle}"/>
-                    <TextBox x:Name="txtGia" Style="{StaticResource InputStyle}"/>
+                    <TextBox x:Name="txtGia" Style="{StaticResource InputStyle}" Text="{Binding GiaNhap, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="Số lượng tồn kho (Đối với phụ tùng)" Style="{StaticResource LabelStyle}"/>
-                    <TextBox x:Name="txtTonKho" Style="{StaticResource InputStyle}" Text="0"/>
+                    <TextBox x:Name="txtTonKho" Style="{StaticResource InputStyle}" Text="{Binding TonKhoNhap, UpdateSourceTrigger=PropertyChanged}"/>
 
                     <TextBlock Text="* Lưu ý: Để trống Tồn kho nếu là dịch vụ sửa chữa." 
                            FontSize="11" FontStyle="Italic" Foreground="Gray"/>
@@ -62,9 +62,9 @@
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
             <Button x:Name="btnCancel" Content="Hủy bỏ" Width="100" Height="35" 
-                Background="#95A5A6" Foreground="White" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand"/>
+                Background="#95A5A6" Foreground="White" BorderThickness="0" Margin="0,0,10,0" Cursor="Hand" Command="{Binding LenhHuyFormDichVu}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
             <Button x:Name="btnSave" Content="Lưu thông tin" Width="120" Height="35" 
-                Background="#27AE60" Foreground="White" BorderThickness="0" FontWeight="Bold" Cursor="Hand"/>
+                Background="#27AE60" Foreground="White" BorderThickness="0" FontWeight="Bold" Cursor="Hand" Command="{Binding LenhLuuDichVu}" CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"/>
         </StackPanel>
     </Grid>
 </Window>

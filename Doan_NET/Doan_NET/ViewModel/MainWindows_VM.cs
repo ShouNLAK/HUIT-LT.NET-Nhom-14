@@ -12,14 +12,8 @@ using Doan_NET.View;
 
 namespace Doan_NET.ViewModel
 {
-    // ViewModel chinh cua man hinh quan tri.
-    // - Nhan lenh dieu huong tu menu ben trai.
-    // - Chon UserControl can hien thi trong khu vuc noi dung.
-    // - Nhan yeu cau dieu huong tu cac ViewModel con thong qua NavigationService.
-    // => Giup View chi dung de hien thi, logic dieu huong nam trong ViewModel.
     public class MainWindows_VM : BaseViewModel
     {
-        // Man hinh dang hien thi trong ContentControl cua MainWindow.
         private UserControl manHinhHienTai;
         public UserControl ManHinhHienTai
         {
@@ -31,7 +25,6 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        // Lenh dung cho toan bo nut menu.
         public ICommand LenhDieuHuong { get; }
 
         public MainWindows_VM()
@@ -41,20 +34,18 @@ namespace Doan_NET.ViewModel
             DieuHuong("QuanLyXe");
         }
 
-        // Xu ly dieu huong khi ViewModel con gui yeu cau len.
         private void XuLyYeuCauDieuHuong(string duongDan, object duLieu)
         {
             if (duongDan == "DanhSachXeTheoHang")
             {
                 var hangXeDuocChon = duLieu as HangXe;
-                ManHinhHienTai = new UC_DSXe(hangXeDuocChon?.TenHang, hangXeDuocChon?.QuocGia);
+                ManHinhHienTai = new UC_DSXe(hangXeDuocChon);
                 return;
             }
 
             DieuHuong(duongDan);
         }
 
-        // Ham dieu huong chinh.
         private void DieuHuong(string tenManHinh)
         {
             switch (tenManHinh)

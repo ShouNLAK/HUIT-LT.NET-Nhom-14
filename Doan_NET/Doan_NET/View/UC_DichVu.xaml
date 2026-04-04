@@ -30,27 +30,35 @@
 
                     <StackPanel Orientation="Horizontal">
                         <TextBox x:Name="txtSearchDichVu" Width="250" Height="35" VerticalContentAlignment="Center" 
-                             Tag="Tìm tên phụ tùng..." Padding="10,0"/>
-                        <Button Content="Tìm kiếm" Width="80" Margin="5,0" Background="#34495E" Foreground="White" BorderThickness="0"/>
+                             Tag="Tìm tên phụ tùng..." Padding="10,0" Text="{Binding TuKhoaTimKiem, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Button Content="Tìm kiếm" Width="80" Margin="5,0" Background="#34495E" Foreground="White" BorderThickness="0" Command="{Binding LenhTimKiemDichVu}"/>
                     </StackPanel>
 
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button Content="➕ THÊM MỚI" Width="100" Height="35" Background="#27AE60" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="5,0" Command="{Binding LenhMoThemDichVu}"/>
                         <Button Content="📝 SỬA" Width="80" Height="35" Background="#F1C40F" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="5,0" Command="{Binding LenhMoSuaDichVu}"/>
-                        <Button Content="🗑️ XÓA" Width="80" Height="35" Background="#E74C3C" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="5,0"/>
+                        <Button Content="🗑️ XÓA" Width="80" Height="35" Background="#E74C3C" Foreground="White" FontWeight="Bold" BorderThickness="0" Margin="5,0" Command="{Binding LenhXoaDichVu}"/>
                     </StackPanel>
                 </Grid>
 
-                <DataGrid x:Name="dgDichVu" AutoGenerateColumns="False" Background="Transparent" IsReadOnly="True" GridLinesVisibility="Horizontal" BorderThickness="0.5">
+                <DataGrid x:Name="dgDichVu" AutoGenerateColumns="False" Background="Transparent" IsReadOnly="True" GridLinesVisibility="Horizontal" BorderThickness="0.5" ItemsSource="{Binding DanhSachDichVu}" SelectedItem="{Binding DichVuDangChon, Mode=TwoWay}">
                     <DataGrid.Columns>
-                        <DataGridTextColumn Header="Mã PT" Width="80" Binding="{Binding MaPhuTung}"/>
+                        <DataGridTextColumn Header="Mã PT" Width="80" Binding="{Binding MaPT}"/>
                         <DataGridTextColumn Header="Tên Phụ tùng / Dịch vụ" Width="*" Binding="{Binding Ten}"/>
                         <DataGridTextColumn Header="Tồn kho" Width="80" Binding="{Binding TonKho}"/>
                         <DataGridTextColumn Header="Đơn giá" Width="120" Binding="{Binding Gia, StringFormat={}{0:N0}}"/>
                         <DataGridTemplateColumn Header="Thêm giỏ hàng" Width="100">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="CHỌN BÁN" Background="#3498DB" Foreground="White" FontWeight="Bold" Padding="5,2" BorderThickness="0" Cursor="Hand"/>
+                                    <Button Content="CHỌN BÁN"
+                                            Background="#3498DB"
+                                            Foreground="White"
+                                            FontWeight="Bold"
+                                            Padding="5,2"
+                                            BorderThickness="0"
+                                            Cursor="Hand"
+                                            Command="{Binding DataContext.LenhChonBan, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
@@ -69,11 +77,11 @@
                     <Separator Background="#EEEEEE" Margin="0,5"/>
                     <Grid Margin="0,5">
                         <TextBlock Text="Tổng tiền tạm tính:" FontSize="14" Foreground="Gray"/>
-                        <TextBlock Text="1.250.000 VNĐ" HorizontalAlignment="Right" FontSize="18" FontWeight="Bold" Foreground="#E74C3C"/>
+                        <TextBlock Text="{Binding TongTienTamTinh, StringFormat={}{0:N0} VNĐ}" HorizontalAlignment="Right" FontSize="18" FontWeight="Bold" Foreground="#E74C3C"/>
                     </Grid>
                 </StackPanel>
 
-                <ListBox x:Name="lstSelectedTemp" BorderThickness="1" BorderBrush="#F0F0F0" Background="#FAFAFA">
+                <ListBox x:Name="lstSelectedTemp" ItemsSource="{Binding GioHangTam}" BorderThickness="1" BorderBrush="#F0F0F0" Background="#FAFAFA">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="#EEEEEE" BorderThickness="0,0,0,1" Padding="5,10">
@@ -84,17 +92,37 @@
                                         <ColumnDefinition Width="Auto"/>
                                     </Grid.ColumnDefinitions>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="{Binding Ten}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis"/>
-                                        <TextBlock Text="{Binding Gia, StringFormat={}{0:N0}}" FontSize="11" Foreground="Gray"/>
+                                        <TextBlock Text="{Binding TenMatHang}" FontWeight="SemiBold" FontSize="13" TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding DonGia, StringFormat={}{0:N0} VNĐ}" FontSize="11" Foreground="Gray"/>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0">
-                                        <Button Content="-" Width="22" Height="22" Background="#F5F5F5" BorderBrush="#DDD"/>
-                                        <TextBlock Text="{Binding SL}" Margin="8,0" VerticalAlignment="Center" FontWeight="Bold"/>
-                                        <Button Content="+" Width="22" Height="22" Background="#F5F5F5" BorderBrush="#DDD"/>
+                                        <Button Content="-"
+                                                Width="22"
+                                                Height="22"
+                                                Background="#F5F5F5"
+                                                BorderBrush="#DDD"
+                                                Command="{Binding DataContext.LenhGiamSoLuongTrongGio, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"/>
+                                        <TextBlock Text="{Binding SoLuong}" Margin="8,0" VerticalAlignment="Center" FontWeight="Bold"/>
+                                        <Button Content="+"
+                                                Width="22"
+                                                Height="22"
+                                                Background="#F5F5F5"
+                                                BorderBrush="#DDD"
+                                                Command="{Binding DataContext.LenhTangSoLuongTrongGio, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                CommandParameter="{Binding}"/>
                                     </StackPanel>
 
-                                    <Button Grid.Column="2" Content="❌" Foreground="#E74C3C" Background="Transparent" BorderThickness="0" VerticalAlignment="Center" FontSize="14"/>
+                                    <Button Grid.Column="2"
+                                            Content="❌"
+                                            Foreground="#E74C3C"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            VerticalAlignment="Center"
+                                            FontSize="14"
+                                            Command="{Binding DataContext.LenhXoaKhoiGio, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"/>
                                 </Grid>
                             </Border>
                         </DataTemplate>

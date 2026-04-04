@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:Doan_NET.View"
         xmlns:vm="clr-namespace:Doan_NET.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="800" Width="1400">
+        Title="Hệ Thống Quản Lý Bán Xe Máy" Height="800" Width="1400">
 
     <Window.DataContext>
         <vm:MainWindows_VM/>

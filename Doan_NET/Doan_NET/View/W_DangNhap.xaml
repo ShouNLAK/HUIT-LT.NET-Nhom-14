@@ -113,13 +113,26 @@
                 BorderBrush="#ecf0f1"
                 Background="Transparent"/>
 
+                <TextBox
+                x:Name="PasswordTextBox"
+                Grid.Column="1"
+                Margin="10,0,0,0"
+                Padding="10,12"
+                FontSize="13"
+                BorderThickness="0,0,0,1"
+                BorderBrush="#ecf0f1"
+                Background="Transparent"
+                Visibility="Collapsed"/>
+
                 <Button 
+                x:Name="TogglePasswordButton"
                 Grid.Column="2"
                 Content="👁"
                 Background="Transparent"
                 BorderThickness="0"
                 Foreground="#95a5a6"
                 FontSize="14"
+                Click="TogglePasswordButton_Click"
                 Cursor="Hand"/>
             </Grid>
             <!-- Loại tài khoản -->

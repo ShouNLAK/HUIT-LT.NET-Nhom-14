@@ -19,7 +19,7 @@ namespace Doan_NET.ViewModel
 
         private void DangKy(Window cuaSoDangKy)
         {
-            MessageBox.Show("Dang ky thanh cong (mo phong).", "Thong bao", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Đăng ký thành công (mô phỏng).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             var cuaSoDangNhap = new W_DangNhap();
             cuaSoDangNhap.Show();
 

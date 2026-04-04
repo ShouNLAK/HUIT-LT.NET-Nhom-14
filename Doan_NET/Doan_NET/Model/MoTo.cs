@@ -6,14 +6,23 @@ using System.Threading.Tasks;
 
 namespace Doan_NET.Model
 {
-    internal class MoTo
+    public class MoTo
     {
+        private string tenHang;
         private string tenDongXe;
         private string loaiXe;
-        private string giaXe;
+        private int giaXe;
         private string hinhAnhFullPath;
         private string moTa;
+        private string mauSac;
         private int namSX;
+        private int soLuongTon;
+
+        public string TenHang
+        {
+            get { return tenHang; }
+            set { tenHang = value; }
+        }
 
         public string TenDongXe
         {
@@ -25,7 +34,7 @@ namespace Doan_NET.Model
             get { return loaiXe; }
             set { loaiXe = value; }
         }
-        public string GiaXe
+        public int GiaXe
         {
             get { return giaXe; }
             set { giaXe = value; }
@@ -40,14 +49,24 @@ namespace Doan_NET.Model
             get { return moTa; }
             set { moTa = value; }
         }
+        public string MauSac
+        {
+            get { return mauSac; }
+            set { mauSac = value; }
+        }
         public int NamSX
         {
             get { return namSX; }
             set { namSX = value; }
         }
+        public int SoLuongTon
+        {
+            get { return soLuongTon; }
+            set { soLuongTon = value; }
+        }
 
         public MoTo() { }
-        public MoTo(string tenDongXe, string loaiXe, int namSX, string giaXe, string hinhAnhFullPath, string moTa)
+        public MoTo(string tenDongXe, string loaiXe, int namSX, int giaXe, string hinhAnhFullPath, string moTa)
         {
             TenDongXe = tenDongXe;
             LoaiXe = loaiXe;
@@ -55,6 +74,19 @@ namespace Doan_NET.Model
             GiaXe = giaXe;
             HinhAnhFullPath = hinhAnhFullPath;
             MoTa = moTa;
+        }
+
+        public MoTo(string tenHang, string tenDongXe, string loaiXe, string mauSac, int namSX, int giaXe, string hinhAnhFullPath, string moTa, int soLuongTon)
+        {
+            TenHang = tenHang;
+            TenDongXe = tenDongXe;
+            LoaiXe = loaiXe;
+            MauSac = mauSac;
+            NamSX = namSX;
+            GiaXe = giaXe;
+            HinhAnhFullPath = hinhAnhFullPath;
+            MoTa = moTa;
+            SoLuongTon = soLuongTon;
         }
     }
 }

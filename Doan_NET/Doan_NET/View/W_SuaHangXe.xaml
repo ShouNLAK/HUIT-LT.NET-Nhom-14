@@ -25,6 +25,7 @@
             <TextBlock Text="Tên hãng xe *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
             <TextBox 
         x:Name="TenHangTextBox"
+        Text="{Binding TenHangNhap, UpdateSourceTrigger=PropertyChanged}"
         Padding="10"
         Margin="0,0,0,15"
         BorderThickness="1"
@@ -35,6 +36,7 @@
             <TextBlock Text="Quốc gia *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
             <TextBox 
         x:Name="QuocGiaTextBox"
+        Text="{Binding QuocGiaNhap, UpdateSourceTrigger=PropertyChanged}"
         Padding="10"
         Margin="0,0,0,15"
         BorderThickness="1"
@@ -52,6 +54,7 @@
                 <TextBox 
             x:Name="LogoTextBox"
             Grid.Column="0"
+            Text="{Binding LogoNhap, UpdateSourceTrigger=PropertyChanged}"
             Padding="10"
             BorderThickness="1"
             BorderBrush="#ecf0f1"
@@ -68,10 +71,11 @@
             Cursor="Hand"/>
             </Grid>
 
-            <!-- Preview Logo -->
-            <TextBlock Text="Preview Logo:" FontSize="12" Foreground="#2c3e50" Margin="0,0,0,5"/>
+            <!-- Xem trước logo -->
+            <TextBlock Text="Xem trước logo:" FontSize="12" Foreground="#2c3e50" Margin="0,0,0,5"/>
             <Image 
         x:Name="LogoPreviewImage"
+        Source="{Binding LogoNhap}"
         Height="80"
         Width="80"
         Stretch="UniformToFill"
@@ -91,6 +95,8 @@
         Foreground="White"
         BorderThickness="0"
         Cursor="Hand"
+        Command="{Binding LenhHuyFormHangXe}"
+        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
         FontSize="12"/>
 
             <Button 
@@ -101,6 +107,8 @@
         Foreground="White"
         BorderThickness="0"
         Cursor="Hand"
+        Command="{Binding LenhLuuHangXe}"
+        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
         FontSize="12"/>
         </StackPanel>
 

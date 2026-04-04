@@ -4,8 +4,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:Doan_NET.View"
+             xmlns:vm="clr-namespace:Doan_NET.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800" Background="#F5F5F5">
+    <UserControl.DataContext>
+        <vm:ThongKe_VM/>
+    </UserControl.DataContext>
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -17,19 +22,19 @@
             <Border Background="White" CornerRadius="10" Margin="0,0,10,0" Padding="15">
                 <StackPanel>
                     <TextBlock Text="TỔNG DOANH THU" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="1,250,000,000" FontSize="22" FontWeight="Bold" Foreground="#27AE60"/>
+                    <TextBlock Text="{Binding TongDoanhThu, StringFormat={}{0:N0} VNĐ}" FontSize="22" FontWeight="Bold" Foreground="#27AE60"/>
                 </StackPanel>
             </Border>
             <Border Background="White" CornerRadius="10" Margin="5,0,5,0" Padding="15">
                 <StackPanel>
                     <TextBlock Text="HÓA ĐƠN MỚI" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="145" FontSize="22" FontWeight="Bold" Foreground="#2980B9"/>
+                    <TextBlock Text="{Binding SoHoaDonMoi}" FontSize="22" FontWeight="Bold" Foreground="#2980B9"/>
                 </StackPanel>
             </Border>
             <Border Background="White" CornerRadius="10" Margin="10,0,0,0" Padding="15">
                 <StackPanel>
-                    <TextBlock Text="KHÁCH HÀNG" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="+28" FontSize="22" FontWeight="Bold" Foreground="#8E44AD"/>
+                    <TextBlock Text="KHÁCH HÀNG PHỤC VỤ" Foreground="Gray" FontSize="12"/>
+                    <TextBlock Text="{Binding SoKhachHangPhucVu}" FontSize="22" FontWeight="Bold" Foreground="#8E44AD"/>
                 </StackPanel>
             </Border>
         </UniformGrid>
@@ -38,7 +43,7 @@
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="DOANH THU 6 THÁNG GẦN NHẤT" FontWeight="Bold" Margin="0,0,0,20"/>
 
-                <ItemsControl ItemsSource="{Binding RevenueData}">
+                <ItemsControl ItemsSource="{Binding DuLieuDoanhThu6Thang}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="6" VerticalAlignment="Bottom"/>
@@ -48,10 +53,10 @@
                         <DataTemplate>
                             <StackPanel VerticalAlignment="Bottom" Margin="10,0">
                                 <Border Background="#3498DB" Width="40" 
-                                    Height="{Binding Value}" 
+                                    Height="{Binding ChieuCaoCot}" 
                                     CornerRadius="5,5,0,0"
-                                    ToolTip="{Binding ValueDisplay}"/>
-                                <TextBlock Text="{Binding MonthName}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="11"/>
+                                    ToolTip="{Binding GiaTriHienThi}"/>
+                                <TextBlock Text="{Binding ThangHienThi}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="11"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -75,13 +80,13 @@
                         <TextBlock Text="DỊCH VỤ BÁN CHẠY" FontSize="15" FontWeight="Bold" Foreground="#2C3E50"/>
                     </StackPanel>
 
-                    <DataGrid ItemsSource="{Binding TopSellingServices}" AutoGenerateColumns="False" 
+                    <DataGrid ItemsSource="{Binding DanhSachDichVuBanChay}" AutoGenerateColumns="False" 
                   CanUserAddRows="False" Background="Transparent" BorderThickness="0"
                   RowHeight="35">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Tên dịch vụ" Binding="{Binding TenDV_SP}" Width="*"/>
-                            <DataGridTextColumn Header="Số lượng" Binding="{Binding SOLUONG}" Width="80"/>
-                            <DataGridTextColumn Header="Doanh thu" Binding="{Binding ThanhTien, StringFormat={}{0:N0}}" Width="120">
+                            <DataGridTextColumn Header="Tên dịch vụ" Binding="{Binding TenMuc}" Width="*"/>
+                            <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuongBan}" Width="80"/>
+                            <DataGridTextColumn Header="Doanh thu" Binding="{Binding DoanhThu, StringFormat={}{0:N0}}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -104,13 +109,13 @@
                         <TextBlock Text="XE BÁN CHẠY NHẤT" FontSize="15" FontWeight="Bold" Foreground="#2C3E50"/>
                     </StackPanel>
 
-                    <DataGrid ItemsSource="{Binding TopSellingVehicles}" AutoGenerateColumns="False" 
+                    <DataGrid ItemsSource="{Binding DanhSachXeBanChay}" AutoGenerateColumns="False" 
                   CanUserAddRows="False" Background="Transparent" BorderThickness="0"
                   RowHeight="35">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Mẫu xe" Binding="{Binding TenDV_SP}" Width="*"/>
-                            <DataGridTextColumn Header="Đã bán" Binding="{Binding SOLUONG}" Width="80"/>
-                            <DataGridTextColumn Header="Doanh số" Binding="{Binding ThanhTien, StringFormat={}{0:N0}}" Width="120">
+                            <DataGridTextColumn Header="Mẫu xe" Binding="{Binding TenMuc}" Width="*"/>
+                            <DataGridTextColumn Header="Đã bán" Binding="{Binding SoLuongBan}" Width="80"/>
+                            <DataGridTextColumn Header="Doanh số" Binding="{Binding DoanhThu, StringFormat={}{0:N0}}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="FontWeight" Value="Bold"/>

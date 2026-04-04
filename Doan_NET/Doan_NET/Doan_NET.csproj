@@ -56,15 +56,26 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Helper\BaseViewModel.cs" />
+    <Compile Include="Model\DuLieuHeThong.cs" />
     <Compile Include="Helper\NavigationService.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
+    <Compile Include="Model\DichVuPhuTung.cs" />
     <Compile Include="Model\HangXe.cs" />
+    <Compile Include="Model\HoaDon.cs" />
+    <Compile Include="Model\KhachHang.cs" />
     <Compile Include="Model\MoTo.cs" />
+    <Compile Include="Model\NhanVien.cs" />
+    <Compile Include="Model\TaiKhoan.cs" />
     <Compile Include="ViewModel\DangKy_VM.cs" />
     <Compile Include="ViewModel\DangNhap_VM.cs" />
     <Compile Include="ViewModel\DichVu_VM.cs" />
+    <Compile Include="ViewModel\HoaDon_VM.cs" />
     <Compile Include="ViewModel\HangXe_VM.cs" />
+    <Compile Include="ViewModel\KhachHang_VM.cs" />
+    <Compile Include="ViewModel\MatHangGio_VM.cs" />
     <Compile Include="ViewModel\MainWindows_VM.cs" />
+    <Compile Include="ViewModel\NhanVien_VM.cs" />
+    <Compile Include="ViewModel\ThongKe_VM.cs" />
     <Compile Include="ViewModel\Xe_VM.cs" />
     <Compile Include="View\UC_ThongKe.xaml.cs">
       <DependentUpon>UC_ThongKe.xaml</DependentUpon>

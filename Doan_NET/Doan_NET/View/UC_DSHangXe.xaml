@@ -46,6 +46,7 @@
             Foreground="White"
             BorderThickness="0"
             Cursor="Hand"
+            Command="{Binding LenhXoaHangXe}"
             FontSize="12"
             FontWeight="Bold" Margin="555,0,95,0"/>
             <Button

@@ -30,6 +30,8 @@
                     <TextBlock Text="Loại xe *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <ComboBox 
                 x:Name="DongXeComboBox"
+                IsEditable="True"
+                Text="{Binding LoaiXeNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
@@ -39,16 +41,18 @@
                     <TextBlock Text="Tên dòng xe *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="TenXeTextBox"
+                Text="{Binding TenDongXeNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
                 BorderBrush="#ecf0f1"
                 FontSize="12"
-                Tag="Nhập tên xe cụ thể (VD: Camry 2.5Q)"/>
+                Tag="Nhập tên xe cụ thể (VD: Wave Alpha 110)"/>
                     <!-- Màu sắc -->
                     <TextBlock Text="Màu sắc *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="MauSacTextBox"
+                Text="{Binding MauSacNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
@@ -59,34 +63,34 @@
                     <TextBlock Text="Năm sản xuất *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="NamSanXuatTextBox"
+                Text="{Binding NamSXNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
                 BorderBrush="#ecf0f1"
-                FontSize="12"
-                Text="2024"/>
+                FontSize="12"/>
 
                     <!-- Giá bán -->
                     <TextBlock Text="Giá bán *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="GiaBanTextBox"
+                Text="{Binding GiaXeNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
                 BorderBrush="#ecf0f1"
-                FontSize="12"
-                Text="0"/>
+                FontSize="12"/>
 
                     <!-- Số lượng -->
                     <TextBlock Text="Số lượng *" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="SoLuongTextBox"
+                Text="{Binding SoLuongTonNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Margin="0,0,0,15"
                 BorderThickness="1"
                 BorderBrush="#ecf0f1"
-                FontSize="12"
-                Text="1"/>
+                FontSize="12"/>
 
                     <!-- Hình ảnh -->
                     <TextBlock Text="Hình ảnh (URL hoặc đường dẫn file)" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
@@ -99,6 +103,7 @@
                         <TextBox 
                     x:Name="HinhAnhTextBox"
                     Grid.Column="0"
+                    Text="{Binding HinhAnhNhap, UpdateSourceTrigger=PropertyChanged}"
                     Padding="10"
                     BorderThickness="1"
                     BorderBrush="#ecf0f1"
@@ -116,9 +121,10 @@
                     </Grid>
 
                     <!-- Preview Hình ảnh -->
-                    <TextBlock Text="Preview:" FontSize="12" Foreground="#2c3e50" Margin="0,0,0,5"/>
+                    <TextBlock Text="Xem trước:" FontSize="12" Foreground="#2c3e50" Margin="0,0,0,5"/>
                     <Image 
                 x:Name="CarImagePreview"
+                Source="{Binding HinhAnhNhap}"
                 Height="120"
                 Width="200"
                 Stretch="UniformToFill"
@@ -128,6 +134,7 @@
                     <TextBlock Text="Mô tả" FontSize="12" FontWeight="Bold" Foreground="#2c3e50" Margin="0,0,0,8"/>
                     <TextBox 
                 x:Name="MoTaTextBox"
+                Text="{Binding MoTaNhap, UpdateSourceTrigger=PropertyChanged}"
                 Padding="10"
                 Height="60"
                 TextWrapping="Wrap"
@@ -150,6 +157,8 @@
         Foreground="White"
         BorderThickness="0"
         Cursor="Hand"
+            Command="{Binding LenhHuyFormXe}"
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
         FontSize="12"/>
 
             <Button 
@@ -160,6 +169,8 @@
         Foreground="White"
         BorderThickness="0"
         Cursor="Hand"
+            Command="{Binding LenhLuuXe}"
+            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=Window}}"
         FontSize="12"/>
         </StackPanel>
 

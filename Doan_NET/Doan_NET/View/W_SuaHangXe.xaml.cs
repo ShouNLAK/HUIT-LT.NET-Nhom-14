@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace Doan_NET.View
 {
@@ -22,6 +23,20 @@ namespace Doan_NET.View
         public W_SuaHangXe()
         {
             InitializeComponent();
+        }
+
+        private void ChonLogo_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog hopThoai = new OpenFileDialog
+            {
+                Title = "Chọn logo hãng xe",
+                Filter = "Tệp ảnh|*.jpg;*.jpeg;*.png;*.webp;*.bmp|Tất cả tệp|*.*"
+            };
+
+            if (hopThoai.ShowDialog() == true)
+            {
+                LogoTextBox.Text = hopThoai.FileName;
+            }
         }
     }
 }
