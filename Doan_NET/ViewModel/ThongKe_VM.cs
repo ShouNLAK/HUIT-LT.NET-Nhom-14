@@ -86,15 +86,27 @@ namespace Doan_NET.ViewModel
 
         private void TaiThongKe()
         {
-            List<HoaDon> danhSachHoaDon = DuLieuHeThong.DanhSachHoaDon.ToList();
+            List<HoaDon> danhSachHoaDon;
+            try
+            {
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    danhSachHoaDon = ctx.HoaDons.ToList();
+                }
+            }
+            catch (Exception)
+            {
+                danhSachHoaDon = new List<HoaDon>();
+            }
 
-            TongDoanhThu = danhSachHoaDon.Sum(item => item.ThanhTien);
+            TongDoanhThu = danhSachHoaDon.Sum(item => (int)(item.ThanhTien ?? 0));
             SoHoaDonMoi = danhSachHoaDon
                 .Select(item => item.MaHD ?? string.Empty)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count();
+
             SoKhachHangPhucVu = danhSachHoaDon
-                .Select(item => item.SDT ?? string.Empty)
+                .Select(item => item.MaKH ?? string.Empty)
                 .Where(item => !string.IsNullOrWhiteSpace(item))
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count();
@@ -113,8 +125,8 @@ namespace Doan_NET.ViewModel
             {
                 DateTime thang = thangBatDau.AddMonths(i);
                 int doanhThu = danhSachHoaDon
-                    .Where(item => item.NgayLap.Year == thang.Year && item.NgayLap.Month == thang.Month)
-                    .Sum(item => item.ThanhTien);
+                    .Where(item => item.NgayLap.HasValue && item.NgayLap.Value.Year == thang.Year && item.NgayLap.Value.Month == thang.Month)
+                    .Sum(item => (int)(item.ThanhTien ?? 0));
 
                 if (doanhThu > doanhThuLonNhat)
                 {
@@ -146,9 +158,18 @@ namespace Doan_NET.ViewModel
 
         private void TaiDanhSachTop(List<HoaDon> danhSachHoaDon)
         {
-            HashSet<string> tapTenXe = new HashSet<string>(
-                DuLieuHeThong.DanhSachXe.Select(item => item.TenDongXe ?? string.Empty),
-                StringComparer.OrdinalIgnoreCase);
+            HashSet<string> tapTenXe;
+            try
+            {
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    tapTenXe = new HashSet<string>(ctx.Xes.Select(x => x.TenXe ?? string.Empty), StringComparer.OrdinalIgnoreCase);
+                }
+            }
+            catch (Exception)
+            {
+                tapTenXe = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            }
 
             List<MucThongKeTop_VM> topDichVu = danhSachHoaDon
                 .Where(item => !tapTenXe.Contains(item.TenDV_SP ?? string.Empty))
@@ -156,8 +177,8 @@ namespace Doan_NET.ViewModel
                 .Select(nhom => new MucThongKeTop_VM
                 {
                     TenMuc = nhom.Key,
-                    SoLuongBan = nhom.Sum(item => item.SoLuong),
-                    DoanhThu = nhom.Sum(item => item.ThanhTien)
+                    SoLuongBan = nhom.Sum(item => item.SoLuong ?? 0),
+                    DoanhThu = nhom.Sum(item => (int)(item.ThanhTien ?? 0))
                 })
                 .OrderByDescending(item => item.DoanhThu)
                 .ThenByDescending(item => item.SoLuongBan)
@@ -170,8 +191,8 @@ namespace Doan_NET.ViewModel
                 .Select(nhom => new MucThongKeTop_VM
                 {
                     TenMuc = nhom.Key,
-                    SoLuongBan = nhom.Sum(item => item.SoLuong),
-                    DoanhThu = nhom.Sum(item => item.ThanhTien)
+                    SoLuongBan = nhom.Sum(item => item.SoLuong ?? 0),
+                    DoanhThu = nhom.Sum(item => (int)(item.ThanhTien ?? 0))
                 })
                 .OrderByDescending(item => item.DoanhThu)
                 .ThenByDescending(item => item.SoLuongBan)

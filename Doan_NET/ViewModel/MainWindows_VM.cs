@@ -29,25 +29,19 @@ namespace Doan_NET.ViewModel
 
         public MainWindows_VM()
         {
-            LenhDieuHuong = new RelayCommand(thamSo => DieuHuong(thamSo?.ToString()));
-            NavigationService.NavigateRequested += XuLyYeuCauDieuHuong;
-            DieuHuong("QuanLyXe");
+            LenhDieuHuong = new RelayCommand(thamSo => DieuHuong(thamSo?.ToString(), null));
+            DieuHuong("QuanLyXe", null);
         }
 
-        private void XuLyYeuCauDieuHuong(string duongDan, object duLieu)
+        public void DieuHuong(string tenManHinh, object duLieu = null)
         {
-            if (duongDan == "DanhSachXeTheoHang")
+            if (tenManHinh == "DanhSachXeTheoHang")
             {
                 var hangXeDuocChon = duLieu as HangXe;
                 ManHinhHienTai = new UC_DSXe(hangXeDuocChon);
                 return;
             }
 
-            DieuHuong(duongDan);
-        }
-
-        private void DieuHuong(string tenManHinh)
-        {
             switch (tenManHinh)
             {
                 case "QuanLyXe":

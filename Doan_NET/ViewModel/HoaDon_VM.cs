@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -12,8 +13,8 @@ namespace Doan_NET.ViewModel
 {
     public class HoaDon_VM : BaseViewModel
     {
-        private ObservableCollection<HoaDon> danhSachHoaDonHienThi;
-        public ObservableCollection<HoaDon> DanhSachHoaDonHienThi
+        private ObservableCollection<HoaDon_HienThi_VM> danhSachHoaDonHienThi;
+        public ObservableCollection<HoaDon_HienThi_VM> DanhSachHoaDonHienThi
         {
             get { return danhSachHoaDonHienThi; }
             set
@@ -38,7 +39,7 @@ namespace Doan_NET.ViewModel
                 OnPropertyChanged();
 
                 if (KhachHangDuocChon != null &&
-                    !string.Equals(KhachHangDuocChon.SDT, (sdtKhachNhap ?? string.Empty).Trim(), StringComparison.OrdinalIgnoreCase))
+                    KhachHangDuocChon.SDT != (sdtKhachNhap ?? string.Empty).Trim())
                 {
                     KhachHangDuocChon = null;
                 }
@@ -187,10 +188,31 @@ namespace Doan_NET.ViewModel
 
         private void TaiDanhSachHoaDonHienThi()
         {
-            DanhSachHoaDonHienThi = new ObservableCollection<HoaDon>(
-                DuLieuHeThong.DanhSachHoaDon
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ds = ctx.HoaDons
+                    .Include("NhanVien")
+                    .Include("KhachHang")
                     .OrderByDescending(item => item.NgayLap)
-                    .ThenByDescending(item => item.MaHD));
+                    .ThenByDescending(item => item.MaHD)
+                    .ToList();
+
+                var danhSachHienThi = ds.Select(item => new HoaDon_HienThi_VM
+                {
+                    MaHD = item.MaHD,
+                    NgayLap = item.NgayLap,
+                    TenNhanVien = item.NhanVien != null ? item.NhanVien.HoTen : string.Empty,
+                    TenKhachHang = item.KhachHang != null ? item.KhachHang.HoTen : string.Empty,
+                    SDT = item.KhachHang != null ? item.KhachHang.SDT : string.Empty,
+                    TenDV_SP = item.TenDV_SP,
+                    SoLuong = item.SoLuong,
+                    ThanhTien = item.ThanhTien,
+                    PhuongThucThanhToan = item.PhuongThucThanhToan
+                }).ToList();
+
+                DanhSachHoaDonHienThi = new ObservableCollection<HoaDon_HienThi_VM>(danhSachHienThi);
+            }
         }
 
         private void KiemTraSDTKhach()
@@ -202,17 +224,21 @@ namespace Doan_NET.ViewModel
             }
 
             string sdt = SDTKhachNhap.Trim();
-            KhachHang khachHang = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                string.Equals(item.SDT, sdt, StringComparison.OrdinalIgnoreCase));
 
-            if (khachHang == null)
+            using (var ctx = new QuanLyBanXeMayEntities())
             {
-                KhachHangDuocChon = null;
-                MessageBox.Show("Không tìm thấy khách hàng theo số điện thoại đã nhập.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            }
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var khachHang = ctx.KhachHangs.FirstOrDefault(item =>
+                    item.SDT == sdt);
+                if (khachHang == null)
+                {
+                    KhachHangDuocChon = null;
+                    MessageBox.Show("Không tìm thấy khách hàng theo số điện thoại đã nhập.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+                    return;
+                }
 
-            KhachHangDuocChon = khachHang;
+                KhachHangDuocChon = khachHang;
+            }
         }
 
         private void HuyHoaDon()
@@ -237,50 +263,53 @@ namespace Doan_NET.ViewModel
 
         private void XacNhanThanhToan()
         {
-            try
+            if (!KiemTraDuLieuThanhToan())
             {
-                if (!KiemTraDuLieuThanhToan())
-                {
-                    return;
-                }
+                return;
+            }
 
-                if (!KiemTraTonKhoTruocThanhToan())
-                {
-                    return;
-                }
+            if (!KiemTraTonKhoTruocThanhToan())
+            {
+                return;
+            }
 
-                string maHoaDonMoi = TaoMaHoaDonMoi();
-                DateTime ngayLap = NgayLapNhap;
+            string maHoaDonMoi = TaoMaHoaDonMoi();
+            DateTime ngayLap = NgayLapNhap;
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var nv = ctx.NhanViens.FirstOrDefault(n => n.HoTen == TenNhanVienLap.Trim());
+                string maNV = nv != null ? nv.MaNV : null;
+                string maKH = KhachHangDuocChon != null ? KhachHangDuocChon.MaKH : null;
 
                 foreach (MatHangGio_VM item in GioHangHienTai.ToList())
                 {
-                    DuLieuHeThong.DanhSachHoaDon.Add(new HoaDon
+                    var hd = new HoaDon
                     {
                         MaHD = maHoaDonMoi,
                         NgayLap = ngayLap,
-                        TenNhanVien = TenNhanVienLap.Trim(),
-                        TenKhachHang = KhachHangDuocChon.HoTen,
-                        SDT = KhachHangDuocChon.SDT,
+                        MaNV = maNV,
+                        MaKH = maKH,
                         TenDV_SP = item.TenMatHang,
                         SoLuong = item.SoLuong,
                         ThanhTien = item.ThanhTien,
                         PhuongThucThanhToan = HinhThucThanhToanDangChon
-                    });
+                    };
+                    ctx.HoaDons.Add(hd);
                 }
 
-                CapNhatTonKhoSauThanhToan();
-
-                GioHangHienTai.Clear();
-                TaiDanhSachHoaDonHienThi();
-                CapNhatTienThanhToan();
-
-                MessageBox.Show("Thanh toán thành công.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                LamMoiThongTinHoaDon(false);
+                ctx.SaveChanges();
             }
-            catch (Exception)
-            {
-                MessageBox.Show("Không thể xác nhận thanh toán. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            CapNhatTonKhoSauThanhToan();
+
+            GioHangHienTai.Clear();
+            TaiDanhSachHoaDonHienThi();
+            CapNhatTienThanhToan();
+
+            MessageBox.Show("Thanh toán thành công.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            LamMoiThongTinHoaDon(false);
         }
 
         private bool KiemTraDuLieuThanhToan()
@@ -339,19 +368,22 @@ namespace Doan_NET.ViewModel
                     continue;
                 }
 
-                DichVuPhuTung phuTung = DuLieuHeThong.DanhSachDichVu.FirstOrDefault(dv =>
-                    string.Equals(dv.MaPT, item.MaMatHang, StringComparison.OrdinalIgnoreCase));
-
-                if (phuTung == null)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    MessageBox.Show("Không tìm thấy phụ tùng " + item.TenMatHang + " trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return false;
-                }
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(dv =>
+                        dv.MaPT == item.MaMatHang);
+                    if (phuTung == null)
+                    {
+                        MessageBox.Show("Không tìm thấy phụ tùng " + item.TenMatHang + " trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false;
+                    }
 
-                if (item.SoLuong > phuTung.TonKho)
-                {
-                    MessageBox.Show("Phụ tùng " + item.TenMatHang + " không đủ tồn kho.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return false;
+                    if (item.SoLuong > (phuTung.TonKho ?? 0))
+                    {
+                        MessageBox.Show("Phụ tùng " + item.TenMatHang + " không đủ tồn kho.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return false;
+                    }
                 }
             }
 
@@ -367,14 +399,19 @@ namespace Doan_NET.ViewModel
                     continue;
                 }
 
-                DichVuPhuTung phuTung = DuLieuHeThong.DanhSachDichVu.FirstOrDefault(dv =>
-                    string.Equals(dv.MaPT, item.MaMatHang, StringComparison.OrdinalIgnoreCase));
-                if (phuTung != null)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    phuTung.TonKho -= item.SoLuong;
-                    if (phuTung.TonKho < 0)
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(dv =>
+                        dv.MaPT == item.MaMatHang);
+                    if (phuTung != null)
                     {
-                        phuTung.TonKho = 0;
+                        phuTung.TonKho = (phuTung.TonKho ?? 0) - item.SoLuong;
+                        if (phuTung.TonKho < 0)
+                        {
+                            phuTung.TonKho = 0;
+                        }
+                        ctx.SaveChanges();
                     }
                 }
             }
@@ -383,18 +420,24 @@ namespace Doan_NET.ViewModel
         private string TaoMaHoaDonMoi()
         {
             int maLonNhat = 0;
-            foreach (HoaDon item in DuLieuHeThong.DanhSachHoaDon)
-            {
-                if (item == null || string.IsNullOrWhiteSpace(item.MaHD))
-                {
-                    continue;
-                }
 
-                string so = item.MaHD.Trim().ToUpper().Replace("HD", string.Empty);
-                int maSo;
-                if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var all = ctx.HoaDons.Select(h => h.MaHD).ToList();
+                foreach (string ma in all)
                 {
-                    maLonNhat = maSo;
+                    if (string.IsNullOrWhiteSpace(ma))
+                    {
+                        continue;
+                    }
+
+                    string so = ma.Trim().ToUpper().Replace("HD", string.Empty);
+                    int maSo;
+                    if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+                    {
+                        maLonNhat = maSo;
+                    }
                 }
             }
 
@@ -403,17 +446,21 @@ namespace Doan_NET.ViewModel
 
         private string LayTenNhanVienMacDinh()
         {
-            NhanVien nhanVienDangLam = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault(item =>
-                string.Equals(item.TrangThai, "Đang làm việc", StringComparison.OrdinalIgnoreCase));
-            if (nhanVienDangLam != null)
+            using (var ctx = new QuanLyBanXeMayEntities())
             {
-                return nhanVienDangLam.HoTen;
-            }
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var nhanVienDangLam = ctx.NhanViens.FirstOrDefault(item =>
+                    item.TrangThai == "Đang làm việc");
+                if (nhanVienDangLam != null)
+                {
+                    return nhanVienDangLam.HoTen;
+                }
 
-            NhanVien nhanVienBatKy = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault();
-            if (nhanVienBatKy != null)
-            {
-                return nhanVienBatKy.HoTen;
+                var nhanVienBatKy = ctx.NhanViens.FirstOrDefault();
+                if (nhanVienBatKy != null)
+                {
+                    return nhanVienBatKy.HoTen;
+                }
             }
 
             return "Nhân viên hệ thống";

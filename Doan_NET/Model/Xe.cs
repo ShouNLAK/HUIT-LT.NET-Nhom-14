@@ -12,20 +12,18 @@ namespace Doan_NET.Model
     using System;
     using System.Collections.Generic;
     
-    public partial class KhachHang
+    public partial class Xe
     {
-        public KhachHang()
-        {
-            this.HoaDons = new HashSet<HoaDon>();
-        }
+        public string MaXe { get; set; }
+        public string TenXe { get; set; }
+        public string LoaiXe { get; set; }
+        public Nullable<int> NamSX { get; set; }
+        public Nullable<decimal> GiaBan { get; set; }
+        public string MauSac { get; set; }
+        public string MoTa { get; set; }
+        public string HinhAnh { get; set; }
+        public string MaHang { get; set; }
     
-        public string MaKH { get; set; }
-        public string HoTen { get; set; }
-        public string SDT { get; set; }
-        public string CCCD { get; set; }
-        public string Email { get; set; }
-        public string DiaChi { get; set; }
-    
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
+        public virtual HangXe HangXe { get; set; }
     }
 }

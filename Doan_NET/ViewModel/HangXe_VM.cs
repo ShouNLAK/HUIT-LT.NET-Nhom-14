@@ -1,4 +1,4 @@
-﻿using Doan_NET.Helper;
+using Doan_NET.Helper;
 using Doan_NET.Model;
 using System;
 using System.Collections.Generic;
@@ -37,7 +37,7 @@ namespace Doan_NET.ViewModel
                 {
                     TenHangNhap = hangXeDangChon.TenHang;
                     QuocGiaNhap = hangXeDangChon.QuocGia;
-                    LogoNhap = hangXeDangChon.LogoFullPath;
+                    LogoNhap = hangXeDangChon.LogoPath;
                 }
                 lenhMoSuaHangXe?.RaiseCanExecuteChanged();
                 lenhXoaHangXe?.RaiseCanExecuteChanged();
@@ -107,8 +107,17 @@ namespace Doan_NET.ViewModel
             LenhLuuHangXe = new RelayCommand(parameter => LuuHangXe(parameter as Window));
             LenhHuyFormHangXe = new RelayCommand(parameter => DongFormHangXe(parameter as Window));
 
-            DanhSachHangXe = DuLieuHeThong.DanhSachHangXe;
+            TaiDanhSachHangXe();
             LamMoiNhapHangXe();
+        }
+
+        private void TaiDanhSachHangXe()
+        {
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                DanhSachHangXe = new ObservableCollection<HangXe>(ctx.HangXes.ToList());
+            }
         }
 
         private void MoDanhSachXeTheoHang(HangXe hangXeDuocChon)
@@ -118,7 +127,16 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            NavigationService.Navigate("DanhSachXeTheoHang", hangXeDuocChon);
+            DieuHuongTuMain("DanhSachXeTheoHang", hangXeDuocChon);
+        }
+
+        private void DieuHuongTuMain(string tenManHinh, object duLieu = null)
+        {
+            var mainVm = Application.Current?.MainWindow?.DataContext as MainWindows_VM;
+            if (mainVm != null)
+            {
+                mainVm.DieuHuong(tenManHinh, duLieu);
+            }
         }
 
         private void MoThemHangXe()
@@ -140,7 +158,7 @@ namespace Doan_NET.ViewModel
             dangSuaHangXe = true;
             TenHangNhap = HangXeDangChon.TenHang;
             QuocGiaNhap = HangXeDangChon.QuocGia;
-            LogoNhap = HangXeDangChon.LogoFullPath;
+            LogoNhap = HangXeDangChon.LogoPath;
             var cuaSoSuaHangXe = new W_SuaHangXe();
             cuaSoSuaHangXe.DataContext = this;
             cuaSoSuaHangXe.ShowDialog();
@@ -148,111 +166,127 @@ namespace Doan_NET.ViewModel
 
         private void LuuHangXe(Window cuaSo)
         {
-            try
+            if (!KiemTraDuLieuHangXe())
             {
-                if (!KiemTraDuLieuHangXe())
+                return;
+            }
+
+            if (dangSuaHangXe && HangXeDangChon != null)
+            {
+                string tenHangNhapTrim = TenHangNhap.Trim();
+                HangXe hangTrung = DanhSachHangXe.FirstOrDefault(item =>
+                    item.MaHang != HangXeDangChon.MaHang &&
+                    (item.TenHang ?? string.Empty).Trim() == tenHangNhapTrim);
+
+                if (hangTrung != null)
                 {
+                    MessageBox.Show("Tên hãng xe đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (dangSuaHangXe && HangXeDangChon != null)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    HangXe hangTrung = DanhSachHangXe.FirstOrDefault(item =>
-                        item != HangXeDangChon &&
-                        string.Equals(item.TenHang?.Trim(), TenHangNhap.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                    if (hangTrung != null)
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var efHang = ctx.HangXes.FirstOrDefault(h => h.MaHang == HangXeDangChon.MaHang);
+                    if (efHang != null)
                     {
-                        MessageBox.Show("Tên hãng xe đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    int viTri = DanhSachHangXe.IndexOf(HangXeDangChon);
-                    if (viTri >= 0)
-                    {
-                        var hangXeMoi = new HangXe
-                        {
-                            TenHang = TenHangNhap.Trim(),
-                            QuocGia = QuocGiaNhap.Trim(),
-                            LogoFullPath = LogoNhap.Trim()
-                        };
-
-                        string tenHangCu = HangXeDangChon.TenHang;
-                        DanhSachHangXe[viTri] = hangXeMoi;
-                        HangXeDangChon = hangXeMoi;
-
-                        foreach (MoTo xe in DuLieuHeThong.DanhSachXe)
-                        {
-                            if (string.Equals(xe.TenHang, tenHangCu, StringComparison.OrdinalIgnoreCase))
-                            {
-                                xe.TenHang = hangXeMoi.TenHang;
-                            }
-                        }
+                        efHang.TenHang = TenHangNhap.Trim();
+                        efHang.QuocGia = QuocGiaNhap.Trim();
+                        efHang.LogoPath = LogoNhap.Trim();
+                        ctx.SaveChanges();
                     }
                 }
-                else
+
+                TaiDanhSachHangXe();
+            }
+            else
+            {
+                string tenHangNhapTrim2 = TenHangNhap.Trim();
+                HangXe hangTrung = DanhSachHangXe.FirstOrDefault(item =>
+                    (item.TenHang ?? string.Empty).Trim() == tenHangNhapTrim2);
+
+                if (hangTrung != null)
                 {
-                    HangXe hangTrung = DanhSachHangXe.FirstOrDefault(item =>
-                        string.Equals(item.TenHang?.Trim(), TenHangNhap.Trim(), StringComparison.OrdinalIgnoreCase));
+                    MessageBox.Show("Tên hãng xe đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
 
-                    if (hangTrung != null)
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string maMoi = TaoMaHangXeMoi(ctx);
+                    var efHang = new HangXe
                     {
-                        MessageBox.Show("Tên hãng xe đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    DanhSachHangXe.Add(new HangXe
-                    {
+                        MaHang = maMoi,
                         TenHang = TenHangNhap.Trim(),
                         QuocGia = QuocGiaNhap.Trim(),
-                        LogoFullPath = LogoNhap.Trim()
-                    });
+                        LogoPath = LogoNhap.Trim()
+                    };
+                    ctx.HangXes.Add(efHang);
+                    ctx.SaveChanges();
                 }
 
-                dangSuaHangXe = false;
-                LamMoiNhapHangXe();
-                cuaSo?.Close();
+                TaiDanhSachHangXe();
             }
-            catch (Exception)
+
+            dangSuaHangXe = false;
+            LamMoiNhapHangXe();
+            cuaSo?.Close();
+        }
+
+        private string TaoMaHangXeMoi(QuanLyBanXeMayEntities ctx)
+        {
+            int soLonNhat = 0;
+            var tatCaMa = ctx.HangXes.Select(h => h.MaHang).ToList();
+            foreach (string ma in tatCaMa)
             {
-                MessageBox.Show("Không thể lưu dữ liệu hãng xe. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                if (string.IsNullOrWhiteSpace(ma))
+                {
+                    continue;
+                }
+                string so = ma.Trim().ToUpper().Replace("HX", string.Empty);
+                int maSo;
+                if (int.TryParse(so, out maSo) && maSo > soLonNhat)
+                {
+                    soLonNhat = maSo;
+                }
             }
+            return "HX" + (soLonNhat + 1).ToString("000");
         }
 
         private void XoaHangXe()
         {
-            try
+            if (HangXeDangChon == null)
             {
-                if (HangXeDangChon == null)
-                {
-                    return;
-                }
-
-                var ketQua = MessageBox.Show("Bạn có chắc muốn xóa hãng xe đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (ketQua != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                string tenHangCanXoa = HangXeDangChon.TenHang;
-                DanhSachHangXe.Remove(HangXeDangChon);
-
-                List<MoTo> danhSachXeCanXoa = DuLieuHeThong.DanhSachXe
-                    .Where(item => string.Equals(item.TenHang, tenHangCanXoa, StringComparison.OrdinalIgnoreCase))
-                    .ToList();
-
-                foreach (MoTo xe in danhSachXeCanXoa)
-                {
-                    DuLieuHeThong.DanhSachXe.Remove(xe);
-                }
-
-                HangXeDangChon = null;
-                LamMoiNhapHangXe();
+                return;
             }
-            catch (Exception)
+
+            var ketQua = MessageBox.Show("Bạn có chắc muốn xóa hãng xe đang chọn? Toàn bộ xe thuộc hãng này cũng sẽ bị xóa.", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (ketQua != MessageBoxResult.Yes)
             {
-                MessageBox.Show("Không thể xóa hãng xe. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var efHang = ctx.HangXes.FirstOrDefault(h => h.MaHang == HangXeDangChon.MaHang);
+                if (efHang != null)
+                {
+                    var xeLienQuan = ctx.Xes.Where(x => x.MaHang == efHang.MaHang).ToList();
+                    foreach (var xe in xeLienQuan)
+                    {
+                        ctx.Xes.Remove(xe);
+                    }
+
+                    ctx.HangXes.Remove(efHang);
+                    ctx.SaveChanges();
+                }
+            }
+
+            TaiDanhSachHangXe();
+            HangXeDangChon = null;
+            LamMoiNhapHangXe();
         }
 
         private void DongFormHangXe(Window cuaSo)

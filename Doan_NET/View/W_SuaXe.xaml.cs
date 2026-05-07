@@ -11,7 +11,6 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Microsoft.Win32;
 
 namespace Doan_NET.View
 {
@@ -27,16 +26,8 @@ namespace Doan_NET.View
 
         private void ChonHinhAnh_Click(object sender, RoutedEventArgs e)
         {
-            OpenFileDialog hopThoai = new OpenFileDialog
-            {
-                Title = "Chọn hình ảnh xe",
-                Filter = "Tệp ảnh|*.jpg;*.jpeg;*.png;*.webp;*.bmp|Tất cả tệp|*.*"
-            };
-
-            if (hopThoai.ShowDialog() == true)
-            {
-                HinhAnhTextBox.Text = hopThoai.FileName;
-            }
+            MessageBox.Show("Vui lòng nhập đường dẫn hình ảnh vào ô bên cạnh.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            HinhAnhTextBox.Focus();
         }
     }
 }

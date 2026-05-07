@@ -38,7 +38,7 @@ namespace Doan_NET.ViewModel
                     HoTenNhap = nhanVienDangChon.HoTen;
                     SDTNhap = nhanVienDangChon.SDT;
                     ChucVuNhap = nhanVienDangChon.ChucVu;
-                    NgayVaoLamNhap = nhanVienDangChon.NgayVaoLam;
+                    NgayVaoLamNhap = nhanVienDangChon.NgayVaoLam ?? DateTime.Now;
                     TrangThaiNhap = nhanVienDangChon.TrangThai;
                     dangThemMoi = false;
                     dangSua = false;
@@ -160,7 +160,13 @@ namespace Doan_NET.ViewModel
 
         private void TaiDanhSachNhanVien()
         {
-            IEnumerable<NhanVien> danhSachLoc = DuLieuHeThong.DanhSachNhanVien;
+            List<NhanVien> danhSachLoc;
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                danhSachLoc = ctx.NhanViens.ToList();
+            }
 
             if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
             {
@@ -169,7 +175,7 @@ namespace Doan_NET.ViewModel
                     (item.MaNV ?? string.Empty).ToLower().Contains(tuKhoa) ||
                     (item.HoTen ?? string.Empty).ToLower().Contains(tuKhoa) ||
                     (item.SDT ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.ChucVu ?? string.Empty).ToLower().Contains(tuKhoa));
+                    (item.ChucVu ?? string.Empty).ToLower().Contains(tuKhoa)).ToList();
             }
 
             DanhSachNhanVien = new ObservableCollection<NhanVien>(danhSachLoc);
@@ -211,61 +217,72 @@ namespace Doan_NET.ViewModel
             HoTenNhap = NhanVienDangChon.HoTen;
             SDTNhap = NhanVienDangChon.SDT;
             ChucVuNhap = NhanVienDangChon.ChucVu;
-            NgayVaoLamNhap = NhanVienDangChon.NgayVaoLam;
+            NgayVaoLamNhap = NhanVienDangChon.NgayVaoLam ?? DateTime.Now;
             TrangThaiNhap = NhanVienDangChon.TrangThai;
         }
 
         private void XoaNhanVien()
         {
-            try
+            if (NhanVienDangChon == null)
             {
-                if (NhanVienDangChon == null)
-                {
-                    return;
-                }
-
-                MessageBoxResult ketQua = MessageBox.Show("Bạn có chắc muốn xóa nhân viên đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (ketQua != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                DuLieuHeThong.DanhSachNhanVien.Remove(NhanVienDangChon);
-                NhanVienDangChon = null;
-                HuyNhapNhanVien();
-                TaiDanhSachNhanVien();
+                return;
             }
-            catch (Exception)
+
+            MessageBoxResult ketQua = MessageBox.Show("Bạn có chắc muốn xóa nhân viên đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (ketQua != MessageBoxResult.Yes)
             {
-                MessageBox.Show("Không thể xóa nhân viên. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ef = ctx.NhanViens.FirstOrDefault(n => n.MaNV == NhanVienDangChon.MaNV);
+                if (ef != null)
+                {
+                    ctx.NhanViens.Remove(ef);
+                    ctx.SaveChanges();
+                }
+            }
+
+            NhanVienDangChon = null;
+            HuyNhapNhanVien();
+            TaiDanhSachNhanVien();
         }
 
         private void LuuNhanVien()
         {
-            try
+            if (!KiemTraDuLieuNhanVien())
             {
-                if (!KiemTraDuLieuNhanVien())
+                return;
+            }
+
+            if (dangThemMoi)
+            {
+                NhanVien nhanVienTrung;
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string maNVNhapUpper = MaNVNhap.ToUpper();
+                    nhanVienTrung = ctx.NhanViens.FirstOrDefault(item =>
+                        item.MaNV == maNVNhapUpper);
+                }
+
+                if (nhanVienTrung != null)
+                {
+                    MessageBox.Show("Mã nhân viên đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (KiemTraTrungSDTNhanVien(null))
                 {
                     return;
                 }
 
-                if (dangThemMoi)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    NhanVien nhanVienTrung = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault(item =>
-                        string.Equals(item.MaNV, MaNVNhap, StringComparison.OrdinalIgnoreCase));
-                    if (nhanVienTrung != null)
-                    {
-                        MessageBox.Show("Mã nhân viên đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    if (KiemTraTrungSDTNhanVien(null))
-                    {
-                        return;
-                    }
-
-                    var nhanVienMoi = new NhanVien
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = new NhanVien
                     {
                         MaNV = MaNVNhap.Trim().ToUpper(),
                         HoTen = HoTenNhap.Trim(),
@@ -274,77 +291,81 @@ namespace Doan_NET.ViewModel
                         NgayVaoLam = NgayVaoLamNhap,
                         TrangThai = ChuanHoaTrangThai(TrangThaiNhap)
                     };
-
-                    DuLieuHeThong.DanhSachNhanVien.Add(nhanVienMoi);
-                    dangThemMoi = false;
-                    TaiDanhSachNhanVien();
-                    NhanVienDangChon = DanhSachNhanVien.FirstOrDefault(item => item.MaNV == nhanVienMoi.MaNV);
-                    return;
+                    ctx.NhanViens.Add(ef);
+                    ctx.SaveChanges();
                 }
 
-                if (dangSua && NhanVienDangChon != null)
-                {
-                    NhanVien nhanVienTrungKhac = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault(item =>
-                        item != NhanVienDangChon &&
-                        string.Equals(item.MaNV, MaNVNhap, StringComparison.OrdinalIgnoreCase));
-                    if (nhanVienTrungKhac != null)
-                    {
-                        MessageBox.Show("Mã nhân viên đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    if (KiemTraTrungSDTNhanVien(NhanVienDangChon))
-                    {
-                        return;
-                    }
-
-                    int viTri = DuLieuHeThong.DanhSachNhanVien.IndexOf(NhanVienDangChon);
-                    if (viTri < 0)
-                    {
-                        NhanVien nhanVienCanSua = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault(item =>
-                            string.Equals(item.MaNV, NhanVienDangChon.MaNV, StringComparison.OrdinalIgnoreCase));
-                        viTri = nhanVienCanSua != null ? DuLieuHeThong.DanhSachNhanVien.IndexOf(nhanVienCanSua) : -1;
-                    }
-
-                    if (viTri >= 0)
-                    {
-                        var nhanVienMoi = new NhanVien
-                        {
-                            MaNV = MaNVNhap.Trim().ToUpper(),
-                            HoTen = HoTenNhap.Trim(),
-                            SDT = SDTNhap.Trim(),
-                            ChucVu = ChucVuNhap.Trim(),
-                            NgayVaoLam = NgayVaoLamNhap,
-                            TrangThai = ChuanHoaTrangThai(TrangThaiNhap)
-                        };
-
-                        DuLieuHeThong.DanhSachNhanVien[viTri] = nhanVienMoi;
-                        dangSua = false;
-                        TaiDanhSachNhanVien();
-                        NhanVienDangChon = DanhSachNhanVien.FirstOrDefault(item => item.MaNV == nhanVienMoi.MaNV);
-                    }
-                    return;
-                }
-
-                MessageBox.Show("Vui lòng bấm Thêm hoặc Sửa trước khi Lưu.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                dangThemMoi = false;
+                TaiDanhSachNhanVien();
+                NhanVienDangChon = DanhSachNhanVien.FirstOrDefault(item => item.MaNV == MaNVNhap.Trim().ToUpper());
+                return;
             }
-            catch (Exception)
+
+            if (dangSua && NhanVienDangChon != null)
             {
-                MessageBox.Show("Không thể lưu dữ liệu nhân viên. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                NhanVien nhanVienTrungKhac;
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string maNVNhapUpper2 = MaNVNhap.ToUpper();
+                    string maNVHienTai = NhanVienDangChon.MaNV;
+                    nhanVienTrungKhac = ctx.NhanViens.FirstOrDefault(item =>
+                        item.MaNV != maNVHienTai &&
+                        item.MaNV == maNVNhapUpper2);
+                }
+
+                if (nhanVienTrungKhac != null)
+                {
+                    MessageBox.Show("Mã nhân viên đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+
+                if (KiemTraTrungSDTNhanVien(NhanVienDangChon))
+                {
+                    return;
+                }
+
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = ctx.NhanViens.FirstOrDefault(n => n.MaNV == NhanVienDangChon.MaNV);
+                    if (ef != null)
+                    {
+                        ef.MaNV = MaNVNhap.Trim().ToUpper();
+                        ef.HoTen = HoTenNhap.Trim();
+                        ef.SDT = SDTNhap.Trim();
+                        ef.ChucVu = ChucVuNhap.Trim();
+                        ef.NgayVaoLam = NgayVaoLamNhap;
+                        ef.TrangThai = ChuanHoaTrangThai(TrangThaiNhap);
+                        ctx.SaveChanges();
+                    }
+                }
+
+                dangSua = false;
+                TaiDanhSachNhanVien();
+                NhanVienDangChon = DanhSachNhanVien.FirstOrDefault(item => item.MaNV == MaNVNhap.Trim().ToUpper());
+                return;
             }
+
+            MessageBox.Show("Vui lòng bấm Thêm hoặc Sửa trước khi Lưu.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
         }
 
         private bool KiemTraTrungSDTNhanVien(NhanVien nhanVienDangBoQua)
         {
             string sdt = SDTNhap.Trim();
-            NhanVien nhanVienTrungSDT = DuLieuHeThong.DanhSachNhanVien.FirstOrDefault(item =>
-                item != nhanVienDangBoQua &&
-                string.Equals(item.SDT, sdt, StringComparison.OrdinalIgnoreCase));
 
-            if (nhanVienTrungSDT != null)
+            using (var ctx = new QuanLyBanXeMayEntities())
             {
-                MessageBox.Show("Số điện thoại đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return true;
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var nhanVienTrungSDT = ctx.NhanViens.FirstOrDefault(item =>
+                    (nhanVienDangBoQua == null || item.MaNV != nhanVienDangBoQua.MaNV) &&
+                    item.SDT == sdt);
+
+                if (nhanVienTrungSDT != null)
+                {
+                    MessageBox.Show("Số điện thoại đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return true;
+                }
             }
 
             return false;
@@ -446,18 +467,24 @@ namespace Doan_NET.ViewModel
         private string TaoMaNhanVienMoi()
         {
             int maLonNhat = 0;
-            foreach (NhanVien item in DuLieuHeThong.DanhSachNhanVien)
-            {
-                if (item == null || string.IsNullOrWhiteSpace(item.MaNV))
-                {
-                    continue;
-                }
 
-                string so = item.MaNV.Trim().ToUpper().Replace("NV", string.Empty);
-                int maSo;
-                if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var all = ctx.NhanViens.Select(n => n.MaNV).ToList();
+                foreach (string ma in all)
                 {
-                    maLonNhat = maSo;
+                    if (string.IsNullOrWhiteSpace(ma))
+                    {
+                        continue;
+                    }
+
+                    string so = ma.Trim().ToUpper().Replace("NV", string.Empty);
+                    int maSo;
+                    if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+                    {
+                        maLonNhat = maSo;
+                    }
                 }
             }
 

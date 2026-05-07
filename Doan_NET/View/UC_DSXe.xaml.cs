@@ -1,4 +1,4 @@
-﻿using Doan_NET.Model;
+using Doan_NET.Model;
 using Doan_NET.ViewModel;
 using System;
 using System.Collections.Generic;
@@ -31,16 +31,6 @@ namespace Doan_NET.View
         public UC_DSXe(HangXe hangXeDuocChon) : this()
         {
             DataContext = new Xe_VM(hangXeDuocChon);
-        }
-
-        public UC_DSXe(string brandName, string brandCountry) : this()
-        {
-            var hangXe = new HangXe
-            {
-                TenHang = brandName,
-                QuocGia = brandCountry
-            };
-            DataContext = new Xe_VM(hangXe);
         }
     }
 }

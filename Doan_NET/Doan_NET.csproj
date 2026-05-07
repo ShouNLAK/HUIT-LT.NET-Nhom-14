@@ -35,8 +35,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.Entity" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -59,11 +66,31 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model\QLCuaHangXeModel.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLCuaHangXeModel.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\QLCuaHangXeModel.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\QLCuaHangXeModel.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>QLCuaHangXeModel.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="Model\Xe.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\DangKy_VM.cs" />
     <Compile Include="ViewModel\DangNhap_VM.cs" />
     <Compile Include="ViewModel\DichVu_VM.cs" />
     <Compile Include="ViewModel\HangXe_VM.cs" />
+    <Compile Include="ViewModel\HoaDon_HienThi_VM.cs" />
     <Compile Include="ViewModel\HoaDon_VM.cs" />
+
     <Compile Include="ViewModel\KhachHang_VM.cs" />
     <Compile Include="ViewModel\MainWindows_VM.cs" />
     <Compile Include="ViewModel\MatHangGio_VM.cs" />
@@ -118,16 +145,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\BaseViewModel.cs" />
-    <Compile Include="Helper\NavigationService.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
-    <Compile Include="Model\DichVuPhuTung.cs" />
-    <Compile Include="Model\DuLieuHeThong.cs" />
-    <Compile Include="Model\HangXe.cs" />
-    <Compile Include="Model\HoaDon.cs" />
-    <Compile Include="Model\KhachHang.cs" />
+    <Compile Include="Model\DichVuPhuTung.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\HangXe.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\HoaDon.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\KhachHang.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Model\MoTo.cs" />
-    <Compile Include="Model\NhanVien.cs" />
-    <Compile Include="Model\TaiKhoan.cs" />
+    <Compile Include="Model\NhanVien.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Model\TaiKhoan.cs">
+      <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -145,6 +182,14 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EntityDeploy Include="Model\QLCuaHangXeModel.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>QLCuaHangXeModel.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+    <None Include="Model\QLCuaHangXeModel.edmx.diagram">
+      <DependentUpon>QLCuaHangXeModel.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -214,6 +259,21 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Model\QLCuaHangXeModel.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>QLCuaHangXeModel.Context.cs</LastGenOutput>
+      <DependentUpon>QLCuaHangXeModel.edmx</DependentUpon>
+    </Content>
+    <Content Include="Model\QLCuaHangXeModel.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>QLCuaHangXeModel.edmx</DependentUpon>
+      <LastGenOutput>QLCuaHangXeModel.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

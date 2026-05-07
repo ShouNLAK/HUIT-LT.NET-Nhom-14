@@ -151,7 +151,13 @@ namespace Doan_NET.ViewModel
 
         private void TaiDanhSachKhachHang()
         {
-            IEnumerable<KhachHang> danhSachLoc = DuLieuHeThong.DanhSachKhachHang;
+            List<KhachHang> danhSachLoc;
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                danhSachLoc = ctx.KhachHangs.ToList();
+            }
 
             if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
             {
@@ -159,7 +165,7 @@ namespace Doan_NET.ViewModel
                 danhSachLoc = danhSachLoc.Where(item =>
                     (item.MaKH ?? string.Empty).ToLower().Contains(tuKhoa) ||
                     (item.HoTen ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.SDT ?? string.Empty).ToLower().Contains(tuKhoa));
+                    (item.SDT ?? string.Empty).ToLower().Contains(tuKhoa)).ToList();
             }
 
             DanhSachKhachHang = new ObservableCollection<KhachHang>(danhSachLoc);
@@ -188,102 +194,66 @@ namespace Doan_NET.ViewModel
 
         private void XoaKhachHang()
         {
-            try
+            if (KhachHangDangChon == null)
             {
-                if (KhachHangDangChon == null)
-                {
-                    return;
-                }
-
-                MessageBoxResult ketQua = MessageBox.Show("Bạn có chắc muốn xóa khách hàng đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (ketQua != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                DuLieuHeThong.DanhSachKhachHang.Remove(KhachHangDangChon);
-                KhachHangDangChon = null;
-                LamMoiNhapKhachHang();
-                TaiDanhSachKhachHang();
+                return;
             }
-            catch (Exception)
+
+            MessageBoxResult ketQua = MessageBox.Show("Bạn có chắc muốn xóa khách hàng đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (ketQua != MessageBoxResult.Yes)
             {
-                MessageBox.Show("Không thể xóa khách hàng. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ef = ctx.KhachHangs.FirstOrDefault(k => k.MaKH == KhachHangDangChon.MaKH);
+                if (ef != null)
+                {
+                    ctx.KhachHangs.Remove(ef);
+                    ctx.SaveChanges();
+                }
+            }
+
+            KhachHangDangChon = null;
+            LamMoiNhapKhachHang();
+            TaiDanhSachKhachHang();
         }
 
         private void LuuKhachHang()
         {
-            try
+            if (!KiemTraDuLieuKhachHang())
             {
-                if (!KiemTraDuLieuKhachHang())
+                return;
+            }
+
+            if (dangThemMoi)
+            {
+                KhachHang khachHangTrungMa;
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    return;
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string maKHNhapUpper = MaKHNhap.ToUpper();
+                    khachHangTrungMa = ctx.KhachHangs.FirstOrDefault(item =>
+                        item.MaKH == maKHNhapUpper);
                 }
 
-                if (dangThemMoi)
-                {
-                    KhachHang khachHangTrung = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                        string.Equals(item.MaKH, MaKHNhap, StringComparison.OrdinalIgnoreCase));
-                    if (khachHangTrung != null)
-                    {
-                        MessageBox.Show("Mã khách hàng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    if (KiemTraTrungThongTinKhachHang(null))
-                    {
-                        return;
-                    }
-
-                    var khachHangMoi = new KhachHang
-                    {
-                        MaKH = MaKHNhap.Trim().ToUpper(),
-                        HoTen = HoTenNhap.Trim(),
-                        SDT = SDTNhap.Trim(),
-                        CCCD = CCCDNhap.Trim(),
-                        Email = EmailNhap.Trim(),
-                        DiaChi = DiaChiNhap.Trim()
-                    };
-
-                    DuLieuHeThong.DanhSachKhachHang.Add(khachHangMoi);
-                    dangThemMoi = false;
-                    TaiDanhSachKhachHang();
-                    KhachHangDangChon = DanhSachKhachHang.FirstOrDefault(item => item.MaKH == khachHangMoi.MaKH);
-                    return;
-                }
-
-                if (KhachHangDangChon == null)
-                {
-                    MessageBox.Show("Vui lòng chọn khách hàng để cập nhật.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                KhachHang khachHangTrungKhac = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                    item != KhachHangDangChon &&
-                    string.Equals(item.MaKH, MaKHNhap, StringComparison.OrdinalIgnoreCase));
-                if (khachHangTrungKhac != null)
+                if (khachHangTrungMa != null)
                 {
                     MessageBox.Show("Mã khách hàng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (KiemTraTrungThongTinKhachHang(KhachHangDangChon))
+                if (KiemTraTrungThongTinKhachHang(null))
                 {
                     return;
                 }
 
-                int viTri = DuLieuHeThong.DanhSachKhachHang.IndexOf(KhachHangDangChon);
-                if (viTri < 0)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    KhachHang khachHangCanSua = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                        string.Equals(item.MaKH, KhachHangDangChon.MaKH, StringComparison.OrdinalIgnoreCase));
-                    viTri = khachHangCanSua != null ? DuLieuHeThong.DanhSachKhachHang.IndexOf(khachHangCanSua) : -1;
-                }
-
-                if (viTri >= 0)
-                {
-                    var khachHangMoi = new KhachHang
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = new KhachHang
                     {
                         MaKH = MaKHNhap.Trim().ToUpper(),
                         HoTen = HoTenNhap.Trim(),
@@ -292,16 +262,62 @@ namespace Doan_NET.ViewModel
                         Email = EmailNhap.Trim(),
                         DiaChi = DiaChiNhap.Trim()
                     };
+                    ctx.KhachHangs.Add(ef);
+                    ctx.SaveChanges();
+                }
 
-                    DuLieuHeThong.DanhSachKhachHang[viTri] = khachHangMoi;
-                    TaiDanhSachKhachHang();
-                    KhachHangDangChon = DanhSachKhachHang.FirstOrDefault(item => item.MaKH == khachHangMoi.MaKH);
+                dangThemMoi = false;
+                TaiDanhSachKhachHang();
+                KhachHangDangChon = DanhSachKhachHang.FirstOrDefault(item => item.MaKH == MaKHNhap.Trim().ToUpper());
+                return;
+            }
+
+            if (KhachHangDangChon == null)
+            {
+                MessageBox.Show("Vui lòng chọn khách hàng để cập nhật.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            KhachHang khachHangTrungKhac;
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                string maKHNhapUpper2 = MaKHNhap.ToUpper();
+                string maKHHienTai = KhachHangDangChon.MaKH;
+                khachHangTrungKhac = ctx.KhachHangs.FirstOrDefault(item =>
+                    item.MaKH != maKHHienTai &&
+                    item.MaKH == maKHNhapUpper2);
+            }
+
+            if (khachHangTrungKhac != null)
+            {
+                MessageBox.Show("Mã khách hàng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if (KiemTraTrungThongTinKhachHang(KhachHangDangChon))
+            {
+                return;
+            }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ef = ctx.KhachHangs.FirstOrDefault(k => k.MaKH == KhachHangDangChon.MaKH);
+                if (ef != null)
+                {
+                    ef.MaKH = MaKHNhap.Trim().ToUpper();
+                    ef.HoTen = HoTenNhap.Trim();
+                    ef.SDT = SDTNhap.Trim();
+                    ef.CCCD = CCCDNhap.Trim();
+                    ef.Email = EmailNhap.Trim();
+                    ef.DiaChi = DiaChiNhap.Trim();
+                    ctx.SaveChanges();
                 }
             }
-            catch (Exception)
-            {
-                MessageBox.Show("Không thể lưu dữ liệu khách hàng. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            TaiDanhSachKhachHang();
+            KhachHangDangChon = DanhSachKhachHang.FirstOrDefault(item => item.MaKH == MaKHNhap.Trim().ToUpper());
         }
 
         private bool KiemTraTrungThongTinKhachHang(KhachHang khachHangDangBoQua)
@@ -310,33 +326,38 @@ namespace Doan_NET.ViewModel
             string cccd = CCCDNhap.Trim();
             string email = EmailNhap.Trim();
 
-            KhachHang trungSDT = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                item != khachHangDangBoQua &&
-                string.Equals(item.SDT, sdt, StringComparison.OrdinalIgnoreCase));
-            if (trungSDT != null)
+            using (var ctx = new QuanLyBanXeMayEntities())
             {
-                MessageBox.Show("Số điện thoại đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return true;
-            }
+                ctx.Configuration.LazyLoadingEnabled = false;
 
-            KhachHang trungCCCD = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                item != khachHangDangBoQua &&
-                string.Equals(item.CCCD, cccd, StringComparison.OrdinalIgnoreCase));
-            if (trungCCCD != null)
-            {
-                MessageBox.Show("CCCD đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return true;
-            }
-
-            if (!string.IsNullOrWhiteSpace(email))
-            {
-                KhachHang trungEmail = DuLieuHeThong.DanhSachKhachHang.FirstOrDefault(item =>
-                    item != khachHangDangBoQua &&
-                    string.Equals(item.Email, email, StringComparison.OrdinalIgnoreCase));
-                if (trungEmail != null)
+                var trungSDT = ctx.KhachHangs.FirstOrDefault(item =>
+                    (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                    item.SDT == sdt);
+                if (trungSDT != null)
                 {
-                    MessageBox.Show("Email đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBox.Show("Số điện thoại đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return true;
+                }
+
+                var trungCCCD = ctx.KhachHangs.FirstOrDefault(item =>
+                    (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                    item.CCCD == cccd);
+                if (trungCCCD != null)
+                {
+                    MessageBox.Show("CCCD đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return true;
+                }
+
+                if (!string.IsNullOrWhiteSpace(email))
+                {
+                    var trungEmail = ctx.KhachHangs.FirstOrDefault(item =>
+                        (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                        item.Email == email);
+                    if (trungEmail != null)
+                    {
+                        MessageBox.Show("Email đã tồn tại trong hệ thống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return true;
+                    }
                 }
             }
 
@@ -383,16 +404,12 @@ namespace Doan_NET.ViewModel
 
             if (!string.IsNullOrWhiteSpace(EmailNhap))
             {
-                try
-                {
-                    MailAddress diaChiMail = new MailAddress(EmailNhap.Trim());
-                    if (!string.Equals(diaChiMail.Address, EmailNhap.Trim(), StringComparison.OrdinalIgnoreCase))
-                    {
-                        MessageBox.Show("Email không hợp lệ.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return false;
-                    }
-                }
-                catch
+                string emailKiemTra = EmailNhap.Trim();
+                int viTriAt = emailKiemTra.IndexOf('@');
+                bool emailHopLe = viTriAt > 0 &&
+                    viTriAt < emailKiemTra.Length - 1 &&
+                    emailKiemTra.LastIndexOf('.') > viTriAt;
+                if (!emailHopLe)
                 {
                     MessageBox.Show("Email không hợp lệ.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return false;
@@ -429,18 +446,24 @@ namespace Doan_NET.ViewModel
         private string TaoMaKhachHangMoi()
         {
             int maLonNhat = 0;
-            foreach (KhachHang item in DuLieuHeThong.DanhSachKhachHang)
-            {
-                if (item == null || string.IsNullOrWhiteSpace(item.MaKH))
-                {
-                    continue;
-                }
 
-                string so = item.MaKH.Trim().ToUpper().Replace("KH", string.Empty);
-                int maSo;
-                if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var all = ctx.KhachHangs.Select(k => k.MaKH).ToList();
+                foreach (string ma in all)
                 {
-                    maLonNhat = maSo;
+                    if (string.IsNullOrWhiteSpace(ma))
+                    {
+                        continue;
+                    }
+
+                    string so = ma.Trim().ToUpper().Replace("KH", string.Empty);
+                    int maSo;
+                    if (int.TryParse(so, out maSo) && maSo > maLonNhat)
+                    {
+                        maLonNhat = maSo;
+                    }
                 }
             }
 

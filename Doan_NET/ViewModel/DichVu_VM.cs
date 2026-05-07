@@ -43,8 +43,8 @@ namespace Doan_NET.ViewModel
                 {
                     MaPTNhap = dichVuDangChon.MaPT;
                     TenNhap = dichVuDangChon.Ten;
-                    GiaNhap = dichVuDangChon.Gia.ToString();
-                    TonKhoNhap = dichVuDangChon.TonKho.ToString();
+                    GiaNhap = (dichVuDangChon.Gia ?? 0).ToString();
+                    TonKhoNhap = (dichVuDangChon.TonKho ?? 0).ToString();
                 }
                 lenhMoSuaDichVu?.RaiseCanExecuteChanged();
                 lenhXoaDichVu?.RaiseCanExecuteChanged();
@@ -180,8 +180,8 @@ namespace Doan_NET.ViewModel
             dangSuaDichVu = true;
             MaPTNhap = DichVuDangChon.MaPT;
             TenNhap = DichVuDangChon.Ten;
-            GiaNhap = DichVuDangChon.Gia.ToString();
-            TonKhoNhap = DichVuDangChon.TonKho.ToString();
+            GiaNhap = (DichVuDangChon.Gia ?? 0).ToString();
+            TonKhoNhap = (DichVuDangChon.TonKho ?? 0).ToString();
 
             var cuaSoThemSuaDichVu = new W_ThemSuaDVxaml();
             cuaSoThemSuaDichVu.DataContext = this;
@@ -190,14 +190,20 @@ namespace Doan_NET.ViewModel
 
         private void TaiDanhSachDichVu()
         {
-            IEnumerable<DichVuPhuTung> danhSachLoc = DuLieuHeThong.DanhSachDichVu;
+            List<DichVuPhuTung> danhSachLoc;
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                danhSachLoc = ctx.DichVuPhuTungs.ToList();
+            }
 
             if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
             {
                 string tuKhoa = TuKhoaTimKiem.Trim().ToLower();
                 danhSachLoc = danhSachLoc.Where(item =>
                     (item.MaPT ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.Ten ?? string.Empty).ToLower().Contains(tuKhoa));
+                    (item.Ten ?? string.Empty).ToLower().Contains(tuKhoa)).ToList();
             }
 
             DanhSachDichVu = new ObservableCollection<DichVuPhuTung>(danhSachLoc);
@@ -205,8 +211,9 @@ namespace Doan_NET.ViewModel
             if (DichVuDangChon != null)
             {
                 string maDangChon = DichVuDangChon.MaPT;
+                string maDangChonLocal = maDangChon;
                 DichVuDangChon = DanhSachDichVu.FirstOrDefault(item =>
-                    string.Equals(item.MaPT, maDangChon, StringComparison.OrdinalIgnoreCase));
+                    item.MaPT == maDangChonLocal);
             }
 
             lenhMoSuaDichVu.RaiseCanExecuteChanged();
@@ -306,88 +313,98 @@ namespace Doan_NET.ViewModel
 
         private void LuuDichVu(Window cuaSo)
         {
-            try
+            int gia;
+            int tonKho;
+            if (!KiemTraDuLieuDichVu(out gia, out tonKho))
             {
-                int gia;
-                int tonKho;
-                if (!KiemTraDuLieuDichVu(out gia, out tonKho))
-                {
-                    return;
-                }
+                return;
+            }
 
-                DichVuPhuTung trungMa = DuLieuHeThong.DanhSachDichVu.FirstOrDefault(item =>
-                    item != DichVuDangChon &&
-                    string.Equals(item.MaPT?.Trim(), MaPTNhap.Trim(), StringComparison.OrdinalIgnoreCase));
+            DichVuPhuTung trungMa;
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                trungMa = ctx.DichVuPhuTungs.FirstOrDefault(item =>
+                    item.MaPT == MaPTNhap.Trim().ToUpper());
+            }
 
-                if (trungMa != null)
-                {
-                    MessageBox.Show("Mã dịch vụ/phụ tùng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
+            if (trungMa != null && (DichVuDangChon == null || trungMa.MaPT != DichVuDangChon.MaPT))
+            {
+                MessageBox.Show("Mã dịch vụ/phụ tùng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
 
-                if (dangSuaDichVu && DichVuDangChon != null)
+            if (dangSuaDichVu && DichVuDangChon != null)
+            {
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    int viTri = DuLieuHeThong.DanhSachDichVu.IndexOf(DichVuDangChon);
-                    if (viTri >= 0)
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == DichVuDangChon.MaPT);
+                    if (ef != null)
                     {
-                        var dichVuMoi = new DichVuPhuTung
-                        {
-                            MaPT = MaPTNhap.Trim().ToUpper(),
-                            Ten = TenNhap.Trim(),
-                            Gia = gia,
-                            TonKho = tonKho
-                        };
-                        DuLieuHeThong.DanhSachDichVu[viTri] = dichVuMoi;
-                        DichVuDangChon = dichVuMoi;
+                        ef.MaPT = MaPTNhap.Trim().ToUpper();
+                        ef.Ten = TenNhap.Trim();
+                        ef.Gia = gia;
+                        ef.TonKho = tonKho;
+                        ctx.SaveChanges();
                     }
                 }
-                else
+
+                TaiDanhSachDichVu();
+                DichVuDangChon = DanhSachDichVu.FirstOrDefault(d => d.MaPT == MaPTNhap.Trim().ToUpper());
+            }
+            else
+            {
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    var dichVuMoi = new DichVuPhuTung
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = new DichVuPhuTung
                     {
                         MaPT = MaPTNhap.Trim().ToUpper(),
                         Ten = TenNhap.Trim(),
                         Gia = gia,
                         TonKho = tonKho
                     };
-                    DuLieuHeThong.DanhSachDichVu.Add(dichVuMoi);
-                    DichVuDangChon = dichVuMoi;
+                    ctx.DichVuPhuTungs.Add(ef);
+                    ctx.SaveChanges();
                 }
 
-                dangSuaDichVu = false;
                 TaiDanhSachDichVu();
-                cuaSo?.Close();
+                DichVuDangChon = DanhSachDichVu.FirstOrDefault(d => d.MaPT == MaPTNhap.Trim().ToUpper());
             }
-            catch (Exception)
-            {
-                MessageBox.Show("Không thể lưu dịch vụ/phụ tùng. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+
+            dangSuaDichVu = false;
+            TaiDanhSachDichVu();
+            cuaSo?.Close();
         }
 
         private void XoaDichVu()
         {
-            try
+            if (DichVuDangChon == null)
             {
-                if (DichVuDangChon == null)
-                {
-                    return;
-                }
-
-                var ketQua = MessageBox.Show("Bạn có chắc muốn xóa dịch vụ/phụ tùng đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (ketQua != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                DuLieuHeThong.DanhSachDichVu.Remove(DichVuDangChon);
-                DichVuDangChon = null;
-                LamMoiNhapDichVu();
-                TaiDanhSachDichVu();
+                return;
             }
-            catch (Exception)
+
+            var ketQua = MessageBox.Show("Bạn có chắc muốn xóa dịch vụ/phụ tùng đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (ketQua != MessageBoxResult.Yes)
             {
-                MessageBox.Show("Không thể xóa dịch vụ/phụ tùng. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ef = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == DichVuDangChon.MaPT);
+                if (ef != null)
+                {
+                    ctx.DichVuPhuTungs.Remove(ef);
+                    ctx.SaveChanges();
+                }
+            }
+
+            DichVuDangChon = null;
+            LamMoiNhapDichVu();
+            TaiDanhSachDichVu();
         }
 
         private void DongFormDichVu(Window cuaSo)
@@ -419,7 +436,7 @@ namespace Doan_NET.ViewModel
             }
 
             MatHangGio_VM matHang = GioHangTam.FirstOrDefault(item =>
-                string.Equals(item.MaMatHang, dichVu.MaPT, StringComparison.OrdinalIgnoreCase));
+                item.MaMatHang == dichVu.MaPT);
 
             if (matHang == null)
             {
@@ -427,7 +444,7 @@ namespace Doan_NET.ViewModel
                 {
                     MaMatHang = dichVu.MaPT,
                     TenMatHang = dichVu.Ten,
-                    DonGia = dichVu.Gia,
+                    DonGia = (int)(dichVu.Gia ?? 0),
                     SoLuong = 1
                 });
             }
@@ -454,13 +471,16 @@ namespace Doan_NET.ViewModel
 
             if (matHang.LaPhuTung)
             {
-                DichVuPhuTung phuTung = DuLieuHeThong.DanhSachDichVu.FirstOrDefault(item =>
-                    string.Equals(item.MaPT, matHang.MaMatHang, StringComparison.OrdinalIgnoreCase));
-
-                if (phuTung != null && matHang.SoLuong + 1 > phuTung.TonKho)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    MessageBox.Show("Số lượng trong giỏ vượt quá tồn kho hiện có.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(item =>
+                        item.MaPT == matHang.MaMatHang);
+                    if (phuTung != null && matHang.SoLuong + 1 > (phuTung.TonKho ?? 0))
+                    {
+                        MessageBox.Show("Số lượng trong giỏ vượt quá tồn kho hiện có.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
                 }
             }
 
@@ -506,7 +526,16 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            NavigationService.Navigate("DonHang");
+            DieuHuongTuMain("DonHang");
+        }
+
+        private void DieuHuongTuMain(string tenManHinh, object duLieu = null)
+        {
+            var mainVm = Application.Current?.MainWindow?.DataContext as MainWindows_VM;
+            if (mainVm != null)
+            {
+                mainVm.DieuHuong(tenManHinh, duLieu);
+            }
         }
 
         private bool LaPhuTung(string ma)

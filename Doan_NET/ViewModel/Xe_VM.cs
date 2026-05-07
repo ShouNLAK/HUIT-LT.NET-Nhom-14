@@ -1,8 +1,9 @@
-﻿using Doan_NET.Helper;
+using Doan_NET.Helper;
 using Doan_NET.Model;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -191,7 +192,7 @@ namespace Doan_NET.ViewModel
         public Xe_VM(HangXe hangXe)
         {
             hangXeDuocChon = hangXe;
-            LenhQuayLaiHangXe = new RelayCommand(_ => NavigationService.Navigate("QuanLyXe"));
+            LenhQuayLaiHangXe = new RelayCommand(_ => DieuHuongTuMain("QuanLyXe"));
             LenhMoThemXe = new RelayCommand(_ => MoThemXe());
             lenhMoSuaXe = new RelayCommand(_ => MoSuaXe(), _ => XeDangChon != null);
             lenhXoaXe = new RelayCommand(_ => XoaXe(), _ => XeDangChon != null);
@@ -215,14 +216,42 @@ namespace Doan_NET.ViewModel
             TieuDeDanhSachXe = "DANH SÁCH XE - " + hangXeDuocChon.TenHang;
         }
 
+        private void DieuHuongTuMain(string tenManHinh, object duLieu = null)
+        {
+            var mainVm = Application.Current?.MainWindow?.DataContext as MainWindows_VM;
+            if (mainVm != null)
+            {
+                mainVm.DieuHuong(tenManHinh, duLieu);
+            }
+        }
+
         private void TaiDanhSachXe()
         {
-            IEnumerable<MoTo> danhSachLoc = DuLieuHeThong.DanhSachXe;
+            List<MoTo> danhSachLoc;
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var xeEntities = ctx.Xes.Include("HangXe").ToList();
+
+                danhSachLoc = xeEntities.Select(x => new MoTo
+                {
+                    TenHang = x.HangXe != null ? x.HangXe.TenHang : string.Empty,
+                    TenDongXe = x.TenXe ?? string.Empty,
+                    LoaiXe = x.LoaiXe ?? string.Empty,
+                    MauSac = x.MauSac ?? string.Empty,
+                    NamSX = x.NamSX ?? 0,
+                    GiaXe = x.GiaBan.HasValue ? (int)x.GiaBan.Value : 0,
+                    HinhAnhFullPath = x.HinhAnh ?? string.Empty,
+                    MoTa = x.MoTa ?? string.Empty,
+                    SoLuongTon = 0
+                }).ToList();
+            }
 
             if (hangXeDuocChon != null && !string.IsNullOrWhiteSpace(hangXeDuocChon.TenHang))
             {
                 danhSachLoc = danhSachLoc.Where(item =>
-                    string.Equals(item.TenHang, hangXeDuocChon.TenHang, StringComparison.OrdinalIgnoreCase));
+                    string.Equals(item.TenHang, hangXeDuocChon.TenHang, StringComparison.OrdinalIgnoreCase)).ToList();
             }
 
             if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
@@ -231,7 +260,7 @@ namespace Doan_NET.ViewModel
                 danhSachLoc = danhSachLoc.Where(item =>
                     (item.TenDongXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
                     (item.LoaiXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.MauSac ?? string.Empty).ToLower().Contains(tuKhoa));
+                    (item.MauSac ?? string.Empty).ToLower().Contains(tuKhoa)).ToList();
             }
 
             DanhSachXe = new ObservableCollection<MoTo>(danhSachLoc);
@@ -358,108 +387,163 @@ namespace Doan_NET.ViewModel
                 return XeDangChon.TenHang;
             }
 
-            HangXe hangMacDinh = DuLieuHeThong.DanhSachHangXe.FirstOrDefault();
-            return hangMacDinh != null ? hangMacDinh.TenHang : "ChuaPhanLoai";
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var hangMacDinh = ctx.HangXes.FirstOrDefault();
+                return hangMacDinh != null ? hangMacDinh.TenHang : string.Empty;
+            }
         }
 
         private void LuuXe(Window cuaSo)
         {
-            try
+            int namSX;
+            int soLuongTon;
+            int giaXe;
+            if (!KiemTraDuLieuXe(out namSX, out soLuongTon, out giaXe))
             {
-                int namSX;
-                int soLuongTon;
-                int giaXe;
-                if (!KiemTraDuLieuXe(out namSX, out soLuongTon, out giaXe))
+                return;
+            }
+
+            string tenHangLuu = LayTenHangLuuXe();
+
+            if (dangSuaXe && XeDangChon != null)
+            {
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    return;
-                }
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string tenDongXeNhapTrim = TenDongXeNhap.Trim();
+                    string tenXeCu = XeDangChon.TenDongXe;
+                    var xeMoi = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                        x.TenXe == tenDongXeNhapTrim &&
+                        x.TenXe != tenXeCu &&
+                        x.HangXe != null &&
+                        x.HangXe.TenHang == tenHangLuu);
 
-                string tenHangLuu = LayTenHangLuuXe();
-
-                MoTo xeTrung = DuLieuHeThong.DanhSachXe.FirstOrDefault(item =>
-                    item != XeDangChon &&
-                    string.Equals(item.TenHang, tenHangLuu, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(item.TenDongXe?.Trim(), TenDongXeNhap.Trim(), StringComparison.OrdinalIgnoreCase));
-
-                if (xeTrung != null)
-                {
-                    MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                if (dangSuaXe && XeDangChon != null)
-                {
-                    int viTri = DuLieuHeThong.DanhSachXe.IndexOf(XeDangChon);
-                    if (viTri >= 0)
+                    if (xeMoi != null)
                     {
-                        var xeMoi = new MoTo
-                        {
-                            TenHang = tenHangLuu,
-                            TenDongXe = TenDongXeNhap.Trim(),
-                            LoaiXe = LoaiXeNhap.Trim(),
-                            MauSac = MauSacNhap.Trim(),
-                            NamSX = namSX,
-                            GiaXe = giaXe,
-                            HinhAnhFullPath = HinhAnhNhap.Trim(),
-                            MoTa = MoTaNhap.Trim(),
-                            SoLuongTon = soLuongTon
-                        };
-                        DuLieuHeThong.DanhSachXe[viTri] = xeMoi;
-                        XeDangChon = xeMoi;
+                        MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
                     }
-                }
-                else
-                {
-                    var xeMoi = new MoTo
+
+                    var efXe = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                        x.TenXe == XeDangChon.TenDongXe &&
+                        x.HangXe != null &&
+                        x.HangXe.TenHang == tenHangLuu);
+
+                    if (efXe != null)
                     {
-                        TenHang = tenHangLuu,
-                        TenDongXe = TenDongXeNhap.Trim(),
-                        LoaiXe = LoaiXeNhap.Trim(),
-                        MauSac = MauSacNhap.Trim(),
-                        NamSX = namSX,
-                        GiaXe = giaXe,
-                        HinhAnhFullPath = HinhAnhNhap.Trim(),
-                        MoTa = MoTaNhap.Trim(),
-                        SoLuongTon = soLuongTon
-                    };
-                    DuLieuHeThong.DanhSachXe.Add(xeMoi);
-                    XeDangChon = xeMoi;
+                        efXe.TenXe = TenDongXeNhap.Trim();
+                        efXe.LoaiXe = LoaiXeNhap.Trim();
+                        efXe.MauSac = MauSacNhap.Trim();
+                        efXe.NamSX = namSX;
+                        efXe.GiaBan = giaXe;
+                        efXe.HinhAnh = HinhAnhNhap.Trim();
+                        efXe.MoTa = MoTaNhap.Trim();
+                        ctx.SaveChanges();
+                    }
                 }
 
                 dangSuaXe = false;
                 TaiDanhSachXe();
+                XeDangChon = DanhSachXe.FirstOrDefault(d => d.TenDongXe == TenDongXeNhap.Trim());
                 cuaSo?.Close();
             }
-            catch (Exception)
+            else
             {
-                MessageBox.Show("Không thể lưu dữ liệu xe. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    string tenDongXeNhapTrim2 = TenDongXeNhap.Trim();
+                    var xeTrung = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                        x.TenXe == tenDongXeNhapTrim2 &&
+                        x.HangXe != null &&
+                        x.HangXe.TenHang == tenHangLuu);
+
+                    if (xeTrung != null)
+                    {
+                        MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    var hang = ctx.HangXes.FirstOrDefault(h => h.TenHang == tenHangLuu);
+                    if (hang == null)
+                    {
+                        MessageBox.Show("Không tìm thấy hãng xe. Vui lòng kiểm tra lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    string maMoiXe = TaoMaXeMoi(ctx);
+                    var efXe = new Xe
+                    {
+                        MaXe = maMoiXe,
+                        TenXe = TenDongXeNhap.Trim(),
+                        LoaiXe = LoaiXeNhap.Trim(),
+                        MauSac = MauSacNhap.Trim(),
+                        NamSX = namSX,
+                        GiaBan = giaXe,
+                        HinhAnh = HinhAnhNhap.Trim(),
+                        MoTa = MoTaNhap.Trim(),
+                        MaHang = hang.MaHang
+                    };
+                    ctx.Xes.Add(efXe);
+                    ctx.SaveChanges();
+                }
+
+                dangSuaXe = false;
+                TaiDanhSachXe();
+                XeDangChon = DanhSachXe.FirstOrDefault(item => item.TenDongXe == TenDongXeNhap.Trim());
+                cuaSo?.Close();
             }
+        }
+
+        private string TaoMaXeMoi(QuanLyBanXeMayEntities ctx)
+        {
+            int soLonNhat = 0;
+            var tatCaMaXe = ctx.Xes.Select(x => x.MaXe).ToList();
+            foreach (string ma in tatCaMaXe)
+            {
+                if (string.IsNullOrWhiteSpace(ma))
+                {
+                    continue;
+                }
+                string so = ma.Trim().ToUpper().Replace("XE", string.Empty);
+                int maSo;
+                if (int.TryParse(so, out maSo) && maSo > soLonNhat)
+                {
+                    soLonNhat = maSo;
+                }
+            }
+            return "XE" + (soLonNhat + 1).ToString("000");
         }
 
         private void XoaXe()
         {
-            try
+            if (XeDangChon == null)
             {
-                if (XeDangChon == null)
-                {
-                    return;
-                }
-
-                var ketQua = MessageBox.Show("Bạn có chắc muốn xóa xe đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
-                if (ketQua != MessageBoxResult.Yes)
-                {
-                    return;
-                }
-
-                DuLieuHeThong.DanhSachXe.Remove(XeDangChon);
-                XeDangChon = null;
-                LamMoiNhapXe();
-                TaiDanhSachXe();
+                return;
             }
-            catch (Exception)
+
+            var ketQua = MessageBox.Show("Bạn có chắc muốn xóa xe đang chọn?", "Xác nhận", MessageBoxButton.YesNo, MessageBoxImage.Question);
+            if (ketQua != MessageBoxResult.Yes)
             {
-                MessageBox.Show("Không thể xóa xe. Vui lòng thử lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
+
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ef = ctx.Xes.FirstOrDefault(x => x.TenXe == XeDangChon.TenDongXe);
+                if (ef != null)
+                {
+                    ctx.Xes.Remove(ef);
+                    ctx.SaveChanges();
+                }
+            }
+
+            XeDangChon = null;
+            LamMoiNhapXe();
+            TaiDanhSachXe();
         }
 
         private void MoThemXe()
