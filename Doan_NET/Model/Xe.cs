@@ -23,6 +23,7 @@ namespace Doan_NET.Model
         public string MoTa { get; set; }
         public string HinhAnh { get; set; }
         public string MaHang { get; set; }
+        public Nullable<int> SoLuongTon { get; set; }
     
         public virtual HangXe HangXe { get; set; }
     }

@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="QuanLyBanXeMayModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="DichVuPhuTung">
+    <Key>
+      <PropertyRef Name="MaPT" />
+    </Key>
+    <Property Name="MaPT" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Ten" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="Gia" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="TonKho" Type="Int32" />
+  </EntityType>
+  <EntityType Name="HangXe">
+    <Key>
+      <PropertyRef Name="MaHang" />
+    </Key>
+    <Property Name="MaHang" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="TenHang" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="QuocGia" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="LogoPath" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Xes" Relationship="Self.FK_Xe_HangXe" FromRole="HangXe" ToRole="Xe" />
+  </EntityType>
+  <EntityType Name="HoaDon">
+    <Key>
+      <PropertyRef Name="MaHD" />
+    </Key>
+    <Property Name="MaHD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="NgayLap" Type="DateTime" Precision="3" />
+    <Property Name="MaNV" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="MaKH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="TenDV_SP" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <Property Name="SoLuong" Type="Int32" />
+    <Property Name="ThanhTien" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="PhuongThucThanhToan" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="KhachHang" Relationship="Self.FK_HoaDon_KhachHang" FromRole="HoaDon" ToRole="KhachHang" />
+    <NavigationProperty Name="NhanVien" Relationship="Self.FK_HoaDon_NhanVien" FromRole="HoaDon" ToRole="NhanVien" />
+  </EntityType>
+  <EntityType Name="KhachHang">
+    <Key>
+      <PropertyRef Name="MaKH" />
+    </Key>
+    <Property Name="MaKH" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="HoTen" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="SDT" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="CCCD" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+    <Property Name="DiaChi" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="HoaDons" Relationship="Self.FK_HoaDon_KhachHang" FromRole="KhachHang" ToRole="HoaDon" />
+  </EntityType>
+  <EntityType Name="NhanVien">
+    <Key>
+      <PropertyRef Name="MaNV" />
+    </Key>
+    <Property Name="MaNV" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="HoTen" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="ChucVu" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NgayVaoLam" Type="DateTime" Precision="0" />
+    <Property Name="SDT" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+    <Property Name="TrangThai" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="HoaDons" Relationship="Self.FK_HoaDon_NhanVien" FromRole="NhanVien" ToRole="HoaDon" />
+    <NavigationProperty Name="TaiKhoans" Relationship="Self.FK_TaiKhoan_NhanVien" FromRole="NhanVien" ToRole="TaiKhoan" />
+  </EntityType>
+  <EntityType Name="TaiKhoan">
+    <Key>
+      <PropertyRef Name="Username" />
+    </Key>
+    <Property Name="Username" Type="String" MaxLength="50" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Password" Type="String" MaxLength="255" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="Role" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="MaNV" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="NhanVien" Relationship="Self.FK_TaiKhoan_NhanVien" FromRole="TaiKhoan" ToRole="NhanVien" />
+  </EntityType>
+  <EntityType Name="Xe">
+    <Key>
+      <PropertyRef Name="MaXe" />
+    </Key>
+    <Property Name="MaXe" Type="String" MaxLength="20" FixedLength="false" Unicode="false" Nullable="false" />
+    <Property Name="TenXe" Type="String" MaxLength="100" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="LoaiXe" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <Property Name="NamSX" Type="Int32" />
+    <Property Name="GiaBan" Type="Decimal" Precision="18" Scale="2" />
+    <Property Name="MauSac" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+    <Property Name="MoTa" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="HinhAnh" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+    <Property Name="MaHang" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
+    <NavigationProperty Name="HangXe" Relationship="Self.FK_Xe_HangXe" FromRole="Xe" ToRole="HangXe" />
+    <Property Name="SoLuongTon" Type="Int32" />
+  </EntityType>
+  <Association Name="FK_Xe_HangXe">
+    <End Role="HangXe" Type="Self.HangXe" Multiplicity="0..1" />
+    <End Role="Xe" Type="Self.Xe" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="HangXe">
+        <PropertyRef Name="MaHang" />
+      </Principal>
+      <Dependent Role="Xe">
+        <PropertyRef Name="MaHang" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HoaDon_KhachHang">
+    <End Role="KhachHang" Type="Self.KhachHang" Multiplicity="0..1" />
+    <End Role="HoaDon" Type="Self.HoaDon" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="KhachHang">
+        <PropertyRef Name="MaKH" />
+      </Principal>
+      <Dependent Role="HoaDon">
+        <PropertyRef Name="MaKH" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HoaDon_NhanVien">
+    <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
+    <End Role="HoaDon" Type="Self.HoaDon" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NhanVien">
+        <PropertyRef Name="MaNV" />
+      </Principal>
+      <Dependent Role="HoaDon">
+        <PropertyRef Name="MaNV" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaiKhoan_NhanVien">
+    <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
+    <End Role="TaiKhoan" Type="Self.TaiKhoan" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NhanVien">
+        <PropertyRef Name="MaNV" />
+      </Principal>
+      <Dependent Role="TaiKhoan">
+        <PropertyRef Name="MaNV" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="QuanLyBanXeMayEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="DichVuPhuTungs" EntityType="Self.DichVuPhuTung" />
+    <EntitySet Name="HangXes" EntityType="Self.HangXe" />
+    <EntitySet Name="HoaDons" EntityType="Self.HoaDon" />
+    <EntitySet Name="KhachHangs" EntityType="Self.KhachHang" />
+    <EntitySet Name="NhanViens" EntityType="Self.NhanVien" />
+    <EntitySet Name="TaiKhoans" EntityType="Self.TaiKhoan" />
+    <EntitySet Name="Xes" EntityType="Self.Xe" />
+    <AssociationSet Name="FK_Xe_HangXe" Association="Self.FK_Xe_HangXe">
+      <End Role="HangXe" EntitySet="HangXes" />
+      <End Role="Xe" EntitySet="Xes" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HoaDon_KhachHang" Association="Self.FK_HoaDon_KhachHang">
+      <End Role="KhachHang" EntitySet="KhachHangs" />
+      <End Role="HoaDon" EntitySet="HoaDons" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HoaDon_NhanVien" Association="Self.FK_HoaDon_NhanVien">
+      <End Role="NhanVien" EntitySet="NhanViens" />
+      <End Role="HoaDon" EntitySet="HoaDons" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaiKhoan_NhanVien" Association="Self.FK_TaiKhoan_NhanVien">
+      <End Role="NhanVien" EntitySet="NhanViens" />
+      <End Role="TaiKhoan" EntitySet="TaiKhoans" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>

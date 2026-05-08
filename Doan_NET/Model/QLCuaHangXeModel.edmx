@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="QuanLyBanXeMayModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="QuanLyBanXeMayModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="DichVuPhuTung">
           <Key>
             <PropertyRef Name="MaPT" />
@@ -78,8 +78,9 @@
           <Property Name="GiaBan" Type="decimal" Precision="18" Scale="2" />
           <Property Name="MauSac" Type="nvarchar" MaxLength="30" />
           <Property Name="MoTa" Type="nvarchar(max)" />
-          <Property Name="HinhAnh" Type="nvarchar" MaxLength="255" />
+          <Property Name="HinhAnh" Type="nvarchar" MaxLength="500" />
           <Property Name="MaHang" Type="varchar" MaxLength="20" />
+          <Property Name="SoLuongTon" Type="int" />
         </EntityType>
         <Association Name="FK_HoaDon_KhachHang">
           <End Role="KhachHang" Type="Self.KhachHang" Multiplicity="0..1" />
@@ -154,8 +155,7 @@
             <End Role="Xe" EntitySet="Xe" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="QuanLyBanXeMayModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -239,9 +239,10 @@
           <Property Name="GiaBan" Type="Decimal" Precision="18" Scale="2" />
           <Property Name="MauSac" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
           <Property Name="MoTa" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="HinhAnh" Type="String" MaxLength="255" FixedLength="false" Unicode="true" />
+          <Property Name="HinhAnh" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Name="MaHang" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <NavigationProperty Name="HangXe" Relationship="Self.FK_Xe_HangXe" FromRole="Xe" ToRole="HangXe" />
+          <Property Name="SoLuongTon" Type="Int32" />
         </EntityType>
         <Association Name="FK_Xe_HangXe">
           <End Role="HangXe" Type="Self.HangXe" Multiplicity="0..1" />
@@ -393,6 +394,7 @@
           <EntitySetMapping Name="Xes">
             <EntityTypeMapping TypeName="QuanLyBanXeMayModel.Xe">
               <MappingFragment StoreEntitySet="Xe">
+                <ScalarProperty Name="SoLuongTon" ColumnName="SoLuongTon" />
                 <ScalarProperty Name="MaXe" ColumnName="MaXe" />
                 <ScalarProperty Name="TenXe" ColumnName="TenXe" />
                 <ScalarProperty Name="LoaiXe" ColumnName="LoaiXe" />

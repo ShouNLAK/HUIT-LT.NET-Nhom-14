@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="QuanLyBanXeMayModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2008" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="DichVuPhuTung">
+    <Key>
+      <PropertyRef Name="MaPT" />
+    </Key>
+    <Property Name="MaPT" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="Ten" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="Gia" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="TonKho" Type="int" />
+  </EntityType>
+  <EntityType Name="HangXe">
+    <Key>
+      <PropertyRef Name="MaHang" />
+    </Key>
+    <Property Name="MaHang" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="TenHang" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="QuocGia" Type="nvarchar" MaxLength="50" />
+    <Property Name="LogoPath" Type="nvarchar" MaxLength="500" />
+  </EntityType>
+  <EntityType Name="HoaDon">
+    <Key>
+      <PropertyRef Name="MaHD" />
+    </Key>
+    <Property Name="MaHD" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="NgayLap" Type="datetime" />
+    <Property Name="MaNV" Type="varchar" MaxLength="20" />
+    <Property Name="MaKH" Type="varchar" MaxLength="20" />
+    <Property Name="TenDV_SP" Type="nvarchar" MaxLength="255" />
+    <Property Name="SoLuong" Type="int" />
+    <Property Name="ThanhTien" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="PhuongThucThanhToan" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="KhachHang">
+    <Key>
+      <PropertyRef Name="MaKH" />
+    </Key>
+    <Property Name="MaKH" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="HoTen" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="SDT" Type="varchar" MaxLength="15" />
+    <Property Name="CCCD" Type="varchar" MaxLength="20" />
+    <Property Name="Email" Type="varchar" MaxLength="100" />
+    <Property Name="DiaChi" Type="nvarchar" MaxLength="255" />
+  </EntityType>
+  <EntityType Name="NhanVien">
+    <Key>
+      <PropertyRef Name="MaNV" />
+    </Key>
+    <Property Name="MaNV" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="HoTen" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="ChucVu" Type="nvarchar" MaxLength="50" />
+    <Property Name="NgayVaoLam" Type="date" />
+    <Property Name="SDT" Type="varchar" MaxLength="15" />
+    <Property Name="TrangThai" Type="nvarchar" MaxLength="50" />
+  </EntityType>
+  <EntityType Name="TaiKhoan">
+    <Key>
+      <PropertyRef Name="Username" />
+    </Key>
+    <Property Name="Username" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="Password" Type="varchar" MaxLength="255" Nullable="false" />
+    <Property Name="Role" Type="nvarchar" MaxLength="50" />
+    <Property Name="MaNV" Type="varchar" MaxLength="20" />
+  </EntityType>
+  <EntityType Name="Xe">
+    <Key>
+      <PropertyRef Name="MaXe" />
+    </Key>
+    <Property Name="MaXe" Type="varchar" MaxLength="20" Nullable="false" />
+    <Property Name="TenXe" Type="nvarchar" MaxLength="100" Nullable="false" />
+    <Property Name="LoaiXe" Type="nvarchar" MaxLength="50" />
+    <Property Name="NamSX" Type="int" />
+    <Property Name="GiaBan" Type="decimal" Precision="18" Scale="2" />
+    <Property Name="MauSac" Type="nvarchar" MaxLength="30" />
+    <Property Name="MoTa" Type="nvarchar(max)" />
+    <Property Name="HinhAnh" Type="nvarchar" MaxLength="500" />
+    <Property Name="MaHang" Type="varchar" MaxLength="20" />
+    <Property Name="SoLuongTon" Type="int" />
+  </EntityType>
+  <Association Name="FK_HoaDon_KhachHang">
+    <End Role="KhachHang" Type="Self.KhachHang" Multiplicity="0..1" />
+    <End Role="HoaDon" Type="Self.HoaDon" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="KhachHang">
+        <PropertyRef Name="MaKH" />
+      </Principal>
+      <Dependent Role="HoaDon">
+        <PropertyRef Name="MaKH" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_HoaDon_NhanVien">
+    <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
+    <End Role="HoaDon" Type="Self.HoaDon" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NhanVien">
+        <PropertyRef Name="MaNV" />
+      </Principal>
+      <Dependent Role="HoaDon">
+        <PropertyRef Name="MaNV" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_TaiKhoan_NhanVien">
+    <End Role="NhanVien" Type="Self.NhanVien" Multiplicity="0..1" />
+    <End Role="TaiKhoan" Type="Self.TaiKhoan" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="NhanVien">
+        <PropertyRef Name="MaNV" />
+      </Principal>
+      <Dependent Role="TaiKhoan">
+        <PropertyRef Name="MaNV" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Xe_HangXe">
+    <End Role="HangXe" Type="Self.HangXe" Multiplicity="0..1" />
+    <End Role="Xe" Type="Self.Xe" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="HangXe">
+        <PropertyRef Name="MaHang" />
+      </Principal>
+      <Dependent Role="Xe">
+        <PropertyRef Name="MaHang" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="QuanLyBanXeMayModelStoreContainer">
+    <EntitySet Name="DichVuPhuTung" EntityType="Self.DichVuPhuTung" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="HangXe" EntityType="Self.HangXe" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="HoaDon" EntityType="Self.HoaDon" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="KhachHang" EntityType="Self.KhachHang" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="NhanVien" EntityType="Self.NhanVien" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="TaiKhoan" EntityType="Self.TaiKhoan" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Xe" EntityType="Self.Xe" Schema="dbo" store:Type="Tables" />
+    <AssociationSet Name="FK_HoaDon_KhachHang" Association="Self.FK_HoaDon_KhachHang">
+      <End Role="KhachHang" EntitySet="KhachHang" />
+      <End Role="HoaDon" EntitySet="HoaDon" />
+    </AssociationSet>
+    <AssociationSet Name="FK_HoaDon_NhanVien" Association="Self.FK_HoaDon_NhanVien">
+      <End Role="NhanVien" EntitySet="NhanVien" />
+      <End Role="HoaDon" EntitySet="HoaDon" />
+    </AssociationSet>
+    <AssociationSet Name="FK_TaiKhoan_NhanVien" Association="Self.FK_TaiKhoan_NhanVien">
+      <End Role="NhanVien" EntitySet="NhanVien" />
+      <End Role="TaiKhoan" EntitySet="TaiKhoan" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Xe_HangXe" Association="Self.FK_Xe_HangXe">
+      <End Role="HangXe" EntitySet="HangXe" />
+      <End Role="Xe" EntitySet="Xe" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
