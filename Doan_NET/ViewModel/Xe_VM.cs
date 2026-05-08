@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Doan_NET.View;
 using System.Windows;
@@ -20,19 +18,19 @@ namespace Doan_NET.ViewModel
         private readonly RelayCommand lenhXoaXe;
         private bool dangSuaXe;
 
-        private ObservableCollection<MoTo> danhSachXe;
-        public ObservableCollection<MoTo> DanhSachXe
+        private ObservableCollection<Xe> danhSachXe;
+        public ObservableCollection<Xe> DanhSachXe
         {
             get { return danhSachXe; }
             set
             {
                 danhSachXe = value;
-                OnPropertyChanged("DanhSachXe");
+                OnPropertyChanged(nameof(DanhSachXe));
             }
         }
 
-        private MoTo xeDangChon;
-        public MoTo XeDangChon
+        private Xe xeDangChon;
+        public Xe XeDangChon
         {
             get { return xeDangChon; }
             set
@@ -41,14 +39,16 @@ namespace Doan_NET.ViewModel
                 OnPropertyChanged();
                 if (xeDangChon != null)
                 {
-                    TenDongXeNhap = xeDangChon.TenDongXe;
+                    TenDongXeNhap = xeDangChon.TenXe;
                     LoaiXeNhap = xeDangChon.LoaiXe;
                     MauSacNhap = xeDangChon.MauSac;
-                    NamSXNhap = xeDangChon.NamSX.ToString();
-                    GiaXeNhap = string.Format("{0:N0}", xeDangChon.GiaXe).Replace(",", ".");
-                    HinhAnhNhap = xeDangChon.HinhAnhFullPath;
+                    NamSXNhap = xeDangChon.NamSX?.ToString() ?? "";
+                    GiaXeNhap = xeDangChon.GiaBan.HasValue
+                        ? string.Format("{0:N0}", xeDangChon.GiaBan.Value).Replace(",", ".")
+                        : "0";
+                    HinhAnhNhap = xeDangChon.HinhAnh;
                     MoTaNhap = xeDangChon.MoTa;
-                    SoLuongTonNhap = xeDangChon.SoLuongTon.ToString();
+                    SoLuongTonNhap = xeDangChon.SoLuongTon?.ToString() ?? "0";
                 }
                 lenhMoSuaXe?.RaiseCanExecuteChanged();
                 lenhXoaXe?.RaiseCanExecuteChanged();
@@ -166,28 +166,17 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        public bool CoXeDuocChon
-        {
-            get { return XeDangChon != null; }
-        }
+        public bool CoXeDuocChon => XeDangChon != null;
 
         public ICommand LenhQuayLaiHangXe { get; }
         public ICommand LenhMoThemXe { get; }
-        public ICommand LenhMoSuaXe
-        {
-            get { return lenhMoSuaXe; }
-        }
-        public ICommand LenhXoaXe
-        {
-            get { return lenhXoaXe; }
-        }
+        public ICommand LenhMoSuaXe => lenhMoSuaXe;
+        public ICommand LenhXoaXe => lenhXoaXe;
         public ICommand LenhLuuXe { get; }
         public ICommand LenhHuyFormXe { get; }
         public ICommand LenhTimKiemXe { get; }
 
-        public Xe_VM() : this(null)
-        {
-        }
+        public Xe_VM() : this(null) { }
 
         public Xe_VM(HangXe hangXe)
         {
@@ -212,64 +201,50 @@ namespace Doan_NET.ViewModel
                 TieuDeDanhSachXe = "DANH SÁCH XE";
                 return;
             }
-
             TieuDeDanhSachXe = "DANH SÁCH XE - " + hangXeDuocChon.TenHang;
         }
 
         private void DieuHuongTuMain(string tenManHinh, object duLieu = null)
         {
             var mainVm = Application.Current?.MainWindow?.DataContext as MainWindows_VM;
-            if (mainVm != null)
-            {
-                mainVm.DieuHuong(tenManHinh, duLieu);
-            }
+            mainVm?.DieuHuong(tenManHinh, duLieu);
         }
 
         private void TaiDanhSachXe()
         {
-            List<MoTo> danhSachLoc;
-
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
                 var xeEntities = ctx.Xes.Include("HangXe").ToList();
 
-                danhSachLoc = xeEntities.Select(x => new MoTo
+                // Lọc theo hãng nếu có chọn
+                if (hangXeDuocChon != null && !string.IsNullOrWhiteSpace(hangXeDuocChon.TenHang))
                 {
-                    TenHang = x.HangXe != null ? x.HangXe.TenHang : string.Empty,
-                    TenDongXe = x.TenXe ?? string.Empty,
-                    LoaiXe = x.LoaiXe ?? string.Empty,
-                    MauSac = x.MauSac ?? string.Empty,
-                    NamSX = x.NamSX ?? 0,
-                    GiaXe = x.GiaBan.HasValue ? (int)x.GiaBan.Value : 0,
-                    HinhAnhFullPath = x.HinhAnh ?? string.Empty,
-                    MoTa = x.MoTa ?? string.Empty,
-                    SoLuongTon = 0
-                }).ToList();
-            }
+                    xeEntities = xeEntities
+                        .Where(x => x.HangXe != null &&
+                                    string.Equals(x.HangXe.TenHang, hangXeDuocChon.TenHang, StringComparison.OrdinalIgnoreCase))
+                        .ToList();
+                }
 
-            if (hangXeDuocChon != null && !string.IsNullOrWhiteSpace(hangXeDuocChon.TenHang))
-            {
-                danhSachLoc = danhSachLoc.Where(item =>
-                    string.Equals(item.TenHang, hangXeDuocChon.TenHang, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
+                // Lọc theo từ khóa tìm kiếm
+                if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
+                {
+                    string tuKhoa = TuKhoaTimKiem.Trim().ToLower();
+                    xeEntities = xeEntities.Where(x =>
+                        (x.TenXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
+                        (x.LoaiXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
+                        (x.MauSac ?? string.Empty).ToLower().Contains(tuKhoa)
+                    ).ToList();
+                }
 
-            if (!string.IsNullOrWhiteSpace(TuKhoaTimKiem))
-            {
-                string tuKhoa = TuKhoaTimKiem.Trim().ToLower();
-                danhSachLoc = danhSachLoc.Where(item =>
-                    (item.TenDongXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.LoaiXe ?? string.Empty).ToLower().Contains(tuKhoa) ||
-                    (item.MauSac ?? string.Empty).ToLower().Contains(tuKhoa)).ToList();
-            }
+                DanhSachXe = new ObservableCollection<Xe>(xeEntities);
 
-            DanhSachXe = new ObservableCollection<MoTo>(danhSachLoc);
-
-            if (XeDangChon != null)
-            {
-                XeDangChon = DanhSachXe.FirstOrDefault(item =>
-                    string.Equals(item.TenHang, XeDangChon.TenHang, StringComparison.OrdinalIgnoreCase) &&
-                    string.Equals(item.TenDongXe, XeDangChon.TenDongXe, StringComparison.OrdinalIgnoreCase));
+                // Giữ lại xe đang chọn nếu có
+                if (XeDangChon != null)
+                {
+                    XeDangChon = DanhSachXe.FirstOrDefault(item =>
+                        string.Equals(item.MaXe, XeDangChon.MaXe, StringComparison.OrdinalIgnoreCase));
+                }
             }
 
             lenhMoSuaXe.RaiseCanExecuteChanged();
@@ -382,9 +357,9 @@ namespace Doan_NET.ViewModel
                 return hangXeDuocChon.TenHang;
             }
 
-            if (XeDangChon != null && !string.IsNullOrWhiteSpace(XeDangChon.TenHang))
+            if (XeDangChon != null && XeDangChon.HangXe != null && !string.IsNullOrWhiteSpace(XeDangChon.HangXe.TenHang))
             {
-                return XeDangChon.TenHang;
+                return XeDangChon.HangXe.TenHang;
             }
 
             using (var ctx = new QuanLyBanXeMayEntities())
@@ -413,7 +388,7 @@ namespace Doan_NET.ViewModel
                 {
                     ctx.Configuration.LazyLoadingEnabled = false;
                     string tenDongXeNhapTrim = TenDongXeNhap.Trim();
-                    string tenXeCu = XeDangChon.TenDongXe;
+                    string tenXeCu = XeDangChon.TenXe;
                     var xeMoi = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
                         x.TenXe == tenDongXeNhapTrim &&
                         x.TenXe != tenXeCu &&
@@ -427,7 +402,7 @@ namespace Doan_NET.ViewModel
                     }
 
                     var efXe = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
-                        x.TenXe == XeDangChon.TenDongXe &&
+                        x.MaXe == XeDangChon.MaXe &&
                         x.HangXe != null &&
                         x.HangXe.TenHang == tenHangLuu);
 
@@ -440,13 +415,14 @@ namespace Doan_NET.ViewModel
                         efXe.GiaBan = giaXe;
                         efXe.HinhAnh = HinhAnhNhap.Trim();
                         efXe.MoTa = MoTaNhap.Trim();
+                        efXe.SoLuongTon = soLuongTon;
                         ctx.SaveChanges();
                     }
                 }
 
                 dangSuaXe = false;
                 TaiDanhSachXe();
-                XeDangChon = DanhSachXe.FirstOrDefault(d => d.TenDongXe == TenDongXeNhap.Trim());
+                XeDangChon = DanhSachXe.FirstOrDefault(d => d.TenXe == TenDongXeNhap.Trim());
                 cuaSo?.Close();
             }
             else
@@ -484,7 +460,8 @@ namespace Doan_NET.ViewModel
                         GiaBan = giaXe,
                         HinhAnh = HinhAnhNhap.Trim(),
                         MoTa = MoTaNhap.Trim(),
-                        MaHang = hang.MaHang
+                        MaHang = hang.MaHang,
+                        SoLuongTon = soLuongTon
                     };
                     ctx.Xes.Add(efXe);
                     ctx.SaveChanges();
@@ -492,7 +469,7 @@ namespace Doan_NET.ViewModel
 
                 dangSuaXe = false;
                 TaiDanhSachXe();
-                XeDangChon = DanhSachXe.FirstOrDefault(item => item.TenDongXe == TenDongXeNhap.Trim());
+                XeDangChon = DanhSachXe.FirstOrDefault(item => item.TenXe == TenDongXeNhap.Trim());
                 cuaSo?.Close();
             }
         }
@@ -533,7 +510,7 @@ namespace Doan_NET.ViewModel
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
-                var ef = ctx.Xes.FirstOrDefault(x => x.TenXe == XeDangChon.TenDongXe);
+                var ef = ctx.Xes.FirstOrDefault(x => x.MaXe == XeDangChon.MaXe);
                 if (ef != null)
                 {
                     ctx.Xes.Remove(ef);
@@ -563,14 +540,16 @@ namespace Doan_NET.ViewModel
             }
 
             dangSuaXe = true;
-            TenDongXeNhap = XeDangChon.TenDongXe;
+            TenDongXeNhap = XeDangChon.TenXe;
             LoaiXeNhap = XeDangChon.LoaiXe;
             MauSacNhap = XeDangChon.MauSac;
-            NamSXNhap = XeDangChon.NamSX.ToString();
-            GiaXeNhap = string.Format("{0:N0}", XeDangChon.GiaXe).Replace(",", ".");
-            HinhAnhNhap = XeDangChon.HinhAnhFullPath;
+            NamSXNhap = XeDangChon.NamSX?.ToString() ?? "";
+            GiaXeNhap = XeDangChon.GiaBan.HasValue
+                ? string.Format("{0:N0}", XeDangChon.GiaBan.Value).Replace(",", ".")
+                : "0";
+            HinhAnhNhap = XeDangChon.HinhAnh;
             MoTaNhap = XeDangChon.MoTa;
-            SoLuongTonNhap = XeDangChon.SoLuongTon.ToString();
+            SoLuongTonNhap = XeDangChon.SoLuongTon?.ToString() ?? "0";
             var cuaSoSuaXe = new W_SuaXe();
             cuaSoSuaXe.DataContext = this;
             cuaSoSuaXe.ShowDialog();

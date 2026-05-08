@@ -47,11 +47,11 @@ CREATE TABLE Xe (
     MoTa NVARCHAR(MAX),
     HinhAnh NVARCHAR(500),
     MaHang VARCHAR(20),
+    SoLuongTon INT CHECK (SoLuongTon >= 0),
 
     CONSTRAINT FK_Xe_HangXe
     FOREIGN KEY (MaHang) REFERENCES HangXe(MaHang)
 );
-GO
 
 -- =============================================
 -- TẠO BẢNG KHÁCH HÀNG
@@ -145,21 +145,20 @@ GO
 -- DỮ LIỆU XE
 -- =============================================
 INSERT INTO Xe VALUES
-('XE01', N'Honda Winner X 2024',     N'Xe côn tay',  2024, 46900000,  N'Đỏ Đen',    N'Động cơ SOHC 150cc, phuộc USD, đèn LED full. Phù hợp đường đô thị lẫn địa hình.', 'https://hondathanhbinhan.com/wp-content/uploads/2024/01/winner-x-2024.png', 'HX01'),
-('XE02', N'Honda Vision 2024',       N'Xe tay ga',   2024, 34990000,  N'Trắng Ngọc',N'Tay ga phổ thông bán chạy nhất Việt Nam. Cốp 21L, tiết kiệm nhiên liệu 1.8L/100km.', 'https://lajumotor.com/wp-content/uploads/2023/10/honda-vision-110-2024-beige.jpg', 'HX01'),
-('XE03', N'Honda SH 160i 2024',      N'Xe tay ga',   2024, 88900000,  N'Xám Xi Măng',N'Tay ga cao cấp nhất phân khúc. Động cơ eSP+ 160cc, smart key, ABS.', 'https://files01.danhgiaxe.com/rotrH2b4Q4UpTvL-Ey7sM2zEBUw=/fit-in/2560x0/20240218/honda-sh-160i-2024--4-013934.jpg', 'HX01'),
-('XE04', N'Yamaha Exciter 155 2024', N'Xe côn tay',  2024, 52900000,  N'Xanh GP',   N'Underbone thể thao đỉnh cao. Động cơ VVA 155cc, khung Delta Box, phuộc KYB.', 'https://moto.yugatech.com/wp-content/uploads/2023/09/Yamaha-Exciter-155-VVA-ABS-2024-10.png', 'HX02'),
-('XE05', N'Yamaha Grande Hybrid 2023',N'Xe tay ga',  2023, 54900000,  N'Đen Nhám',  N'Tay ga cốp rộng với hệ thống hybrid thông minh. Tiết kiệm xăng tới 45km/L.', 'https://lajumotor.com/wp-content/uploads/2022/09/yamaha-grande-2023-hybrid.jpg', 'HX02'),
-('XE06', N'Suzuki Raider R150 2023', N'Xe côn tay',  2023, 50900000,  N'Xanh Đen',  N'Hyper Underbone với khung kim cương, động cơ 150cc phun xăng điện tử FI.', 'https://www.dsf.my/wp-content/uploads/2022/03/Suzuki-Raider-R150-Fi-Belang-Launch.jpeg?v=1646963855', 'HX03'),
-('XE07', N'Vespa Sprint 125 2024',   N'Xe tay ga',   2024, 82000000,  N'Vàng Cát',  N'Biểu tượng xe tay ga Ý với thiết kế retro hiện đại. Động cơ 125cc iGet, ABS.', 'https://images5.1000ps.net/images_bikekat/2024/39-Vespa/10947-Sprint_125_S/003-638538602238427418-vespa-sprint-125-s.jpg', 'HX04'),
-('XE08', N'Vespa GTS Super 300 2024',N'Xe tay ga',   2024, 165000000, N'Xanh Pastel',N'Tay ga hạng sang. Động cơ HPE 300cc, nồng nhiệt hội tụ phong cách Ý cổ điển.', 'https://images5.1000ps.net/images_bikekat/2025/39-Vespa/10955-GTS_125_Super_Sport/005-638681198583248918-vespa-gts-125-super-sport.jpg', 'HX04'),
-('XE09', N'Kawasaki Ninja 400 2023', N'Sportbike',   2023, 168000000, N'Xanh KRT',  N'Sportbike 400cc lý tưởng cho người mới bắt đầu lên phân khúc lớn. Khung trellis nhôm.', 'https://storage.kawasaki.eu/public/kawasaki.eu/en-EU/model/N400_P_GN1.jpg', 'HX07'),
-('XE10', N'Ducati Panigale V4 2024', N'Superbike',   2024, 1260000000,N'Đỏ Ducati', N'Siêu mô tô đường đua thuần chủng. Động cơ Desmosedici Stradale V4 1103cc, 215 mã lực.', 'https://dhqlmcogwd1an.cloudfront.net/images/phocagallery/ducati/panigale-v4-2023/01-ducati-panigale-v4-2023-estudio-rojo-01.jpg', 'HX06');
+('XE01', N'Honda Winner X 2024',      N'Xe côn tay', 2024, 46900000,   N'Đỏ Đen',      N'Động cơ SOHC 150cc, phuộc USD, đèn LED full. Phù hợp đường đô thị lẫn địa hình.', 'https://hondathanhbinhan.com/wp-content/uploads/2024/01/winner-x-2024.png', 'HX01', 15),
+('XE02', N'Honda Vision 2024',        N'Xe tay ga',  2024, 34990000,   N'Trắng Ngọc',  N'Tay ga phổ thông bán chạy nhất Việt Nam. Cốp 21L, tiết kiệm nhiên liệu 1.8L/100km.', 'https://lajumotor.com/wp-content/uploads/2023/10/honda-vision-110-2024-beige.jpg', 'HX01', 30),
+('XE03', N'Honda SH 160i 2024',       N'Xe tay ga',  2024, 88900000,   N'Xám Xi Măng', N'Tay ga cao cấp nhất phân khúc. Động cơ eSP+ 160cc, smart key, ABS.', 'https://files01.danhgiaxe.com/rotrH2b4Q4UpTvL-Ey7sM2zEBUw=/fit-in/2560x0/20240218/honda-sh-160i-2024--4-013934.jpg', 'HX01', 10),
+('XE04', N'Yamaha Exciter 155 2024',  N'Xe côn tay', 2024, 52900000,   N'Xanh GP',     N'Underbone thể thao đỉnh cao. Động cơ VVA 155cc, khung Delta Box, phuộc KYB.', 'https://moto.yugatech.com/wp-content/uploads/2023/09/Yamaha-Exciter-155-VVA-ABS-2024-10.png', 'HX02', 18),
+('XE05', N'Yamaha Grande Hybrid 2023',N'Xe tay ga',  2023, 54900000,   N'Đen Nhám',    N'Tay ga cốp rộng với hệ thống hybrid thông minh. Tiết kiệm xăng tới 45km/L.', 'https://lajumotor.com/wp-content/uploads/2022/09/yamaha-grande-2023-hybrid.jpg', 'HX02', 12),
+('XE06', N'Suzuki Raider R150 2023',  N'Xe côn tay', 2023, 50900000,   N'Xanh Đen',    N'Hyper Underbone với khung kim cương, động cơ 150cc phun xăng điện tử FI.', 'https://www.dsf.my/wp-content/uploads/2022/03/Suzuki-Raider-R150-Fi-Belang-Launch.jpeg?v=1646963855', 'HX03', 9),
+('XE07', N'Vespa Sprint 125 2024',    N'Xe tay ga',  2024, 82000000,   N'Vàng Cát',    N'Biểu tượng xe tay ga Ý với thiết kế retro hiện đại. Động cơ 125cc iGet, ABS.', 'https://images5.1000ps.net/images_bikekat/2024/39-Vespa/10947-Sprint_125_S/003-638538602238427418-vespa-sprint-125-s.jpg', 'HX04', 7),
+('XE08', N'Vespa GTS Super 300 2024', N'Xe tay ga',  2024, 165000000,  N'Xanh Pastel', N'Tay ga hạng sang. Động cơ HPE 300cc, nồng nhiệt hội tụ phong cách Ý cổ điển.', 'https://images5.1000ps.net/images_bikekat/2025/39-Vespa/10955-GTS_125_Super_Sport/005-638681198583248918-vespa-gts-125-super-sport.jpg', 'HX04', 5),
+('XE09', N'Kawasaki Ninja 400 2023',  N'Sportbike',  2023, 168000000,  N'Xanh KRT',    N'Sportbike 400cc lý tưởng cho người mới bắt đầu lên phân khúc lớn. Khung trellis nhôm.', 'https://storage.kawasaki.eu/public/kawasaki.eu/en-EU/model/N400_P_GN1.jpg', 'HX07', 4),
+('XE10', N'Ducati Panigale V4 2024',  N'Superbike',  2024, 1260000000, N'Đỏ Ducati',   N'Siêu mô tô đường đua thuần chủng. Động cơ Desmosedici Stradale V4 1103cc, 215 mã lực.', 'https://dhqlmcogwd1an.cloudfront.net/images/phocagallery/ducati/panigale-v4-2023/01-ducati-panigale-v4-2023-estudio-rojo-01.jpg', 'HX06', 2);
 GO
 
 -- =============================================
 -- DỮ LIỆU KHÁCH HÀNG
--- =============================================
 INSERT INTO KhachHang VALUES
 ('KH001', N'Nguyễn Minh Tuấn',    '0931845672', '079091234571', 'nguyenminhtuan@gmail.com',    N'123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM'),
 ('KH002', N'Trần Thị Thanh Hà',   '0768234591', '079185234582', 'tranthithanhhakh@gmail.com',  N'45 Lê Lợi, Phường Bến Thành, Quận 3, TP.HCM'),
@@ -170,7 +169,8 @@ INSERT INTO KhachHang VALUES
 ('KH007', N'Đặng Văn Hùng',       '0582947361', '079093248537', 'dangvanhung@gmail.com',        N'89 Trường Chinh, Phường 14, Tân Bình, TP.HCM'),
 ('KH008', N'Bùi Ngọc Hương',      '0703581924', '079180539148', 'buingochuong@gmail.com',       N'21 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM'),
 ('KH009', N'Đỗ Thanh Khoa',       '0846275319', '079095624759', 'dothankhoa@gmail.com',         N'67 Nguyễn Tất Thành, Phường 13, Quận 4, TP.HCM'),
-('KH010', N'Ngô Thị Phương Linh', '0563748291', '079181234860', 'ngothiphuonglinh@gmail.com',   N'15 Kinh Dương Vương, Phường An Lạc, Bình Tân, TP.HCM');
+('KH010', N'Ngô Thị Phương Linh', '0563748291', '079181234860
+-- =============================================', 'ngothiphuonglinh@gmail.com',   N'15 Kinh Dương Vương, Phường An Lạc, Bình Tân, TP.HCM');
 GO
 
 -- =============================================
