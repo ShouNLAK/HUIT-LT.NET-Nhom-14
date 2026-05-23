@@ -97,8 +97,36 @@
     <Compile Include="ViewModel\NhanVien_VM.cs" />
     <Compile Include="ViewModel\ThongKe_VM.cs" />
     <Compile Include="ViewModel\Xe_VM.cs" />
+    <Compile Include="ViewModel\MainWindow_User_VM.cs" />
+    <Compile Include="ViewModel\User_TrangChu_VM.cs" />
+    <Compile Include="ViewModel\User_XemXe_VM.cs" />
+    <Compile Include="ViewModel\User_DichVu_VM.cs" />
+    <Compile Include="ViewModel\User_GioHang_VM.cs" />
+    <Compile Include="ViewModel\User_DonHang_VM.cs" />
+    <Compile Include="ViewModel\User_TaiKhoan_VM.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\MainWindow_User.xaml.cs">
+      <DependentUpon>MainWindow_User.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_TrangChu.xaml.cs">
+      <DependentUpon>UC_User_TrangChu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_XemXe.xaml.cs">
+      <DependentUpon>UC_User_XemXe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_DichVu.xaml.cs">
+      <DependentUpon>UC_User_DichVu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_GioHang.xaml.cs">
+      <DependentUpon>UC_User_GioHang.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_DonHang.xaml.cs">
+      <DependentUpon>UC_User_DonHang.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_User_TaiKhoan.xaml.cs">
+      <DependentUpon>UC_User_TaiKhoan.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UC_DichVu.xaml.cs">
       <DependentUpon>UC_DichVu.xaml</DependentUpon>
@@ -145,6 +173,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\BaseViewModel.cs" />
+    <Compile Include="Helper\PhienDangNhap.cs" />
     <Compile Include="Helper\RelayCommand.cs" />
     <Compile Include="Model\DichVuPhuTung.cs">
       <DependentUpon>QLCuaHangXeModel.tt</DependentUpon>
@@ -200,6 +229,34 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="View\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\MainWindow_User.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_TrangChu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_XemXe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_DichVu.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_GioHang.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_DonHang.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_User_TaiKhoan.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

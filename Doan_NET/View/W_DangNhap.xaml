@@ -69,7 +69,7 @@
                 VerticalAlignment="Center"
                 Foreground="#95a5a6"/>
 
-                <TextBox 
+                <TextBox
                 x:Name="UsernameTextBox"
                 Grid.Column="1"
                 Margin="10,0,0,0"
@@ -78,7 +78,8 @@
                 Foreground="#2c3e50"
                 BorderThickness="0,0,0,1"
                 BorderBrush="#ecf0f1"
-                Background="Transparent"/>
+                Background="Transparent"
+                Text="{Binding TenDangNhap, UpdateSourceTrigger=PropertyChanged}"/>
             </Grid>
 
             <!-- Password -->
@@ -144,19 +145,19 @@
             Margin="30,0,30,12"/>
 
             <StackPanel Margin="30,0,30,20" Orientation="Horizontal">
-                <RadioButton 
+                <RadioButton
                 x:Name="AdminRadioButton"
                 Content="Admin"
-                IsChecked="False"
+                IsChecked="{Binding LaAdmin, Mode=TwoWay}"
                 VerticalAlignment="Center"
                 Foreground="#7f8c8d"
                 FontSize="12"
                 Margin="0,0,30,0"/>
 
-                <RadioButton 
+                <RadioButton
                 x:Name="StaffRadioButton"
                 Content="Khách hàng"
-                IsChecked="True"
+                IsChecked="{Binding LaKhachHang, Mode=TwoWay}"
                 VerticalAlignment="Center"
                 Foreground="#7f8c8d"
                 FontSize="12"/>
