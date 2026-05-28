@@ -62,7 +62,10 @@ CREATE TABLE KhachHang (
     SDT VARCHAR(15),
     CCCD VARCHAR(20),
     Email VARCHAR(100),
-    DiaChi NVARCHAR(255)
+    DiaChi NVARCHAR(255),
+    NgaySinh DATE,
+    GioiTinh NVARCHAR(10),
+    AnhCaNhan NVARCHAR(500)
 );
 GO
 
@@ -116,6 +119,7 @@ CREATE TABLE HoaDon (
     SoLuong INT CHECK (SoLuong > 0),
     ThanhTien DECIMAL(18,2) CHECK (ThanhTien > 0),
     PhuongThucThanhToan NVARCHAR(50),
+    TrangThai NVARCHAR(50) DEFAULT N'Đã xác nhận',
 
     CONSTRAINT FK_HoaDon_NhanVien
     FOREIGN KEY (MaNV) REFERENCES NhanVien(MaNV),
@@ -129,16 +133,16 @@ GO
 -- DỮ LIỆU HÃNG XE
 -- =============================================
 INSERT INTO HangXe VALUES
-('HX01', N'Honda',        N'Nhật Bản', 'https://logos-world.net/wp-content/uploads/2021/03/Honda-Logo.png'),
-('HX02', N'Yamaha',       N'Nhật Bản', 'https://logos-world.net/wp-content/uploads/2020/10/Yamaha-Logo-700x394.png'),
-('HX03', N'Suzuki',       N'Nhật Bản', 'https://logos-world.net/wp-content/uploads/2021/10/Suzuki-Logo-700x394.png'),
-('HX04', N'Piaggio',      N'Ý',        'https://logos-world.net/wp-content/uploads/2022/12/Piaggio-Logo-500x281.png'),
-('HX05', N'SYM',          N'Đài Loan', 'https://logos-world.net/wp-content/uploads/2021/04/SYM-Motors-Logo-500x281.png'),
-('HX06', N'Ducati',       N'Ý',        'https://logos-world.net/wp-content/uploads/2021/03/Ducati-Logo-700x394.png'),
-('HX07', N'Kawasaki',     N'Nhật Bản', 'https://logos-world.net/wp-content/uploads/2020/11/Kawasaki-Logo-700x394.png'),
-('HX08', N'BMW Motorrad', N'Đức',      'https://logos-world.net/wp-content/uploads/2024/10/BMW-Motorrad-Logo-500x281.png'),
-('HX09', N'Triumph',      N'Anh',      'https://logos-world.net/wp-content/uploads/2020/11/Triumph-Logo-700x394.png'),
-('HX10', N'KTM',          N'Áo',       'https://logos-world.net/wp-content/uploads/2020/11/KTM-Logo-700x394.png');
+('HX01', N'Honda',        N'Nhật Bản', 'https://www.carlogos.org/car-logos/honda-logo.png'),
+('HX02', N'Yamaha',       N'Nhật Bản', 'https://cdn.freebiesupply.com/logos/large/2x/yamaha-2-logo-png-transparent.png'),
+('HX03', N'Suzuki',       N'Nhật Bản', 'https://www.carlogos.org/car-logos/suzuki-logo.png'),
+('HX04', N'Piaggio',      N'Ý',        'https://cdn.freebiesupply.com/logos/large/2x/piaggio-logo-png-transparent.png'),
+('HX05', N'SYM',          N'Đài Loan', 'https://cdn.freebiesupply.com/logos/large/2x/sym-logo-png-transparent.png'),
+('HX06', N'Ducati',       N'Ý',        'https://cdn.freebiesupply.com/logos/large/2x/ducati-logo-png-transparent.png'),
+('HX07', N'Kawasaki',     N'Nhật Bản', 'https://cdn.freebiesupply.com/logos/large/2x/kawasaki-logo-png-transparent.png'),
+('HX08', N'BMW Motorrad', N'Đức',      'https://www.carlogos.org/car-logos/bmw-logo.png'),
+('HX09', N'Triumph',      N'Anh',      'https://www.carlogos.org/car-logos/triumph-logo.png'),
+('HX10', N'KTM',          N'Áo',       'https://www.carlogos.org/car-logos/ktm-logo.png');
 GO
 
 -- =============================================
@@ -148,18 +152,18 @@ INSERT INTO Xe VALUES
 ('XE01', N'Honda Winner X 2024',      N'Xe côn tay', 2024, 46900000,   N'Đỏ Đen',      N'Động cơ SOHC 150cc, phuộc USD, đèn LED full. Phù hợp đường đô thị lẫn địa hình.', 'https://hondathanhbinhan.com/wp-content/uploads/2024/01/winner-x-2024.png', 'HX01', 15),
 ('XE02', N'Honda Vision 2024',        N'Xe tay ga',  2024, 34990000,   N'Trắng Ngọc',  N'Tay ga phổ thông bán chạy nhất Việt Nam. Cốp 21L, tiết kiệm nhiên liệu 1.8L/100km.', 'https://lajumotor.com/wp-content/uploads/2023/10/honda-vision-110-2024-beige.jpg', 'HX01', 30),
 ('XE03', N'Honda SH 160i 2024',       N'Xe tay ga',  2024, 88900000,   N'Xám Xi Măng', N'Tay ga cao cấp nhất phân khúc. Động cơ eSP+ 160cc, smart key, ABS.', 'https://files01.danhgiaxe.com/rotrH2b4Q4UpTvL-Ey7sM2zEBUw=/fit-in/2560x0/20240218/honda-sh-160i-2024--4-013934.jpg', 'HX01', 10),
-('XE04', N'Yamaha Exciter 155 2024',  N'Xe côn tay', 2024, 52900000,   N'Xanh GP',     N'Underbone thể thao đỉnh cao. Động cơ VVA 155cc, khung Delta Box, phuộc KYB.', 'https://moto.yugatech.com/wp-content/uploads/2023/09/Yamaha-Exciter-155-VVA-ABS-2024-10.png', 'HX02', 18),
+('XE04', N'Yamaha Exciter 155 2024',  N'Xe côn tay', 2024, 52900000,   N'Xanh GP',     N'Underbone thể thao đỉnh cao. Động cơ VVA 155cc, khung Delta Box, phuộc KYB.', 'https://files01.danhgiaxe.com/_pppPtGuS_LagJFl5EfB3C0yqkw=/fit-in/1280x0/20240219/yamaha-exciter-155-4-autobike.com_.vn_-144722.jpg', 'HX02', 18),
 ('XE05', N'Yamaha Grande Hybrid 2023',N'Xe tay ga',  2023, 54900000,   N'Đen Nhám',    N'Tay ga cốp rộng với hệ thống hybrid thông minh. Tiết kiệm xăng tới 45km/L.', 'https://lajumotor.com/wp-content/uploads/2022/09/yamaha-grande-2023-hybrid.jpg', 'HX02', 12),
 ('XE06', N'Suzuki Raider R150 2023',  N'Xe côn tay', 2023, 50900000,   N'Xanh Đen',    N'Hyper Underbone với khung kim cương, động cơ 150cc phun xăng điện tử FI.', 'https://www.dsf.my/wp-content/uploads/2022/03/Suzuki-Raider-R150-Fi-Belang-Launch.jpeg?v=1646963855', 'HX03', 9),
 ('XE07', N'Vespa Sprint 125 2024',    N'Xe tay ga',  2024, 82000000,   N'Vàng Cát',    N'Biểu tượng xe tay ga Ý với thiết kế retro hiện đại. Động cơ 125cc iGet, ABS.', 'https://images5.1000ps.net/images_bikekat/2024/39-Vespa/10947-Sprint_125_S/003-638538602238427418-vespa-sprint-125-s.jpg', 'HX04', 7),
-('XE08', N'Vespa GTS Super 300 2024', N'Xe tay ga',  2024, 165000000,  N'Xanh Pastel', N'Tay ga hạng sang. Động cơ HPE 300cc, nồng nhiệt hội tụ phong cách Ý cổ điển.', 'https://images5.1000ps.net/images_bikekat/2025/39-Vespa/10955-GTS_125_Super_Sport/005-638681198583248918-vespa-gts-125-super-sport.jpg', 'HX04', 5),
+('XE08', N'Vespa GTS Super 300 2024', N'Xe tay ga',  2024, 165000000,  N'Xanh Pastel', N'Tay ga hạng sang. Động cơ HPE 300cc, nồng nhiệt hội tụ phong cách Ý cổ điển.', 'https://files01.danhgiaxe.com/Jca8VeJUyGvL1wHcM2QrebK0xr4=/fit-in/1280x0/20230324/vespa-gts-super-sport-300-mau-xanh-112451.jpg', 'HX04', 5),
 ('XE09', N'Kawasaki Ninja 400 2023',  N'Sportbike',  2023, 168000000,  N'Xanh KRT',    N'Sportbike 400cc lý tưởng cho người mới bắt đầu lên phân khúc lớn. Khung trellis nhôm.', 'https://storage.kawasaki.eu/public/kawasaki.eu/en-EU/model/N400_P_GN1.jpg', 'HX07', 4),
 ('XE10', N'Ducati Panigale V4 2024',  N'Superbike',  2024, 1260000000, N'Đỏ Ducati',   N'Siêu mô tô đường đua thuần chủng. Động cơ Desmosedici Stradale V4 1103cc, 215 mã lực.', 'https://dhqlmcogwd1an.cloudfront.net/images/phocagallery/ducati/panigale-v4-2023/01-ducati-panigale-v4-2023-estudio-rojo-01.jpg', 'HX06', 2);
 GO
 
 -- =============================================
 -- DỮ LIỆU KHÁCH HÀNG
-INSERT INTO KhachHang VALUES
+INSERT INTO KhachHang (MaKH, HoTen, SDT, CCCD, Email, DiaChi) VALUES
 ('KH001', N'Nguyễn Minh Tuấn',    '0931845672', '079091234571', 'nguyenminhtuan@gmail.com',    N'123 Nguyễn Huệ, Phường Bến Nghé, Quận 1, TP.HCM'),
 ('KH002', N'Trần Thị Thanh Hà',   '0768234591', '079185234582', 'tranthithanhhakh@gmail.com',  N'45 Lê Lợi, Phường Bến Thành, Quận 3, TP.HCM'),
 ('KH003', N'Lê Quốc Cường',       '0853712946', '079094537893', 'lequoccuongkh@gmail.com',     N'78 Xô Viết Nghệ Tĩnh, Phường 24, Bình Thạnh, TP.HCM'),
@@ -169,8 +173,7 @@ INSERT INTO KhachHang VALUES
 ('KH007', N'Đặng Văn Hùng',       '0582947361', '079093248537', 'dangvanhung@gmail.com',        N'89 Trường Chinh, Phường 14, Tân Bình, TP.HCM'),
 ('KH008', N'Bùi Ngọc Hương',      '0703581924', '079180539148', 'buingochuong@gmail.com',       N'21 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM'),
 ('KH009', N'Đỗ Thanh Khoa',       '0846275319', '079095624759', 'dothankhoa@gmail.com',         N'67 Nguyễn Tất Thành, Phường 13, Quận 4, TP.HCM'),
-('KH010', N'Ngô Thị Phương Linh', '0563748291', '079181234860
--- =============================================', 'ngothiphuonglinh@gmail.com',   N'15 Kinh Dương Vương, Phường An Lạc, Bình Tân, TP.HCM');
+('KH010', N'Ngô Thị Phương Linh', '0563748291', '079181234860', 'ngothiphuonglinh@gmail.com',   N'15 Kinh Dương Vương, Phường An Lạc, Bình Tân, TP.HCM');
 GO
 
 -- =============================================
@@ -228,7 +231,7 @@ GO
 -- =============================================
 -- DỮ LIỆU HÓA ĐƠN
 -- =============================================
-INSERT INTO HoaDon VALUES
+INSERT INTO HoaDon (MaHD, NgayLap, MaNV, MaKH, TenDV_SP, SoLuong, ThanhTien, PhuongThucThanhToan) VALUES
 ('HD001', '2025-01-08 09:15:00', 'NV002', 'KH001', N'Honda Winner X 2024',           1, 46900000,  N'Trả góp'),
 ('HD002', '2025-01-15 10:30:00', 'NV003', 'KH002', N'Honda Vision 2024',              1, 34990000,  N'Tiền mặt'),
 ('HD003', '2025-02-03 08:45:00', 'NV004', 'KH003', N'Bảo dưỡng định kỳ toàn bộ',     1,   199000,  N'Tiền mặt'),

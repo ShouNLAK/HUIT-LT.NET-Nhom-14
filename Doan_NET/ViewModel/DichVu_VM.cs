@@ -526,7 +526,7 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            DieuHuongTuMain("DonHang");
+            DieuHuongTuMain("ThanhToan");
         }
 
         private void DieuHuongTuMain(string tenManHinh, object duLieu = null)

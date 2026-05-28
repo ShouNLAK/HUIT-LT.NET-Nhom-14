@@ -70,9 +70,18 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <Border Width="160" Height="160" Margin="0,0,15,15"
-                                Background="White" CornerRadius="10"
-                                Effect="{StaticResource ShadowEffect}" Cursor="Hand">
+                        <Button Width="160" Height="160" Margin="0,0,15,15" Cursor="Hand"
+                                BorderThickness="0" Background="Transparent"
+                                Command="{Binding DataContext.LenhChonHang, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                CommandParameter="{Binding}"
+                                ToolTip="Bấm để xem các xe của hãng này">
+                            <Button.Template>
+                                <ControlTemplate TargetType="Button">
+                                    <Border Background="White" CornerRadius="10" Effect="{StaticResource ShadowEffect}">
+                                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                    </Border>
+                                </ControlTemplate>
+                            </Button.Template>
                             <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
                                 <Image Source="{Binding LogoPath}" Width="70" Height="70" Margin="0,0,0,10" Stretch="Uniform"/>
                                 <TextBlock Text="{Binding TenHang}" FontSize="14" FontWeight="Bold"
@@ -80,7 +89,7 @@
                                 <TextBlock Text="{Binding QuocGia}" FontSize="11"
                                            Foreground="#95A5A6" TextAlignment="Center" Margin="0,3,0,0"/>
                             </StackPanel>
-                        </Border>
+                        </Button>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

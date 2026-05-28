@@ -87,7 +87,8 @@ namespace Doan_NET.ViewModel
                     TenDV_SP = item.TenDV_SP,
                     SoLuong = item.SoLuong,
                     ThanhTien = item.ThanhTien,
-                    PhuongThucThanhToan = item.PhuongThucThanhToan
+                    PhuongThucThanhToan = item.PhuongThucThanhToan,
+                    TrangThai = item.TrangThai
                 }).ToList();
 
                 DanhSachDonHang = new ObservableCollection<HoaDon_HienThi_VM>(ket);

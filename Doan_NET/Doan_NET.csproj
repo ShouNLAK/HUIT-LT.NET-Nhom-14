@@ -104,6 +104,10 @@
     <Compile Include="ViewModel\User_GioHang_VM.cs" />
     <Compile Include="ViewModel\User_DonHang_VM.cs" />
     <Compile Include="ViewModel\User_TaiKhoan_VM.cs" />
+    <Compile Include="ViewModel\ThanhToan_VM.cs" />
+    <Compile Include="ViewModel\ThongBao_VM.cs" />
+    <Compile Include="ViewModel\DonChoXuLy_VM.cs" />
+    <Compile Include="ViewModel\CaiDat_VM.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -145,6 +149,18 @@
     </Compile>
     <Compile Include="View\UC_NhanVien.xaml.cs">
       <DependentUpon>UC_NhanVien.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_ThanhToan.xaml.cs">
+      <DependentUpon>UC_ThanhToan.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_ThongBao.xaml.cs">
+      <DependentUpon>UC_ThongBao.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\UC_CaiDat.xaml.cs">
+      <DependentUpon>UC_CaiDat.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_XuLyDon.xaml.cs">
+      <DependentUpon>W_XuLyDon.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\UC_ThongKe.xaml.cs">
       <DependentUpon>UC_ThongKe.xaml</DependentUpon>
@@ -281,6 +297,22 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\UC_NhanVien.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_ThanhToan.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_ThongBao.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\UC_CaiDat.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\W_XuLyDon.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

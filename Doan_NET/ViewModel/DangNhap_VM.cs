@@ -180,9 +180,12 @@ namespace Doan_NET.ViewModel
                 if (tk != null && tk.Password == matKhau)
                 {
                     string role = (tk.Role ?? string.Empty).Trim();
-                    if (string.Equals(role, "Admin", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(role, "Quản lý", StringComparison.OrdinalIgnoreCase) ||
-                        string.Equals(role, "Quan ly", StringComparison.OrdinalIgnoreCase))
+                    // Mọi tài khoản nhân viên (Quản lý, Bán hàng, Kỹ thuật, Kế toán...) đều
+                    // được vào khu quản lý. Chỉ loại trừ tài khoản khách hàng.
+                    bool laKhachHang =
+                        string.Equals(role, "KhachHang", StringComparison.OrdinalIgnoreCase) ||
+                        string.Equals(role, "Khách hàng", StringComparison.OrdinalIgnoreCase);
+                    if (!laKhachHang)
                     {
                         return true;
                     }
@@ -211,21 +214,10 @@ namespace Doan_NET.ViewModel
                     return false;
                 }
 
+                // Chỉ tra cứu hồ sơ khách theo SĐT, KHÔNG tự tạo mới.
+                // Nếu chưa có hồ sơ thì vẫn cho đăng nhập, khách tự tạo hồ sơ
+                // trong tab "Tài khoản" (tránh tạo khách hàng trùng/vô tội vạ).
                 khachHang = ctx.KhachHangs.FirstOrDefault(k => k.SDT == ten);
-                if (khachHang == null)
-                {
-                    khachHang = new KhachHang
-                    {
-                        MaKH = TaoMaKhachHangMoi(ctx),
-                        HoTen = ten,
-                        SDT = ten,
-                        CCCD = string.Empty,
-                        Email = string.Empty,
-                        DiaChi = string.Empty
-                    };
-                    ctx.KhachHangs.Add(khachHang);
-                    ctx.SaveChanges();
-                }
 
                 return true;
             }

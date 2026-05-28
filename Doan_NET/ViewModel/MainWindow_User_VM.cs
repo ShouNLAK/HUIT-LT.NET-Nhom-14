@@ -46,13 +46,21 @@ namespace Doan_NET.ViewModel
 
         public void DieuHuong(string tenManHinh)
         {
+            DieuHuong(tenManHinh, null);
+        }
+
+        public void DieuHuong(string tenManHinh, object duLieu)
+        {
             switch (tenManHinh)
             {
                 case "TrangChu":
                     ManHinhHienTai = new UC_User_TrangChu();
                     break;
                 case "XemXe":
-                    ManHinhHienTai = new UC_User_XemXe();
+                    var hang = duLieu as Model.HangXe;
+                    ManHinhHienTai = hang != null
+                        ? new UC_User_XemXe(hang.MaHang)
+                        : new UC_User_XemXe();
                     break;
                 case "DichVu":
                     ManHinhHienTai = new UC_User_DichVu();

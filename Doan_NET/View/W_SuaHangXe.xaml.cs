@@ -26,8 +26,16 @@ namespace Doan_NET.View
 
         private void ChonLogo_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Vui lòng nhập đường dẫn logo vào ô bên cạnh.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-            LogoTextBox.Focus();
+            var hopThoai = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Chọn logo hãng xe",
+                Filter = "Tệp ảnh (*.png;*.jpg;*.jpeg;*.bmp;*.gif)|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Tất cả tệp (*.*)|*.*"
+            };
+
+            if (hopThoai.ShowDialog() == true)
+            {
+                LogoTextBox.Text = hopThoai.FileName;
+            }
         }
     }
 }

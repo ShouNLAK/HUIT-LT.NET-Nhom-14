@@ -8,10 +8,6 @@
              d:DesignHeight="700" d:DesignWidth="1100"
              Background="#F5F5F5">
 
-    <UserControl.DataContext>
-        <vm:User_XemXe_VM/>
-    </UserControl.DataContext>
-
     <UserControl.Resources>
         <DropShadowEffect x:Key="ShadowEffect" BlurRadius="8" ShadowDepth="2" Opacity="0.15"/>
     </UserControl.Resources>

@@ -175,6 +175,7 @@ namespace Doan_NET.ViewModel
         public ICommand LenhLuuXe { get; }
         public ICommand LenhHuyFormXe { get; }
         public ICommand LenhTimKiemXe { get; }
+        public ICommand LenhBanXe { get; }
 
         public Xe_VM() : this(null) { }
 
@@ -188,6 +189,7 @@ namespace Doan_NET.ViewModel
             LenhLuuXe = new RelayCommand(parameter => LuuXe(parameter as Window));
             LenhHuyFormXe = new RelayCommand(parameter => DongFormXe(parameter as Window));
             LenhTimKiemXe = new RelayCommand(_ => TaiDanhSachXe());
+            LenhBanXe = new RelayCommand(_ => BanXe());
 
             CapNhatTieuDe();
             TaiDanhSachXe();
@@ -316,7 +318,7 @@ namespace Doan_NET.ViewModel
 
             if (!LaUrlHopLe(HinhAnhNhap.Trim()))
             {
-                MessageBox.Show("Đường dẫn hình ảnh phải là URL hợp lệ (http/https).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Đường dẫn hình ảnh phải là URL hợp lệ (http/https) hoặc đường dẫn file ảnh có thật.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -345,9 +347,20 @@ namespace Doan_NET.ViewModel
 
         private bool LaUrlHopLe(string duongDan)
         {
+            if (string.IsNullOrWhiteSpace(duongDan))
+            {
+                return false;
+            }
+
             Uri uri;
-            return Uri.TryCreate(duongDan, UriKind.Absolute, out uri)
-                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            if (Uri.TryCreate(duongDan, UriKind.Absolute, out uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                return true;
+            }
+
+            // Cho phép chọn file ảnh có sẵn trong máy (nút "Chọn file").
+            return System.IO.File.Exists(duongDan);
         }
 
         private string LayTenHangLuuXe()
@@ -553,6 +566,46 @@ namespace Doan_NET.ViewModel
             var cuaSoSuaXe = new W_SuaXe();
             cuaSoSuaXe.DataContext = this;
             cuaSoSuaXe.ShowDialog();
+        }
+
+        private void BanXe()
+        {
+            if (XeDangChon == null)
+            {
+                MessageBox.Show("Vui lòng chọn xe cần bán.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            if ((XeDangChon.SoLuongTon ?? 0) <= 0)
+            {
+                MessageBox.Show("Xe đã hết hàng trong kho.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            // Thêm xe vào giỏ hàng dùng chung rồi chuyển sang màn hình lập hóa đơn.
+            var gioHang = DichVu_VM.GioHangDungChung;
+            var matHang = gioHang.FirstOrDefault(item => item.MaMatHang == XeDangChon.MaXe);
+            if (matHang == null)
+            {
+                gioHang.Add(new MatHangGio_VM
+                {
+                    MaMatHang = XeDangChon.MaXe,
+                    TenMatHang = XeDangChon.TenXe,
+                    DonGia = (int)(XeDangChon.GiaBan ?? 0),
+                    SoLuong = 1
+                });
+            }
+            else
+            {
+                if (matHang.SoLuong + 1 > (XeDangChon.SoLuongTon ?? 0))
+                {
+                    MessageBox.Show("Số lượng trong giỏ vượt quá tồn kho hiện có.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                matHang.SoLuong += 1;
+            }
+
+            DieuHuongTuMain("ThanhToan");
         }
 
         private void DongFormXe(Window cuaSo)

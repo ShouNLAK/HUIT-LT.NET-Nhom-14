@@ -13,5 +13,6 @@ namespace Doan_NET.ViewModel
         public int? SoLuong { get; set; }
         public decimal? ThanhTien { get; set; }
         public string PhuongThucThanhToan { get; set; }
+        public string TrangThai { get; set; }
     }
 }

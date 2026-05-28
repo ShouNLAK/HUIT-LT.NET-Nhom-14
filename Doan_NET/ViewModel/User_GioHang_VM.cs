@@ -217,53 +217,76 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            string maHoaDon = TaoMaHoaDonMoi();
             DateTime ngayLap = DateTime.Now;
+            int soDonDaTao = 0;
 
-            using (var ctx = new QuanLyBanXeMayEntities())
+            try
             {
-                ctx.Configuration.LazyLoadingEnabled = false;
-                foreach (MatHangGio_VM item in GioHang)
-                {
-                    var hd = new HoaDon
-                    {
-                        MaHD = maHoaDon,
-                        NgayLap = ngayLap,
-                        MaNV = null,
-                        MaKH = PhienDangNhap.KhachHangHienTai.MaKH,
-                        TenDV_SP = item.TenMatHang,
-                        SoLuong = item.SoLuong,
-                        ThanhTien = item.ThanhTien,
-                        PhuongThucThanhToan = HinhThucThanhToanDangChon
-                    };
-                    ctx.HoaDons.Add(hd);
+                // MaHD là khóa chính nên mỗi mặt hàng phải có một mã riêng,
+                // không được dùng chung một mã cho cả giỏ.
+                int soBatDau = LaySoHoaDonLonNhat();
 
-                    string ma = (item.MaMatHang ?? string.Empty).Trim().ToUpper();
-                    if (ma.StartsWith("XE"))
+                using (var ctx = new QuanLyBanXeMayEntities())
+                {
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    foreach (MatHangGio_VM item in GioHang)
                     {
-                        var xe = ctx.Xes.FirstOrDefault(x => x.MaXe == item.MaMatHang);
-                        if (xe != null)
+                        // CSDL ràng buộc ThanhTien > 0 nên bỏ qua dòng giá 0.
+                        if (item.ThanhTien <= 0)
                         {
-                            xe.SoLuongTon = (xe.SoLuongTon ?? 0) - item.SoLuong;
-                            if (xe.SoLuongTon < 0) xe.SoLuongTon = 0;
+                            continue;
+                        }
+
+                        soDonDaTao++;
+                        string maHoaDon = "HD" + (soBatDau + soDonDaTao).ToString("000");
+
+                        var hd = new HoaDon
+                        {
+                            MaHD = maHoaDon,
+                            NgayLap = ngayLap,
+                            MaNV = null,
+                            MaKH = PhienDangNhap.KhachHangHienTai.MaKH,
+                            TenDV_SP = item.TenMatHang,
+                            SoLuong = item.SoLuong,
+                            ThanhTien = item.ThanhTien,
+                            PhuongThucThanhToan = HinhThucThanhToanDangChon,
+                            TrangThai = "Chờ xác nhận"
+                        };
+                        ctx.HoaDons.Add(hd);
+
+                        string ma = (item.MaMatHang ?? string.Empty).Trim().ToUpper();
+                        if (ma.StartsWith("XE"))
+                        {
+                            var xe = ctx.Xes.FirstOrDefault(x => x.MaXe == item.MaMatHang);
+                            if (xe != null)
+                            {
+                                xe.SoLuongTon = (xe.SoLuongTon ?? 0) - item.SoLuong;
+                                if (xe.SoLuongTon < 0) xe.SoLuongTon = 0;
+                            }
+                        }
+                        else if (ma.StartsWith("PT"))
+                        {
+                            var pt = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == item.MaMatHang);
+                            if (pt != null)
+                            {
+                                pt.TonKho = (pt.TonKho ?? 0) - item.SoLuong;
+                                if (pt.TonKho < 0) pt.TonKho = 0;
+                            }
                         }
                     }
-                    else if (ma.StartsWith("PT"))
-                    {
-                        var pt = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == item.MaMatHang);
-                        if (pt != null)
-                        {
-                            pt.TonKho = (pt.TonKho ?? 0) - item.SoLuong;
-                            if (pt.TonKho < 0) pt.TonKho = 0;
-                        }
-                    }
+                    ctx.SaveChanges();
                 }
-                ctx.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Đặt hàng thất bại: " + ex.Message, "Lỗi",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             GioHang.Clear();
             OnPropertyChanged(nameof(TongTien));
-            MessageBox.Show("Đặt hàng thành công! Mã đơn: " + maHoaDon, "Thông báo",
+            MessageBox.Show("Đặt hàng thành công! Đã tạo " + soDonDaTao + " hóa đơn.", "Thông báo",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -282,7 +305,7 @@ namespace Doan_NET.ViewModel
             return true;
         }
 
-        private string TaoMaHoaDonMoi()
+        private int LaySoHoaDonLonNhat()
         {
             int maLonNhat = 0;
             using (var ctx = new QuanLyBanXeMayEntities())
@@ -300,7 +323,7 @@ namespace Doan_NET.ViewModel
                     }
                 }
             }
-            return "HD" + (maLonNhat + 1).ToString("000");
+            return maLonNhat;
         }
     }
 }

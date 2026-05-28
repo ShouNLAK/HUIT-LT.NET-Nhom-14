@@ -22,7 +22,8 @@ namespace Doan_NET.Model
         public Nullable<int> SoLuong { get; set; }
         public Nullable<decimal> ThanhTien { get; set; }
         public string PhuongThucThanhToan { get; set; }
-    
+        public string TrangThai { get; set; }
+
         public virtual KhachHang KhachHang { get; set; }
         public virtual NhanVien NhanVien { get; set; }
     }

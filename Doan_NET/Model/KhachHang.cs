@@ -25,7 +25,10 @@ namespace Doan_NET.Model
         public string CCCD { get; set; }
         public string Email { get; set; }
         public string DiaChi { get; set; }
-    
+        public Nullable<System.DateTime> NgaySinh { get; set; }
+        public string GioiTinh { get; set; }
+        public string AnhCaNhan { get; set; }
+
         public virtual ICollection<HoaDon> HoaDons { get; set; }
     }
 }

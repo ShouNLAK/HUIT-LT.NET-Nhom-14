@@ -128,7 +128,7 @@
                         <TextBlock Text="MÔ TẢ" FontSize="12" FontWeight="Bold" Foreground="Gray" Margin="0,5,0,5"/>
                         <TextBlock Text="{Binding XeDangChon.MoTa}" FontSize="13" TextWrapping="Wrap" Foreground="#34495e" Margin="0,0,0,15"/>
                         <TextBlock Text="{Binding XeDangChon.GiaBan, StringFormat=Giá: {0:N0} đ}" FontSize="14" FontWeight="Bold" Foreground="Red" Margin="0,0,0,20"/>
-                        <Button Content="BÁN NGAY" Background="#e74c3c" Foreground="White" Padding="10" BorderThickness="0" Command="{Binding LenhMoThemXe}"/>
+                        <Button Content="BÁN NGAY" Background="#e74c3c" Foreground="White" Padding="10" BorderThickness="0" Cursor="Hand" Command="{Binding LenhBanXe}"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

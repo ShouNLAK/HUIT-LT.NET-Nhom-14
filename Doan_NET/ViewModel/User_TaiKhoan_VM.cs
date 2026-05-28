@@ -113,6 +113,15 @@ namespace Doan_NET.ViewModel
                 }
             }
 
+            // Giữ liên kết tài khoản ↔ khách hàng: SĐT hồ sơ phải trùng tên đăng nhập.
+            string tenDangNhap = (PhienDangNhap.TenDangNhap ?? string.Empty).Trim();
+            if (!string.IsNullOrEmpty(tenDangNhap) && SDT.Trim() != tenDangNhap)
+            {
+                MessageBox.Show("Số điện thoại phải trùng với tên đăng nhập (" + tenDangNhap + ").",
+                    "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
@@ -125,6 +134,28 @@ namespace Doan_NET.ViewModel
                 else
                 {
                     ef = ctx.KhachHangs.FirstOrDefault(k => k.SDT == SDT.Trim());
+                }
+
+                // Kiểm tra trùng SĐT/CCCD/Email với khách khác (bỏ qua chính hồ sơ này).
+                string maHienTai = ef != null ? ef.MaKH : string.Empty;
+                string sdtNhap = SDT.Trim();
+                string cccdNhap = (CCCD ?? string.Empty).Trim();
+                string emailNhap = (Email ?? string.Empty).Trim();
+
+                if (ctx.KhachHangs.Any(k => k.SDT == sdtNhap && k.MaKH != maHienTai))
+                {
+                    MessageBox.Show("Số điện thoại này đã có hồ sơ khách hàng khác.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (cccdNhap.Length > 0 && ctx.KhachHangs.Any(k => k.CCCD == cccdNhap && k.MaKH != maHienTai))
+                {
+                    MessageBox.Show("CCCD này đã được dùng cho hồ sơ khác.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
+                }
+                if (emailNhap.Length > 0 && ctx.KhachHangs.Any(k => k.Email == emailNhap && k.MaKH != maHienTai))
+                {
+                    MessageBox.Show("Email này đã được dùng cho hồ sơ khác.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    return;
                 }
 
                 if (ef == null)

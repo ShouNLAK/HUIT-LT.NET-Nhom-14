@@ -62,7 +62,7 @@
 
                 <Button 
             Grid.Column="1"
-            Content="Chọn file"
+            Content="Chọn file" Click="ChonLogo_Click"
             Margin="10,0,0,0"
             Padding="10"
             Background="#3498db"

@@ -77,12 +77,26 @@ namespace Doan_NET.ViewModel
         public ICommand LenhTimKiem { get; }
         public ICommand LenhThemVaoGio { get; }
 
-        public User_XemXe_VM()
+        public User_XemXe_VM() : this(null)
+        {
+        }
+
+        // maHangLoc: nếu khác null sẽ lọc sẵn theo hãng (khi khách bấm hãng ở Trang chủ).
+        public User_XemXe_VM(string maHangLoc)
         {
             LenhTimKiem = new RelayCommand(_ => TaiDanhSachXe());
             LenhThemVaoGio = new RelayCommand(_ => ThemVaoGio());
             TaiHangLoc();
-            TaiDanhSachXe();
+
+            if (!string.IsNullOrWhiteSpace(maHangLoc))
+            {
+                var hang = DanhSachHangLoc.FirstOrDefault(h => h.MaHang == maHangLoc);
+                if (hang != null)
+                {
+                    // Gán setter sẽ tự gọi TaiDanhSachXe() với bộ lọc theo hãng.
+                    HangLocDangChon = hang;
+                }
+            }
         }
 
         private void TaiHangLoc()

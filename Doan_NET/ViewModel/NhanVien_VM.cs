@@ -331,7 +331,7 @@ namespace Doan_NET.ViewModel
                     var ef = ctx.NhanViens.FirstOrDefault(n => n.MaNV == NhanVienDangChon.MaNV);
                     if (ef != null)
                     {
-                        ef.MaNV = MaNVNhap.Trim().ToUpper();
+                        // Không gán lại MaNV (khóa chính) vì EF không cho sửa khóa và sẽ làm văng app.
                         ef.HoTen = HoTenNhap.Trim();
                         ef.SDT = SDTNhap.Trim();
                         ef.ChucVu = ChucVuNhap.Trim();
@@ -353,12 +353,15 @@ namespace Doan_NET.ViewModel
         private bool KiemTraTrungSDTNhanVien(NhanVien nhanVienDangBoQua)
         {
             string sdt = SDTNhap.Trim();
+            // Chỉ truyền giá trị nguyên thủy (MaNV) vào query, không truyền cả entity
+            // để tránh lỗi "Unable to create a constant value of type ... NhanVien".
+            string maBoQua = nhanVienDangBoQua != null ? nhanVienDangBoQua.MaNV : null;
 
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
                 var nhanVienTrungSDT = ctx.NhanViens.FirstOrDefault(item =>
-                    (nhanVienDangBoQua == null || item.MaNV != nhanVienDangBoQua.MaNV) &&
+                    (maBoQua == null || item.MaNV != maBoQua) &&
                     item.SDT == sdt);
 
                 if (nhanVienTrungSDT != null)

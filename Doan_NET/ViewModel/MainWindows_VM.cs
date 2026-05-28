@@ -56,14 +56,21 @@ namespace Doan_NET.ViewModel
                 case "DichVu":
                     ManHinhHienTai = new UC_DichVu();
                     break;
+                case "ThanhToan":
+                    ManHinhHienTai = new UC_ThanhToan();
+                    break;
+                case "LichSu":
                 case "DonHang":
                     ManHinhHienTai = new UC_HoaDon();
+                    break;
+                case "ThongBao":
+                    ManHinhHienTai = new UC_ThongBao();
                     break;
                 case "ThongKe":
                     ManHinhHienTai = new UC_ThongKe();
                     break;
                 case "CaiDat":
-                    ManHinhHienTai = new UC_ThongKe();
+                    ManHinhHienTai = new UC_CaiDat();
                     break;
                 case "DangXuat":
                     var cuaSoDangNhap = new W_DangNhap();

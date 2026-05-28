@@ -37,9 +37,9 @@ namespace Doan_NET.ViewModel
                 MessageBox.Show("Vui lòng nhập họ và tên.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            if (string.IsNullOrWhiteSpace(username) || username.Length < 3)
+            if (!LaSoDienThoaiHopLe(username))
             {
-                MessageBox.Show("Tên đăng nhập phải có ít nhất 3 ký tự.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Tên đăng nhập phải là số điện thoại (10 đến 11 chữ số). Số này dùng để đăng nhập và lập hóa đơn.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             if (string.IsNullOrWhiteSpace(matKhau) || matKhau.Length < 3)
@@ -142,6 +142,30 @@ namespace Doan_NET.ViewModel
                 }
             }
             return "KH" + (maLonNhat + 1).ToString("000");
+        }
+
+        private bool LaSoDienThoaiHopLe(string duLieu)
+        {
+            if (string.IsNullOrWhiteSpace(duLieu))
+            {
+                return false;
+            }
+
+            string giaTri = duLieu.Trim();
+            if (giaTri.Length < 10 || giaTri.Length > 11)
+            {
+                return false;
+            }
+
+            foreach (char kyTu in giaTri)
+            {
+                if (kyTu < '0' || kyTu > '9')
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         private string LayThongDiepLoi(Exception ex)

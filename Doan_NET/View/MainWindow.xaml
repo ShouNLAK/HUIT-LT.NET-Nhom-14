@@ -149,16 +149,42 @@
                                 </StackPanel>
                             </Button>
 
-                            <!-- Đơn hàng -->
-                            <Button 
+                            <!-- Thanh toán -->
+                            <Button
+                        x:Name="BtnThanhToan"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="ThanhToan"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="ThanhToan">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="💳" FontSize="18" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Thanh toán" FontSize="14" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Lịch sử giao dịch -->
+                            <Button
                         x:Name="BtnDonHang"
                         Style="{DynamicResource MenuButtonStyle}"
-                        Tag="DonHang"
+                        Tag="LichSu"
                         Command="{Binding LenhDieuHuong}"
-                        CommandParameter="DonHang">
+                        CommandParameter="LichSu">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock Text="📋" FontSize="18" Margin="0,0,12,0"/>
-                                    <TextBlock Text="Hóa đơn" FontSize="14" VerticalAlignment="Center"/>
+                                    <TextBlock Text="Lịch sử giao dịch" FontSize="14" VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Thông báo -->
+                            <Button
+                        x:Name="BtnThongBao"
+                        Style="{DynamicResource MenuButtonStyle}"
+                        Tag="ThongBao"
+                        Command="{Binding LenhDieuHuong}"
+                        CommandParameter="ThongBao">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="🔔" FontSize="18" Margin="0,0,12,0"/>
+                                    <TextBlock Text="Thông báo" FontSize="14" VerticalAlignment="Center"/>
                                 </StackPanel>
                             </Button>
 

@@ -63,13 +63,15 @@
         <Border Grid.Row="1" Background="White" CornerRadius="10" Padding="15"
                 Effect="{StaticResource ShadowEffect}">
             <DockPanel>
-                <Grid DockPanel.Dock="Top" Margin="0,0,0,12">
+                <Grid DockPanel.Dock="Top" Margin="0,0,0,8">
                     <TextBlock Text="LỊCH SỬ ĐƠN HÀNG" FontSize="16" FontWeight="Bold" Foreground="#2C3E50"/>
                     <Button HorizontalAlignment="Right" Content="🔄 Tải lại"
                             Padding="12,6" Background="#34495E" Foreground="White"
                             FontWeight="Bold" BorderThickness="0" Cursor="Hand"
                             Command="{Binding LenhTaiLai}"/>
                 </Grid>
+                <TextBlock DockPanel.Dock="Top" Margin="0,0,0,10" TextWrapping="Wrap" FontSize="12" Foreground="#27AE60"
+                           Text="Đơn ở trạng thái 'Đã xác nhận' đã được cửa hàng tiếp nhận — vui lòng đến cơ sở để làm thủ tục nhận xe."/>
 
                 <DataGrid ItemsSource="{Binding DanhSachDonHang}"
                           AutoGenerateColumns="False" CanUserAddRows="False" IsReadOnly="True"
@@ -84,6 +86,7 @@
                         <DataGridTextColumn Header="Thành tiền" Width="140"
                                             Binding="{Binding ThanhTien, StringFormat={}{0:N0}}"/>
                         <DataGridTextColumn Header="Thanh toán" Width="120" Binding="{Binding PhuongThucThanhToan}"/>
+                        <DataGridTextColumn Header="Trạng thái" Width="120" Binding="{Binding TrangThai}"/>
                         <DataGridTextColumn Header="NV phụ trách" Width="130" Binding="{Binding TenNhanVien}"/>
                     </DataGrid.Columns>
                 </DataGrid>

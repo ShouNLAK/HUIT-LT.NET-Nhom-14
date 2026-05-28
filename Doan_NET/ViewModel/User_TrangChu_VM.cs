@@ -47,12 +47,25 @@ namespace Doan_NET.ViewModel
 
         public ICommand LenhMoMuaXe { get; }
         public ICommand LenhMoDichVu { get; }
+        public ICommand LenhChonHang { get; }
 
         public User_TrangChu_VM()
         {
             LenhMoMuaXe = new RelayCommand(_ => ChuyenManHinh("XemXe"));
             LenhMoDichVu = new RelayCommand(_ => ChuyenManHinh("DichVu"));
+            LenhChonHang = new RelayCommand(thamSo => ChonHang(thamSo as HangXe));
             TaiDuLieu();
+        }
+
+        private void ChonHang(HangXe hang)
+        {
+            if (hang == null)
+            {
+                return;
+            }
+            var cuaSoUser = Application.Current.Windows.OfType<MainWindow_User>().FirstOrDefault();
+            var vm = cuaSoUser?.DataContext as MainWindow_User_VM;
+            vm?.DieuHuong("XemXe", hang);
         }
 
         private void TaiDuLieu()

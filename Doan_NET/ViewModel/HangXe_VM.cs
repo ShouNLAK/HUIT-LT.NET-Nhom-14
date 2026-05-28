@@ -323,7 +323,7 @@ namespace Doan_NET.ViewModel
 
             if (!LaUrlHopLe(LogoNhap.Trim()))
             {
-                MessageBox.Show("Đường dẫn logo phải là URL hợp lệ (http/https).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Đường dẫn logo phải là URL hợp lệ (http/https) hoặc đường dẫn file ảnh có thật.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
             }
 
@@ -332,9 +332,20 @@ namespace Doan_NET.ViewModel
 
         private bool LaUrlHopLe(string duongDan)
         {
+            if (string.IsNullOrWhiteSpace(duongDan))
+            {
+                return false;
+            }
+
             Uri uri;
-            return Uri.TryCreate(duongDan, UriKind.Absolute, out uri)
-                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            if (Uri.TryCreate(duongDan, UriKind.Absolute, out uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                return true;
+            }
+
+            // Cho phép chọn file ảnh có sẵn trong máy (nút "Chọn file").
+            return System.IO.File.Exists(duongDan);
         }
 
         private void LamMoiNhapHangXe()

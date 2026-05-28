@@ -18,7 +18,17 @@
             <RowDefinition Height="0.8*"/>
         </Grid.RowDefinitions>
 
-        <UniformGrid Grid.Row="0" Columns="3" Margin="0,0,0,20">
+        <StackPanel Grid.Row="0">
+            <Button Content="🔄 Làm mới"
+                    HorizontalAlignment="Right"
+                    Margin="0,0,0,10"
+                    Padding="14,6"
+                    Background="#34495E"
+                    Foreground="White"
+                    BorderThickness="0"
+                    Cursor="Hand"
+                    Command="{Binding LenhTaiLaiThongKe}"/>
+        <UniformGrid Columns="3" Margin="0,0,0,20">
             <Border Background="White" CornerRadius="10" Margin="0,0,10,0" Padding="15">
                 <StackPanel>
                     <TextBlock Text="TỔNG DOANH THU" Foreground="Gray" FontSize="12"/>
@@ -38,6 +48,7 @@
                 </StackPanel>
             </Border>
         </UniformGrid>
+        </StackPanel>
 
         <Border Grid.Row="1" Background="White" CornerRadius="10" Margin="0,0,0,20" Padding="20">
             <DockPanel>

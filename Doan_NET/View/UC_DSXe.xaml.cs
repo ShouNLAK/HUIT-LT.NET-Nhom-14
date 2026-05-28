@@ -22,14 +22,12 @@ namespace Doan_NET.View
         public UC_DSXe()
         {
             InitializeComponent();
-            if (DataContext == null)
-            {
-                DataContext = new Xe_VM();
-            }
+            DataContext = new Xe_VM();
         }
 
-        public UC_DSXe(HangXe hangXeDuocChon) : this()
+        public UC_DSXe(HangXe hangXeDuocChon)
         {
+            InitializeComponent();
             DataContext = new Xe_VM(hangXeDuocChon);
         }
     }

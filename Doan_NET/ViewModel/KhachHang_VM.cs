@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Net.Mail;
+using Microsoft.Win32;
 
 namespace Doan_NET.ViewModel
 {
@@ -41,6 +42,9 @@ namespace Doan_NET.ViewModel
                     CCCDNhap = khachHangDangChon.CCCD;
                     EmailNhap = khachHangDangChon.Email;
                     DiaChiNhap = khachHangDangChon.DiaChi;
+                    NgaySinhNhap = khachHangDangChon.NgaySinh;
+                    GioiTinhNhap = khachHangDangChon.GioiTinh;
+                    AnhCaNhanNhap = khachHangDangChon.AnhCaNhan;
                     dangThemMoi = false;
                 }
                 lenhXoaKhachHang?.RaiseCanExecuteChanged();
@@ -124,6 +128,42 @@ namespace Doan_NET.ViewModel
             }
         }
 
+        private Nullable<DateTime> ngaySinhNhap;
+        public Nullable<DateTime> NgaySinhNhap
+        {
+            get { return ngaySinhNhap; }
+            set
+            {
+                ngaySinhNhap = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string gioiTinhNhap;
+        public string GioiTinhNhap
+        {
+            get { return gioiTinhNhap; }
+            set
+            {
+                gioiTinhNhap = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string anhCaNhanNhap;
+        public string AnhCaNhanNhap
+        {
+            get { return anhCaNhanNhap; }
+            set
+            {
+                anhCaNhanNhap = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ObservableCollection<string> DanhSachGioiTinh { get; } =
+            new ObservableCollection<string> { "Nam", "Nữ", "Khác" };
+
         private bool dangThemMoi;
         private readonly RelayCommand lenhXoaKhachHang;
 
@@ -135,6 +175,7 @@ namespace Doan_NET.ViewModel
         public ICommand LenhLuuKhachHang { get; }
         public ICommand LenhTimKiemKhachHang { get; }
         public ICommand LenhLamMoiKhachHang { get; }
+        public ICommand LenhChonAnh { get; }
 
         public KhachHang_VM()
         {
@@ -143,6 +184,7 @@ namespace Doan_NET.ViewModel
             LenhLuuKhachHang = new RelayCommand(_ => LuuKhachHang());
             LenhTimKiemKhachHang = new RelayCommand(_ => TaiDanhSachKhachHang());
             LenhLamMoiKhachHang = new RelayCommand(_ => LamMoiNhapKhachHang());
+            LenhChonAnh = new RelayCommand(_ => ChonAnh());
 
             DanhSachKhachHang = new ObservableCollection<KhachHang>();
             TaiDanhSachKhachHang();
@@ -189,6 +231,9 @@ namespace Doan_NET.ViewModel
             CCCDNhap = string.Empty;
             EmailNhap = string.Empty;
             DiaChiNhap = string.Empty;
+            NgaySinhNhap = null;
+            GioiTinhNhap = null;
+            AnhCaNhanNhap = string.Empty;
             KhachHangDangChon = null;
         }
 
@@ -260,7 +305,10 @@ namespace Doan_NET.ViewModel
                         SDT = SDTNhap.Trim(),
                         CCCD = CCCDNhap.Trim(),
                         Email = EmailNhap.Trim(),
-                        DiaChi = DiaChiNhap.Trim()
+                        DiaChi = DiaChiNhap.Trim(),
+                        NgaySinh = NgaySinhNhap,
+                        GioiTinh = GioiTinhNhap,
+                        AnhCaNhan = (AnhCaNhanNhap ?? string.Empty).Trim()
                     };
                     ctx.KhachHangs.Add(ef);
                     ctx.SaveChanges();
@@ -306,12 +354,15 @@ namespace Doan_NET.ViewModel
                 var ef = ctx.KhachHangs.FirstOrDefault(k => k.MaKH == KhachHangDangChon.MaKH);
                 if (ef != null)
                 {
-                    ef.MaKH = MaKHNhap.Trim().ToUpper();
+                    // Không gán lại MaKH (khóa chính) vì EF không cho sửa khóa và sẽ làm văng app.
                     ef.HoTen = HoTenNhap.Trim();
                     ef.SDT = SDTNhap.Trim();
                     ef.CCCD = CCCDNhap.Trim();
                     ef.Email = EmailNhap.Trim();
                     ef.DiaChi = DiaChiNhap.Trim();
+                    ef.NgaySinh = NgaySinhNhap;
+                    ef.GioiTinh = GioiTinhNhap;
+                    ef.AnhCaNhan = (AnhCaNhanNhap ?? string.Empty).Trim();
                     ctx.SaveChanges();
                 }
             }
@@ -325,13 +376,16 @@ namespace Doan_NET.ViewModel
             string sdt = SDTNhap.Trim();
             string cccd = CCCDNhap.Trim();
             string email = EmailNhap.Trim();
+            // Chỉ truyền giá trị nguyên thủy (MaKH) vào query, không truyền cả entity
+            // để tránh lỗi "Unable to create a constant value of type ... KhachHang".
+            string maBoQua = khachHangDangBoQua != null ? khachHangDangBoQua.MaKH : null;
 
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
 
                 var trungSDT = ctx.KhachHangs.FirstOrDefault(item =>
-                    (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                    (maBoQua == null || item.MaKH != maBoQua) &&
                     item.SDT == sdt);
                 if (trungSDT != null)
                 {
@@ -340,7 +394,7 @@ namespace Doan_NET.ViewModel
                 }
 
                 var trungCCCD = ctx.KhachHangs.FirstOrDefault(item =>
-                    (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                    (maBoQua == null || item.MaKH != maBoQua) &&
                     item.CCCD == cccd);
                 if (trungCCCD != null)
                 {
@@ -351,7 +405,7 @@ namespace Doan_NET.ViewModel
                 if (!string.IsNullOrWhiteSpace(email))
                 {
                     var trungEmail = ctx.KhachHangs.FirstOrDefault(item =>
-                        (khachHangDangBoQua == null || item.MaKH != khachHangDangBoQua.MaKH) &&
+                        (maBoQua == null || item.MaKH != maBoQua) &&
                         item.Email == email);
                     if (trungEmail != null)
                     {
@@ -470,6 +524,19 @@ namespace Doan_NET.ViewModel
             return "KH" + (maLonNhat + 1).ToString("000");
         }
 
+        private void ChonAnh()
+        {
+            var hopThoai = new OpenFileDialog
+            {
+                Title = "Chọn ảnh cá nhân khách hàng",
+                Filter = "Tệp ảnh (*.png;*.jpg;*.jpeg;*.bmp)|*.png;*.jpg;*.jpeg;*.bmp"
+            };
+            if (hopThoai.ShowDialog() == true)
+            {
+                AnhCaNhanNhap = hopThoai.FileName;
+            }
+        }
+
         private void LamMoiNhapKhachHang()
         {
             dangThemMoi = false;
@@ -479,6 +546,9 @@ namespace Doan_NET.ViewModel
             CCCDNhap = string.Empty;
             EmailNhap = string.Empty;
             DiaChiNhap = string.Empty;
+            NgaySinhNhap = null;
+            GioiTinhNhap = null;
+            AnhCaNhanNhap = string.Empty;
         }
     }
 }
