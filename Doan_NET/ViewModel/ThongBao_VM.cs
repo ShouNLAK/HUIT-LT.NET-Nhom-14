@@ -45,7 +45,7 @@ namespace Doan_NET.ViewModel
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
-                var ds = ctx.HoaDons
+                var ds = ctx.HoaDons.AsNoTracking()
                     .Include("KhachHang")
                     .Where(item => item.TrangThai == "Chờ xác nhận")
                     .ToList();

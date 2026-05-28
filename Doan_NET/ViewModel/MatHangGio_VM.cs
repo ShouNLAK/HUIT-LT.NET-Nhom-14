@@ -29,8 +29,8 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        private int donGia;
-        public int DonGia
+        private decimal donGia;
+        public decimal DonGia
         {
             get { return donGia; }
             set
@@ -53,7 +53,7 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        public int ThanhTien
+        public decimal ThanhTien
         {
             get { return DonGia * SoLuong; }
         }

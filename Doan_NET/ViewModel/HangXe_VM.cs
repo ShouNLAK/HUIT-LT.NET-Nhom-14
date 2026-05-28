@@ -94,6 +94,7 @@ namespace Doan_NET.ViewModel
         }
         public ICommand LenhLuuHangXe { get; }
         public ICommand LenhHuyFormHangXe { get; }
+        public ICommand LenhXuatKho { get; }
 
         public HangXe_VM()
         {
@@ -106,6 +107,7 @@ namespace Doan_NET.ViewModel
             lenhXoaHangXe = new RelayCommand(_ => XoaHangXe(), _ => HangXeDangChon != null);
             LenhLuuHangXe = new RelayCommand(parameter => LuuHangXe(parameter as Window));
             LenhHuyFormHangXe = new RelayCommand(parameter => DongFormHangXe(parameter as Window));
+            LenhXuatKho = new RelayCommand(_ => { W_ReportXuatKho frm = new W_ReportXuatKho(); frm.Show(); });
 
             TaiDanhSachHangXe();
             LamMoiNhapHangXe();

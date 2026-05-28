@@ -1,5 +1,6 @@
 using Doan_NET.Helper;
 using Doan_NET.Model;
+using Doan_NET.View;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -92,12 +93,12 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        public int TongTienHang
+        public decimal TongTienHang
         {
             get { return GioHangHienTai.Sum(item => item.ThanhTien); }
         }
 
-        public int ThanhTienThanhToan
+        public decimal ThanhTienThanhToan
         {
             get { return TongTienHang; }
         }
@@ -265,12 +266,12 @@ namespace Doan_NET.ViewModel
             }
 
             DateTime ngayLap = NgayLapNhap;
-            int soDonDaTao = 0;
+            string maHoaDonMoi = "";
 
             try
             {
-                // MaHD là khóa chính nên mỗi mặt hàng phải mang một mã hóa đơn riêng.
                 int soBatDau = LaySoHoaDonLonNhat();
+                maHoaDonMoi = "HD" + (soBatDau + 1).ToString("000");
 
                 using (var ctx = new QuanLyBanXeMayEntities())
                 {
@@ -278,53 +279,47 @@ namespace Doan_NET.ViewModel
                     string maNV = NhanVienLapDuocChon != null ? NhanVienLapDuocChon.MaNV : null;
                     string maKH = KhachHangDuocChon != null ? KhachHangDuocChon.MaKH : null;
 
-                    foreach (MatHangGio_VM item in GioHangHienTai.ToList())
+                    var dsHopLe = GioHangHienTai.Where(x => x.ThanhTien > 0).ToList();
+                    if (dsHopLe.Count > 0)
                     {
-                        // CSDL ràng buộc ThanhTien > 0 nên bỏ qua dòng giá 0.
-                        if (item.ThanhTien <= 0)
+                        foreach (MatHangGio_VM item in dsHopLe)
                         {
-                            continue;
-                        }
+                            string sql = "INSERT INTO HoaDon (MaHD, NgayLap, MaNV, MaKH, TenDV_SP, SoLuong, ThanhTien, PhuongThucThanhToan, TrangThai) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})";
+                            ctx.Database.ExecuteSqlCommand(sql,
+                                maHoaDonMoi,
+                                ngayLap,
+                                string.IsNullOrEmpty(maNV) ? (object)DBNull.Value : maNV,
+                                string.IsNullOrEmpty(maKH) ? (object)DBNull.Value : maKH,
+                                item.TenMatHang,
+                                item.SoLuong,
+                                item.ThanhTien,
+                                string.IsNullOrEmpty(HinhThucThanhToanDangChon) ? (object)DBNull.Value : HinhThucThanhToanDangChon,
+                                "Đã xác nhận"
+                            );
 
-                        soDonDaTao++;
-                        string maHoaDonMoi = "HD" + (soBatDau + soDonDaTao).ToString("000");
-
-                        var hd = new HoaDon
-                        {
-                            MaHD = maHoaDonMoi,
-                            NgayLap = ngayLap,
-                            MaNV = maNV,
-                            MaKH = maKH,
-                            TenDV_SP = item.TenMatHang,
-                            SoLuong = item.SoLuong,
-                            ThanhTien = item.ThanhTien,
-                            PhuongThucThanhToan = HinhThucThanhToanDangChon,
-                            TrangThai = "Đã xác nhận"
-                        };
-                        ctx.HoaDons.Add(hd);
-
-                        // Trừ tồn kho ngay trong cùng giao dịch để dữ liệu nhất quán.
-                        if (item.LaPhuTung)
-                        {
-                            var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(dv => dv.MaPT == item.MaMatHang);
-                            if (phuTung != null)
+                            // Trừ tồn kho ngay trong cùng giao dịch để dữ liệu nhất quán.
+                            if (item.LaPhuTung)
                             {
-                                phuTung.TonKho = (phuTung.TonKho ?? 0) - item.SoLuong;
-                                if (phuTung.TonKho < 0)
+                                var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(dv => dv.MaPT == item.MaMatHang);
+                                if (phuTung != null)
                                 {
-                                    phuTung.TonKho = 0;
+                                    phuTung.TonKho = (phuTung.TonKho ?? 0) - item.SoLuong;
+                                    if (phuTung.TonKho < 0)
+                                    {
+                                        phuTung.TonKho = 0;
+                                    }
                                 }
                             }
-                        }
-                        else if ((item.MaMatHang ?? string.Empty).Trim().StartsWith("XE", StringComparison.OrdinalIgnoreCase))
-                        {
-                            var xe = ctx.Xes.FirstOrDefault(x => x.MaXe == item.MaMatHang);
-                            if (xe != null)
+                            else if ((item.MaMatHang ?? string.Empty).Trim().StartsWith("XE", StringComparison.OrdinalIgnoreCase))
                             {
-                                xe.SoLuongTon = (xe.SoLuongTon ?? 0) - item.SoLuong;
-                                if (xe.SoLuongTon < 0)
+                                var xe = ctx.Xes.FirstOrDefault(x => x.MaXe == item.MaMatHang);
+                                if (xe != null)
                                 {
-                                    xe.SoLuongTon = 0;
+                                    xe.SoLuongTon = (xe.SoLuongTon ?? 0) - item.SoLuong;
+                                    if (xe.SoLuongTon < 0)
+                                    {
+                                        xe.SoLuongTon = 0;
+                                    }
                                 }
                             }
                         }
@@ -343,8 +338,12 @@ namespace Doan_NET.ViewModel
             GioHangHienTai.Clear();
             CapNhatTienThanhToan();
 
-            MessageBox.Show("Thanh toán thành công. Đã tạo " + soDonDaTao + " hóa đơn.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
+            MessageBox.Show("Thanh toán thành công hóa đơn " + maHoaDonMoi, "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
             LamMoiThongTinHoaDon(false);
+
+            // Mở report hóa đơn mới
+            W_ReportHoaDon frmReport = new W_ReportHoaDon(maHoaDonMoi);
+            frmReport.Show();
         }
 
         private bool KiemTraDuLieuThanhToan()

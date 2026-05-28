@@ -29,6 +29,7 @@
                              Text="{Binding TuKhoaTimKiem, UpdateSourceTrigger=PropertyChanged}"/>
                     <Button Content="Tìm kiếm" Width="90" Height="32" Background="#34495E" Foreground="White" BorderThickness="0" Cursor="Hand" Margin="0,0,5,0" Command="{Binding LenhTimKiem}"/>
                     <Button Content="Làm mới" Width="90" Height="32" Background="#95A5A6" Foreground="White" BorderThickness="0" Cursor="Hand" Command="{Binding LenhLamMoi}"/>
+                    <Button Content="Xuất hóa đơn" Width="100" Height="32" Background="#27AE60" Foreground="White" BorderThickness="0" Cursor="Hand" Margin="5,0,0,0" Command="{Binding LenhInHoaDon}"/>
                 </StackPanel>
 
                 <Border Grid.Column="1" Background="#EAF2F8" CornerRadius="6" Padding="14,6" Margin="0,0,10,0">
@@ -46,6 +47,7 @@
             </Grid>
 
             <DataGrid ItemsSource="{Binding DanhSachHoaDonHienThi}"
+                      SelectedItem="{Binding HoaDonDuocChon}"
                       AutoGenerateColumns="False"
                       Background="Transparent"
                       CanUserAddRows="False"

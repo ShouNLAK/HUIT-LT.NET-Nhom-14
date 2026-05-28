@@ -13,78 +13,117 @@
     </UserControl.DataContext>
 
     <UserControl.Resources>
-        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="8" ShadowDepth="2" Opacity="0.15"/>
+        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="15" ShadowDepth="4" Opacity="0.1" Color="#000000"/>
+        <Style TargetType="TextBlock" x:Key="LabelStyle">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#7F8C8D"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style TargetType="TextBox">
+            <Setter Property="Height" Value="42"/>
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
-    <Grid Margin="15">
-        <Border Background="White" CornerRadius="10" Padding="25" Effect="{StaticResource ShadowEffect}"
-                MaxWidth="700" HorizontalAlignment="Center" VerticalAlignment="Top">
+    <Grid Margin="20">
+        <Border Background="White" CornerRadius="12" Padding="35,30" Effect="{StaticResource ShadowEffect}"
+                MaxWidth="750" HorizontalAlignment="Center" VerticalAlignment="Top">
             <ScrollViewer VerticalScrollBarVisibility="Auto">
                 <StackPanel>
-                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
-                        <Ellipse Width="56" Height="56" Fill="#3498DB"/>
-                        <StackPanel VerticalAlignment="Center" Margin="15,0,0,0">
-                            <TextBlock Text="THÔNG TIN TÀI KHOẢN" FontSize="18" FontWeight="Bold" Foreground="#2C3E50"/>
-                            <TextBlock Text="Cập nhật thông tin liên hệ &amp; địa chỉ giao hàng"
-                                       FontSize="12" Foreground="#7F8C8D"/>
+                    <!-- Header -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,25">
+                        <Ellipse Width="64" Height="64" Fill="#3498DB"/>
+                        <StackPanel VerticalAlignment="Center" Margin="20,0,0,0">
+                            <TextBlock Text="THÔNG TIN TÀI KHOẢN" FontSize="22" FontWeight="Bold" Foreground="#2C3E50"/>
+                            <TextBlock Text="Quản lý thông tin liên hệ và địa chỉ giao hàng của bạn"
+                                       FontSize="13" Foreground="#95A5A6" Margin="0,3,0,0"/>
                         </StackPanel>
                     </StackPanel>
 
-                    <Border Background="#FFF8E1" CornerRadius="6" Padding="10" Margin="0,0,0,15">
-                        <TextBlock Text="{Binding TrangThai}" FontSize="12" TextWrapping="Wrap" Foreground="#7E5109"/>
+                    <Separator Margin="0,0,0,25" Background="#ECF0F1"/>
+
+                    <!-- Message -->
+                    <Border Background="#FEF9E7" BorderBrush="#F1C40F" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,25">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="ℹ️" FontSize="16" Margin="0,0,10,0"/>
+                            <TextBlock Text="{Binding TrangThai}" FontSize="13" TextWrapping="Wrap" Foreground="#D4AC0D" VerticalAlignment="Center"/>
+                        </StackPanel>
                     </Border>
 
-                    <Grid Margin="0,0,0,12">
+                    <!-- Row 1 -->
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Mã khách hàng" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding MaKH, Mode=OneWay}" IsReadOnly="True"
-                                     Height="32" Background="#F0F0F0" VerticalContentAlignment="Center" Padding="6,0"/>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Mã khách hàng" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding MaKH, Mode=OneWay}" IsReadOnly="True" Background="#F8F9F9" Foreground="#7F8C8D"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="Họ và tên *" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding HoTen, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="32" VerticalContentAlignment="Center" Padding="6,0"/>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Họ và tên *" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding HoTen, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
-                    <Grid Margin="0,0,0,12">
+                    <!-- Row 2 -->
+                    <Grid Margin="0,0,0,20">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
-                            <TextBlock Text="Số điện thoại *" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding SDT, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="32" VerticalContentAlignment="Center" Padding="6,0"/>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Số điện thoại *" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding SDT, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
-                        <StackPanel Grid.Column="1" Margin="8,0,0,0">
-                            <TextBlock Text="CCCD" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding CCCD, UpdateSourceTrigger=PropertyChanged}"
-                                     Height="32" VerticalContentAlignment="Center" Padding="6,0"/>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Số CCCD" Style="{StaticResource LabelStyle}"/>
+                            <TextBox Text="{Binding CCCD, UpdateSourceTrigger=PropertyChanged}"/>
                         </StackPanel>
                     </Grid>
 
-                    <StackPanel Margin="0,0,0,12">
-                        <TextBlock Text="Email" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="32" VerticalContentAlignment="Center" Padding="6,0"/>
+                    <!-- Email -->
+                    <StackPanel Margin="0,0,0,20">
+                        <TextBlock Text="Địa chỉ Email" Style="{StaticResource LabelStyle}"/>
+                        <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}"/>
                     </StackPanel>
 
-                    <StackPanel Margin="0,0,0,20">
-                        <TextBlock Text="Địa chỉ giao hàng" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,4"/>
+                    <!-- Address -->
+                    <StackPanel Margin="0,0,0,30">
+                        <TextBlock Text="Địa chỉ giao hàng chi tiết" Style="{StaticResource LabelStyle}"/>
                         <TextBox Text="{Binding DiaChi, UpdateSourceTrigger=PropertyChanged}"
-                                 Height="60" VerticalContentAlignment="Top" Padding="6,4"
+                                 Height="80" VerticalContentAlignment="Top" Padding="12,12"
                                  TextWrapping="Wrap" AcceptsReturn="True"/>
                     </StackPanel>
 
-                    <Button Content="💾 LƯU THÔNG TIN"
-                            Padding="10,12" Background="#27AE60" Foreground="White"
-                            FontSize="14" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                            Command="{Binding LenhLuu}"/>
+                    <Button Content="💾 LƯU THAY ĐỔI"
+                            Height="48" Background="#27AE60" Foreground="White"
+                            FontSize="15" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
+                            Command="{Binding LenhLuu}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="8">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
             </ScrollViewer>
         </Border>

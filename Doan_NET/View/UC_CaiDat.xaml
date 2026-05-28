@@ -11,43 +11,96 @@
         <vm:CaiDat_VM/>
     </UserControl.DataContext>
 
-    <Grid Margin="15" HorizontalAlignment="Left" VerticalAlignment="Top" Width="520">
-        <StackPanel>
-            <TextBlock Text="CÀI ĐẶT TÀI KHOẢN" FontSize="18" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,15"/>
+    <UserControl.Resources>
+        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="12" ShadowDepth="3" Opacity="0.1" Color="#000000"/>
+        <Style TargetType="TextBlock" x:Key="HeaderStyle">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="Foreground" Value="#2C3E50"/>
+            <Setter Property="Margin" Value="0,0,0,20"/>
+        </Style>
+        <Style TargetType="TextBlock" x:Key="LabelStyle">
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="Foreground" Value="#7F8C8D"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style TargetType="PasswordBox">
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="PasswordBox">
+                        <Border Background="White" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="6">
+                            <ScrollViewer x:Name="PART_ContentHost"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
 
-            <Border Background="White" CornerRadius="10" Padding="20" Margin="0,0,0,15">
+    <Grid Margin="30">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="0,0,15,0">
+            <TextBlock Text="CÀI ĐẶT TÀI KHOẢN" Style="{StaticResource HeaderStyle}"/>
+
+            <Border Background="White" CornerRadius="12" Padding="25" Effect="{StaticResource ShadowEffect}" Margin="0,0,0,20">
                 <StackPanel>
-                    <TextBlock Text="THÔNG TIN TÀI KHOẢN" FontSize="14" FontWeight="Bold" Foreground="#2980B9" Margin="0,0,0,12"/>
-                    <Grid Margin="0,0,0,6">
-                        <TextBlock Text="Tên đăng nhập:" Foreground="Gray"/>
-                        <TextBlock Text="{Binding TenDangNhap}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
-                    </Grid>
-                    <Grid Margin="0,0,0,6">
-                        <TextBlock Text="Vai trò:" Foreground="Gray"/>
-                        <TextBlock Text="{Binding VaiTro}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
-                    </Grid>
-                    <Grid>
-                        <TextBlock Text="Nhân viên:" Foreground="Gray"/>
-                        <TextBlock Text="{Binding TenNhanVien}" HorizontalAlignment="Right" FontWeight="SemiBold"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                        <Ellipse Width="60" Height="60" Fill="#3498DB"/>
+                        <StackPanel VerticalAlignment="Center" Margin="15,0,0,0">
+                            <TextBlock Text="{Binding TenNhanVien}" FontSize="18" FontWeight="Bold" Foreground="#2C3E50"/>
+                            <Border Background="#EAF2F8" CornerRadius="4" Padding="8,4" HorizontalAlignment="Left" Margin="0,5,0,0">
+                                <TextBlock Text="{Binding VaiTro}" FontSize="12" FontWeight="SemiBold" Foreground="#2980B9"/>
+                            </Border>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <Separator Margin="0,10,0,15" Background="#ECF0F1"/>
+
+                    <Grid Margin="0,0,0,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="👤 Tên đăng nhập:" Style="{StaticResource LabelStyle}" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="{Binding TenDangNhap}" FontSize="14" FontWeight="Bold" Foreground="#34495E" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                     </Grid>
                 </StackPanel>
             </Border>
+        </StackPanel>
 
-            <Border Background="White" CornerRadius="10" Padding="20">
+        <StackPanel Grid.Column="1" Margin="15,0,0,0">
+            <TextBlock Text="ĐỔI MẬT KHẨU" Style="{StaticResource HeaderStyle}"/>
+
+            <Border Background="White" CornerRadius="12" Padding="25" Effect="{StaticResource ShadowEffect}">
                 <StackPanel>
-                    <TextBlock Text="ĐỔI MẬT KHẨU" FontSize="14" FontWeight="Bold" Foreground="#2980B9" Margin="0,0,0,12"/>
+                    <TextBlock Text="Mật khẩu hiện tại *" Style="{StaticResource LabelStyle}"/>
+                    <PasswordBox x:Name="MatKhauCuBox" Margin="0,0,0,15"/>
 
-                    <TextBlock Text="Mật khẩu hiện tại:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
-                    <PasswordBox x:Name="MatKhauCuBox" Height="32" Margin="0,0,0,10"/>
+                    <TextBlock Text="Mật khẩu mới *" Style="{StaticResource LabelStyle}"/>
+                    <PasswordBox x:Name="MatKhauMoiBox" Margin="0,0,0,15"/>
 
-                    <TextBlock Text="Mật khẩu mới:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
-                    <PasswordBox x:Name="MatKhauMoiBox" Height="32" Margin="0,0,0,10"/>
+                    <TextBlock Text="Xác nhận mật khẩu mới *" Style="{StaticResource LabelStyle}"/>
+                    <PasswordBox x:Name="XacNhanBox" Margin="0,0,0,25"/>
 
-                    <TextBlock Text="Xác nhận mật khẩu mới:" Foreground="Gray" FontSize="11" Margin="0,0,0,3"/>
-                    <PasswordBox x:Name="XacNhanBox" Height="32" Margin="0,0,0,15"/>
-
-                    <Button Content="ĐỔI MẬT KHẨU" Height="40" Background="#27AE60" Foreground="White"
-                            FontWeight="Bold" BorderThickness="0" Cursor="Hand" Click="DoiMatKhau_Click"/>
+                    <Button Content="💾 XÁC NHẬN ĐỔI MẬT KHẨU" Height="45" Background="#27AE60" Foreground="White"
+                            FontSize="14" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Click="DoiMatKhau_Click">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
             </Border>
         </StackPanel>

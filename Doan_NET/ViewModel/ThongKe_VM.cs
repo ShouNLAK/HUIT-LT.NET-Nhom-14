@@ -1,5 +1,6 @@
 using Doan_NET.Helper;
 using Doan_NET.Model;
+using Doan_NET.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,8 +11,8 @@ namespace Doan_NET.ViewModel
 {
     public class ThongKe_VM : BaseViewModel
     {
-        private int tongDoanhThu;
-        public int TongDoanhThu
+        private decimal tongDoanhThu;
+        public decimal TongDoanhThu
         {
             get { return tongDoanhThu; }
             set
@@ -77,10 +78,12 @@ namespace Doan_NET.ViewModel
         }
 
         public ICommand LenhTaiLaiThongKe { get; }
+        public ICommand LenhInThongKe { get; }
 
         public ThongKe_VM()
         {
             LenhTaiLaiThongKe = new RelayCommand(_ => TaiThongKe());
+            LenhInThongKe = new RelayCommand(_ => { W_ReportThongKe frm = new W_ReportThongKe(); frm.Show(); });
             TaiThongKe();
         }
 
@@ -99,7 +102,7 @@ namespace Doan_NET.ViewModel
                 danhSachHoaDon = new List<HoaDon>();
             }
 
-            TongDoanhThu = danhSachHoaDon.Sum(item => (int)(item.ThanhTien ?? 0));
+            TongDoanhThu = danhSachHoaDon.Sum(item => item.ThanhTien ?? 0);
             SoHoaDonMoi = danhSachHoaDon
                 .Select(item => item.MaHD ?? string.Empty)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
@@ -117,27 +120,49 @@ namespace Doan_NET.ViewModel
 
         private void TaiDuLieuDoanhThu6Thang(List<HoaDon> danhSachHoaDon)
         {
-            DateTime thangBatDau = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-5);
-            List<CotDoanhThuThang_VM> duLieu = new List<CotDoanhThuThang_VM>();
-            int doanhThuLonNhat = 0;
+            var danhSachThang = danhSachHoaDon
+                .Where(x => x.NgayLap.HasValue)
+                .Select(x => new { Nam = x.NgayLap.Value.Year, Thang = x.NgayLap.Value.Month })
+                .Distinct()
+                .OrderByDescending(x => x.Nam).ThenByDescending(x => x.Thang)
+                .Take(6)
+                .OrderBy(x => x.Nam).ThenBy(x => x.Thang)
+                .ToList();
 
-            for (int i = 0; i < 6; i++)
+            if (danhSachThang.Count == 0)
             {
-                DateTime thang = thangBatDau.AddMonths(i);
-                int doanhThu = danhSachHoaDon
-                    .Where(item => item.NgayLap.HasValue && item.NgayLap.Value.Year == thang.Year && item.NgayLap.Value.Month == thang.Month)
-                    .Sum(item => (int)(item.ThanhTien ?? 0));
+                for (int i = 5; i >= 0; i--)
+                {
+                    var date = DateTime.Now.AddMonths(-i);
+                    danhSachThang.Add(new { Nam = date.Year, Thang = date.Month });
+                }
+            }
+
+            List<CotDoanhThuThang_VM> duLieu = new List<CotDoanhThuThang_VM>();
+            decimal doanhThuLonNhat = 0;
+
+            foreach (var t in danhSachThang)
+            {
+                decimal doanhThu = danhSachHoaDon
+                    .Where(item => item.NgayLap.HasValue && item.NgayLap.Value.Year == t.Nam && item.NgayLap.Value.Month == t.Thang)
+                    .Sum(item => item.ThanhTien ?? 0);
 
                 if (doanhThu > doanhThuLonNhat)
                 {
                     doanhThuLonNhat = doanhThu;
                 }
 
+                string strHienThi = doanhThu.ToString("N0") + " đ";
+                if (doanhThu >= 1000000000)
+                    strHienThi = (doanhThu / 1000000000m).ToString("0.##") + " Tỷ";
+                else if (doanhThu >= 1000000)
+                    strHienThi = (doanhThu / 1000000m).ToString("0.##") + " Tr";
+
                 duLieu.Add(new CotDoanhThuThang_VM
                 {
-                    ThangHienThi = "Thg " + thang.Month,
+                    ThangHienThi = t.Thang + "/" + (t.Nam % 100).ToString("00"),
                     DoanhThuThang = doanhThu,
-                    GiaTriHienThi = doanhThu.ToString("N0") + " VNĐ"
+                    GiaTriHienThi = strHienThi
                 });
             }
 
@@ -149,7 +174,7 @@ namespace Doan_NET.ViewModel
                 }
                 else
                 {
-                    cot.ChieuCaoCot = Math.Max(20, ((double)cot.DoanhThuThang / doanhThuLonNhat) * 160);
+                    cot.ChieuCaoCot = Math.Max(20, ((double)cot.DoanhThuThang / (double)doanhThuLonNhat) * 160);
                 }
             }
 
@@ -178,7 +203,7 @@ namespace Doan_NET.ViewModel
                 {
                     TenMuc = nhom.Key,
                     SoLuongBan = nhom.Sum(item => item.SoLuong ?? 0),
-                    DoanhThu = nhom.Sum(item => (int)(item.ThanhTien ?? 0))
+                    DoanhThu = nhom.Sum(item => item.ThanhTien ?? 0)
                 })
                 .OrderByDescending(item => item.DoanhThu)
                 .ThenByDescending(item => item.SoLuongBan)
@@ -192,7 +217,7 @@ namespace Doan_NET.ViewModel
                 {
                     TenMuc = nhom.Key,
                     SoLuongBan = nhom.Sum(item => item.SoLuong ?? 0),
-                    DoanhThu = nhom.Sum(item => (int)(item.ThanhTien ?? 0))
+                    DoanhThu = nhom.Sum(item => item.ThanhTien ?? 0)
                 })
                 .OrderByDescending(item => item.DoanhThu)
                 .ThenByDescending(item => item.SoLuongBan)
@@ -227,8 +252,8 @@ namespace Doan_NET.ViewModel
             }
         }
 
-        private int doanhThuThang;
-        public int DoanhThuThang
+        private decimal doanhThuThang;
+        public decimal DoanhThuThang
         {
             get { return doanhThuThang; }
             set
@@ -265,6 +290,6 @@ namespace Doan_NET.ViewModel
     {
         public string TenMuc { get; set; }
         public int SoLuongBan { get; set; }
-        public int DoanhThu { get; set; }
+        public decimal DoanhThu { get; set; }
     }
 }

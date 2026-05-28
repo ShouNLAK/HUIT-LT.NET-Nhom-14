@@ -80,6 +80,14 @@ namespace Doan_NET.View
 
             MessageBox.Show("Đã xác nhận đơn. Khách sẽ thấy đơn 'Đã xác nhận' và được mời đến cơ sở nhận xe.",
                 "Thành công", MessageBoxButton.OK, MessageBoxImage.Information);
+
+            if (don.DanhSachMaHD != null && don.DanhSachMaHD.Count > 0)
+            {
+                var maHD = don.DanhSachMaHD.FirstOrDefault();
+                W_ReportHoaDon frmReport = new W_ReportHoaDon(maHD);
+                frmReport.Show();
+            }
+
             DialogResult = true;
             Close();
         }

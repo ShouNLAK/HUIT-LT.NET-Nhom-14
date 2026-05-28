@@ -74,7 +74,8 @@ namespace Doan_NET.ViewModel
                         SDT = username,
                         CCCD = string.Empty,
                         Email = string.Empty,
-                        DiaChi = string.Empty
+                        DiaChi = string.Empty,
+                        AnhCaNhan = "https://static.vecteezy.com/system/resources/previews/000/439/863/original/vector-users-icon.jpg"
                     };
                     ctx.KhachHangs.Add(khachHangMoi);
 
@@ -82,7 +83,7 @@ namespace Doan_NET.ViewModel
                     {
                         Username = username,
                         Password = matKhau,
-                        Role = "KhachHang",
+                        Role = "Khách hàng",
                         MaNV = null
                     };
                     ctx.TaiKhoans.Add(taiKhoanMoi);

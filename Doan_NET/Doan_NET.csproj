@@ -41,13 +41,19 @@
     <Reference Include="EntityFramework, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.5.0.0\lib\net45\EntityFramework.dll</HintPath>
     </Reference>
+    <Reference Include="ReachFramework" />
+    <Reference Include="sapbusinessobjects.wpf.viewer, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
+    <Reference Include="SAPBusinessObjects.WPF.ViewerShared, Version=13.0.4000.0, Culture=neutral, PublicKeyToken=692fbea5521e1304, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Printing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -74,16 +80,19 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>crp_HoaDon.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
-        <Compile Include="Report\crp_ThongKe.cs">
+    <Compile Include="Report\crp_ThongKe.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>crp_ThongKe.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
-        <Compile Include="Report\crp_XuatKho.cs">
+    <Compile Include="Report\crp_XuatKho.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>crp_XuatKho.rpt</DependentUpon>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Model\QLCuaHangXeModel.Context.cs">
       <AutoGen>True</AutoGen>
@@ -204,6 +213,15 @@
     <Compile Include="View\W_ThemXe.xaml.cs">
       <DependentUpon>W_ThemXe.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\W_ReportHoaDon.xaml.cs">
+      <DependentUpon>W_ReportHoaDon.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_ReportThongKe.xaml.cs">
+      <DependentUpon>W_ReportThongKe.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\W_ReportXuatKho.xaml.cs">
+      <DependentUpon>W_ReportXuatKho.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Helper\BaseViewModel.cs" />
@@ -245,11 +263,11 @@
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>crp_HoaDon.cs</LastGenOutput>
     </EmbeddedResource>
-        <EmbeddedResource Include="Report\crp_ThongKe.rpt">
+    <EmbeddedResource Include="Report\crp_ThongKe.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>crp_ThongKe.cs</LastGenOutput>
     </EmbeddedResource>
-        <EmbeddedResource Include="Report\crp_XuatKho.rpt">
+    <EmbeddedResource Include="Report\crp_XuatKho.rpt">
       <Generator>CrystalDecisions.VSDesigner.CodeGen.ReportCodeGenerator</Generator>
       <LastGenOutput>crp_XuatKho.cs</LastGenOutput>
     </EmbeddedResource>
@@ -375,6 +393,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="View\W_ThemXe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\W_ReportHoaDon.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\W_ReportThongKe.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="View\W_ReportXuatKho.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

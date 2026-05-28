@@ -60,6 +60,17 @@
             Command="{Binding LenhMoSuaHangXe}"
             FontSize="12"
             FontWeight="Bold" Margin="650,0,0,0"/>
+            <Button
+            Content="📦 Xuất kho"
+            Padding="15,8"
+            Width="90"
+            Background="#9b59b6"
+            Foreground="White"
+            BorderThickness="0"
+            Cursor="Hand"
+            Command="{Binding LenhXuatKho}"
+            FontSize="12"
+            FontWeight="Bold" Margin="745,0,-120,0"/>
         </Grid>
         <!-- Danh sách hãng xe -->
 

@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="Doan_NET.View.UC_ThongKe"
+<UserControl x:Class="Doan_NET.View.UC_ThongKe"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,7 +11,40 @@
         <vm:ThongKe_VM/>
     </UserControl.DataContext>
 
-    <Grid Margin="20">
+    <UserControl.Resources>
+        <DropShadowEffect x:Key="ShadowEffect" BlurRadius="15" ShadowDepth="4" Opacity="0.1" Color="#000000"/>
+        
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowHeight" Value="45"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#F2F3F4"/>
+        </Style>
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F8F9F9"/>
+            <Setter Property="Foreground" Value="#7F8C8D"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="10,12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E8E8"/>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                            <ContentPresenter VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="25">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -19,42 +52,103 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0">
-            <Button Content="🔄 Làm mới"
-                    HorizontalAlignment="Right"
-                    Margin="0,0,0,10"
-                    Padding="14,6"
-                    Background="#34495E"
-                    Foreground="White"
-                    BorderThickness="0"
-                    Cursor="Hand"
-                    Command="{Binding LenhTaiLaiThongKe}"/>
-        <UniformGrid Columns="3" Margin="0,0,0,20">
-            <Border Background="White" CornerRadius="10" Margin="0,0,10,0" Padding="15">
-                <StackPanel>
-                    <TextBlock Text="TỔNG DOANH THU" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="{Binding TongDoanhThu, StringFormat={}{0:N0} VNĐ}" FontSize="22" FontWeight="Bold" Foreground="#27AE60"/>
+            <!-- Toolbar -->
+            <Grid Margin="0,0,0,20">
+                <TextBlock Text="BẢNG ĐIỀU KHIỂN &amp; THỐNG KÊ" FontSize="22" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
+                
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="📊 In báo cáo phân tích"
+                            Height="38" Padding="15,0" Margin="0,0,10,0"
+                            Background="#27AE60" Foreground="White" FontWeight="Bold"
+                            BorderThickness="0" Cursor="Hand"
+                            Command="{Binding LenhInThongKe}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+                    <Button Content="🔄 Làm mới dữ liệu"
+                            Height="38" Padding="15,0"
+                            Background="#34495E" Foreground="White" FontWeight="Bold"
+                            BorderThickness="0" Cursor="Hand"
+                            Command="{Binding LenhTaiLaiThongKe}">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
                 </StackPanel>
-            </Border>
-            <Border Background="White" CornerRadius="10" Margin="5,0,5,0" Padding="15">
-                <StackPanel>
-                    <TextBlock Text="HÓA ĐƠN MỚI" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="{Binding SoHoaDonMoi}" FontSize="22" FontWeight="Bold" Foreground="#2980B9"/>
-                </StackPanel>
-            </Border>
-            <Border Background="White" CornerRadius="10" Margin="10,0,0,0" Padding="15">
-                <StackPanel>
-                    <TextBlock Text="KHÁCH HÀNG PHỤC VỤ" Foreground="Gray" FontSize="12"/>
-                    <TextBlock Text="{Binding SoKhachHangPhucVu}" FontSize="22" FontWeight="Bold" Foreground="#8E44AD"/>
-                </StackPanel>
-            </Border>
-        </UniformGrid>
+            </Grid>
+
+            <!-- Cards -->
+            <UniformGrid Columns="3" Margin="0,0,0,20">
+                <!-- Card 1 -->
+                <Border Background="White" CornerRadius="12" Margin="0,0,10,0" Padding="20" Effect="{StaticResource ShadowEffect}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="TỔNG DOANH THU" Foreground="#7F8C8D" FontSize="13" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding TongDoanhThu, StringFormat={}{0:N0} đ}" FontSize="26" FontWeight="Bold" Foreground="#27AE60" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <Ellipse Grid.Column="1" Width="50" Height="50" Fill="#EAFAF1" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="💰" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Card 2 -->
+                <Border Background="White" CornerRadius="12" Margin="5,0,5,0" Padding="20" Effect="{StaticResource ShadowEffect}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="HÓA ĐƠN MỚI" Foreground="#7F8C8D" FontSize="13" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding SoHoaDonMoi}" FontSize="26" FontWeight="Bold" Foreground="#2980B9" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <Ellipse Grid.Column="1" Width="50" Height="50" Fill="#EBF5FB" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="📝" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+
+                <!-- Card 3 -->
+                <Border Background="White" CornerRadius="12" Margin="10,0,0,0" Padding="20" Effect="{StaticResource ShadowEffect}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="LƯỢT KHÁCH HÀNG" Foreground="#7F8C8D" FontSize="13" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding SoKhachHangPhucVu}" FontSize="26" FontWeight="Bold" Foreground="#8E44AD" Margin="0,5,0,0"/>
+                        </StackPanel>
+                        <Ellipse Grid.Column="1" Width="50" Height="50" Fill="#F4ECF7" VerticalAlignment="Center"/>
+                        <TextBlock Grid.Column="1" Text="👥" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Grid>
+                </Border>
+            </UniformGrid>
         </StackPanel>
 
-        <Border Grid.Row="1" Background="White" CornerRadius="10" Margin="0,0,0,20" Padding="20">
+        <!-- Chart Area -->
+        <Border Grid.Row="1" Background="White" CornerRadius="12" Margin="0,0,0,20" Padding="25" Effect="{StaticResource ShadowEffect}">
             <DockPanel>
-                <TextBlock DockPanel.Dock="Top" Text="DOANH THU 6 THÁNG GẦN NHẤT" FontWeight="Bold" Margin="0,0,0,20"/>
+                <TextBlock DockPanel.Dock="Top" Text="📈 BIỂU ĐỒ DOANH THU 6 THÁNG GẦN NHẤT" FontSize="15" FontWeight="Bold" Foreground="#2C3E50" Margin="0,0,0,25"/>
 
-                <ItemsControl ItemsSource="{Binding DuLieuDoanhThu6Thang}">
+                <!-- Trục Y giả định -->
+                <StackPanel DockPanel.Dock="Left" Margin="0,0,20,25" VerticalAlignment="Stretch" Width="40">
+                    <TextBlock Text="" Height="0" VerticalAlignment="Top"/>
+                </StackPanel>
+
+                <ItemsControl ItemsSource="{Binding DuLieuDoanhThu6Thang}" VerticalAlignment="Bottom" Height="220">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
                             <UniformGrid Columns="6" VerticalAlignment="Bottom"/>
@@ -62,12 +156,20 @@
                     </ItemsControl.ItemsPanel>
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel VerticalAlignment="Bottom" Margin="10,0">
-                                <Border Background="#3498DB" Width="40" 
-                                    Height="{Binding ChieuCaoCot}" 
-                                    CornerRadius="5,5,0,0"
-                                    ToolTip="{Binding GiaTriHienThi}"/>
-                                <TextBlock Text="{Binding ThangHienThi}" HorizontalAlignment="Center" Margin="0,5,0,0" FontSize="11"/>
+                            <StackPanel VerticalAlignment="Bottom" Margin="15,0">
+                                <TextBlock Text="{Binding GiaTriHienThi}" HorizontalAlignment="Center" FontSize="11" Foreground="#95A5A6" Margin="0,0,0,5"/>
+                                <Border Width="50" 
+                                        Height="{Binding ChieuCaoCot}" 
+                                        CornerRadius="4,4,0,0"
+                                        ToolTip="{Binding GiaTriHienThi}">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#3498DB" Offset="0"/>
+                                            <GradientStop Color="#2980B9" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <TextBlock Text="{Binding ThangHienThi}" FontWeight="SemiBold" Foreground="#34495E" HorizontalAlignment="Center" Margin="0,10,0,0" FontSize="13"/>
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -75,32 +177,29 @@
             </DockPanel>
         </Border>
 
+        <!-- Top Selling -->
         <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Border Background="White" CornerRadius="10" Padding="15" Margin="0,0,10,0">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="10" Opacity="0.1"/>
-                </Border.Effect>
+            <Border Background="White" CornerRadius="12" Padding="20" Margin="0,0,10,0" Effect="{StaticResource ShadowEffect}">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
-                        <TextBlock Text="🛠️" FontSize="18" Margin="0,0,10,0"/>
-                        <TextBlock Text="DỊCH VỤ BÁN CHẠY" FontSize="15" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock Text="🛠️" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="TOP DỊCH VỤ / PHỤ TÙNG" FontSize="16" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <DataGrid ItemsSource="{Binding DanhSachDichVuBanChay}" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" Background="Transparent" BorderThickness="0"
-                  RowHeight="35">
+                              CanUserAddRows="False" IsReadOnly="True" Cursor="Arrow">
                         <DataGrid.Columns>
-                            <DataGridTextColumn Header="Tên dịch vụ" Binding="{Binding TenMuc}" Width="*"/>
+                            <DataGridTextColumn Header="Tên dịch vụ/Sản phẩm" Binding="{Binding TenMuc}" Width="*"/>
                             <DataGridTextColumn Header="Số lượng" Binding="{Binding SoLuongBan}" Width="80"/>
                             <DataGridTextColumn Header="Doanh thu" Binding="{Binding DoanhThu, StringFormat={}{0:N0}}" Width="120">
                                 <DataGridTextColumn.ElementStyle>
                                     <Style TargetType="TextBlock">
-                                        <Setter Property="FontWeight" Value="SemiBold"/>
+                                        <Setter Property="FontWeight" Value="Bold"/>
                                         <Setter Property="Foreground" Value="#27AE60"/>
                                     </Style>
                                 </DataGridTextColumn.ElementStyle>
@@ -110,19 +209,15 @@
                 </DockPanel>
             </Border>
 
-            <Border Grid.Column="1" Background="White" CornerRadius="10" Padding="15" Margin="10,0,0,0">
-                <Border.Effect>
-                    <DropShadowEffect BlurRadius="10" Opacity="0.1"/>
-                </Border.Effect>
+            <Border Grid.Column="1" Background="White" CornerRadius="12" Padding="20" Margin="10,0,0,0" Effect="{StaticResource ShadowEffect}">
                 <DockPanel>
                     <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" Margin="0,0,0,15">
-                        <TextBlock Text="🏍️" FontSize="18" Margin="0,0,10,0"/>
-                        <TextBlock Text="XE BÁN CHẠY NHẤT" FontSize="15" FontWeight="Bold" Foreground="#2C3E50"/>
+                        <TextBlock Text="🏍️" FontSize="20" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                        <TextBlock Text="TOP XE MÁY BÁN CHẠY" FontSize="16" FontWeight="Bold" Foreground="#2C3E50" VerticalAlignment="Center"/>
                     </StackPanel>
 
                     <DataGrid ItemsSource="{Binding DanhSachXeBanChay}" AutoGenerateColumns="False" 
-                  CanUserAddRows="False" Background="Transparent" BorderThickness="0"
-                  RowHeight="35">
+                              CanUserAddRows="False" IsReadOnly="True" Cursor="Arrow">
                         <DataGrid.Columns>
                             <DataGridTextColumn Header="Mẫu xe" Binding="{Binding TenMuc}" Width="*"/>
                             <DataGridTextColumn Header="Đã bán" Binding="{Binding SoLuongBan}" Width="80"/>

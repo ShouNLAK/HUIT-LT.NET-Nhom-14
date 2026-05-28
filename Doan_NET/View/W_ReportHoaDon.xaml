@@ -1,0 +1,9 @@
+<Window x:Class="Doan_NET.View.W_ReportHoaDon"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Viewer="clr-namespace:SAPBusinessObjects.WPF.Viewer;assembly=SAPBusinessObjects.WPF.Viewer"
+        Title="In Hóa Đơn" Height="300" Width="1080" WindowStartupLocation="CenterScreen">
+    <DockPanel LastChildFill="True">
+        <Viewer:CrystalReportsViewer x:Name="ViewerHoaDon"/>
+    </DockPanel>
+</Window>

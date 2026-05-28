@@ -1,5 +1,6 @@
 using Doan_NET.Helper;
 using Doan_NET.Model;
+using Doan_NET.View;
 using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -17,7 +18,7 @@ namespace Doan_NET.ViewModel
             get { return PhienDangNhap.GioHangKhach; }
         }
 
-        public int TongTien
+        public decimal TongTien
         {
             get { return GioHang.Sum(item => item.ThanhTien); }
         }
@@ -141,7 +142,7 @@ namespace Doan_NET.ViewModel
         {
             if (item == null) return;
             int tonKhoToiDa = LayTonKhoToiDa(item);
-            if (tonKhoToiDa > 0 && item.SoLuong + 1 > tonKhoToiDa)
+            if (item.SoLuong + 1 > tonKhoToiDa)
             {
                 MessageBox.Show("Vượt quá tồn kho (" + tonKhoToiDa + ").", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -194,7 +195,7 @@ namespace Doan_NET.ViewModel
                     return pt?.TonKho ?? 0;
                 }
             }
-            return 0;
+            return int.MaxValue; // Dịch vụ không bị giới hạn tồn kho
         }
 
         private void DatHang()
@@ -218,41 +219,37 @@ namespace Doan_NET.ViewModel
             }
 
             DateTime ngayLap = DateTime.Now;
-            int soDonDaTao = 0;
+            string maHoaDon = "";
 
             try
             {
-                // MaHD là khóa chính nên mỗi mặt hàng phải có một mã riêng,
-                // không được dùng chung một mã cho cả giỏ.
                 int soBatDau = LaySoHoaDonLonNhat();
+                maHoaDon = "HD" + (soBatDau + 1).ToString("000");
 
                 using (var ctx = new QuanLyBanXeMayEntities())
                 {
                     ctx.Configuration.LazyLoadingEnabled = false;
-                    foreach (MatHangGio_VM item in GioHang)
+                    var dsHopLe = GioHang.Where(x => x.ThanhTien > 0).ToList();
+                    if (dsHopLe.Count == 0) return;
+
+                    // Lấy mã nhân viên đầu tiên làm mặc định cho khách tự đặt
+                    // (Vì bảng HoaDon quy định MaNV nằm trong khóa chính nên không được NULL)
+                    string maNVMacDinh = ctx.NhanViens.Select(nv => nv.MaNV).FirstOrDefault();
+
+                    foreach (MatHangGio_VM item in dsHopLe)
                     {
-                        // CSDL ràng buộc ThanhTien > 0 nên bỏ qua dòng giá 0.
-                        if (item.ThanhTien <= 0)
-                        {
-                            continue;
-                        }
-
-                        soDonDaTao++;
-                        string maHoaDon = "HD" + (soBatDau + soDonDaTao).ToString("000");
-
-                        var hd = new HoaDon
-                        {
-                            MaHD = maHoaDon,
-                            NgayLap = ngayLap,
-                            MaNV = null,
-                            MaKH = PhienDangNhap.KhachHangHienTai.MaKH,
-                            TenDV_SP = item.TenMatHang,
-                            SoLuong = item.SoLuong,
-                            ThanhTien = item.ThanhTien,
-                            PhuongThucThanhToan = HinhThucThanhToanDangChon,
-                            TrangThai = "Chờ xác nhận"
-                        };
-                        ctx.HoaDons.Add(hd);
+                        string sql = "INSERT INTO HoaDon (MaHD, NgayLap, MaNV, MaKH, TenDV_SP, SoLuong, ThanhTien, PhuongThucThanhToan, TrangThai) VALUES ({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7}, {8})";
+                        ctx.Database.ExecuteSqlCommand(sql,
+                            maHoaDon,
+                            ngayLap,
+                            string.IsNullOrEmpty(maNVMacDinh) ? (object)DBNull.Value : maNVMacDinh,
+                            string.IsNullOrEmpty(PhienDangNhap.KhachHangHienTai.MaKH) ? (object)DBNull.Value : PhienDangNhap.KhachHangHienTai.MaKH,
+                            item.TenMatHang,
+                            item.SoLuong,
+                            item.ThanhTien,
+                            string.IsNullOrEmpty(HinhThucThanhToanDangChon) ? (object)DBNull.Value : HinhThucThanhToanDangChon,
+                            "Chờ xác nhận"
+                        );
 
                         string ma = (item.MaMatHang ?? string.Empty).Trim().ToUpper();
                         if (ma.StartsWith("XE"))
@@ -286,8 +283,12 @@ namespace Doan_NET.ViewModel
 
             GioHang.Clear();
             OnPropertyChanged(nameof(TongTien));
-            MessageBox.Show("Đặt hàng thành công! Đã tạo " + soDonDaTao + " hóa đơn.", "Thông báo",
+            MessageBox.Show("Đặt hàng thành công hóa đơn " + maHoaDon + ".", "Thông báo",
                 MessageBoxButton.OK, MessageBoxImage.Information);
+
+            // Mở report hóa đơn mới
+            W_ReportHoaDon frmReport = new W_ReportHoaDon(maHoaDon);
+            frmReport.Show();
         }
 
         private bool KiemTraTonKho()
