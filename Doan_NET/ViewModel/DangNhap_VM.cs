@@ -48,6 +48,9 @@ namespace Doan_NET.ViewModel
 
         public ICommand LenhDangNhap { get; }
         public ICommand LenhMoDangKy { get; }
+        public ICommand LenhHienMatKhau { get; }
+
+        private bool dangHienMatKhau;
 
         public DangNhap_VM()
         {
@@ -55,6 +58,33 @@ namespace Doan_NET.ViewModel
             LaAdmin = false;
             LenhDangNhap = new RelayCommand(thamSo => DangNhap(thamSo as Window));
             LenhMoDangKy = new RelayCommand(thamSo => MoDangKy(thamSo as Window));
+            LenhHienMatKhau = new RelayCommand(thamSo => HienMatKhau(thamSo as Window));
+        }
+
+        private void HienMatKhau(Window cuaSo)
+        {
+            if (cuaSo == null) return;
+            var passwordBox = cuaSo.FindName("PasswordBox") as PasswordBox;
+            var passwordTextBox = cuaSo.FindName("PasswordTextBox") as TextBox;
+            var toggleButton = cuaSo.FindName("TogglePasswordButton") as Button;
+            if (passwordBox == null || passwordTextBox == null || toggleButton == null) return;
+
+            if (!dangHienMatKhau)
+            {
+                passwordTextBox.Text = passwordBox.Password;
+                passwordTextBox.Visibility = Visibility.Visible;
+                passwordBox.Visibility = Visibility.Collapsed;
+                toggleButton.Content = "🙈";
+                dangHienMatKhau = true;
+            }
+            else
+            {
+                passwordBox.Password = passwordTextBox.Text;
+                passwordBox.Visibility = Visibility.Visible;
+                passwordTextBox.Visibility = Visibility.Collapsed;
+                toggleButton.Content = "👁";
+                dangHienMatKhau = false;
+            }
         }
 
         private void DangNhap(Window cuaSoDangNhap)

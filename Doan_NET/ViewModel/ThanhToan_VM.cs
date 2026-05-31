@@ -297,7 +297,7 @@ namespace Doan_NET.ViewModel
                                 "Đã xác nhận"
                             );
 
-                            // Trừ tồn kho ngay trong cùng giao dịch để dữ liệu nhất quán.
+                            // Trừ tồn kho ngay trong cùng lần lưu để dữ liệu nhất quán.
                             if (item.LaPhuTung)
                             {
                                 var phuTung = ctx.DichVuPhuTungs.FirstOrDefault(dv => dv.MaPT == item.MaMatHang);

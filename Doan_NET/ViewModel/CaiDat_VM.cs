@@ -29,9 +29,30 @@ namespace Doan_NET.ViewModel
             set { tenNhanVien = value; OnPropertyChanged(); }
         }
 
+        public System.Windows.Input.ICommand LenhDoiMatKhau { get; }
+
         public CaiDat_VM()
         {
+            LenhDoiMatKhau = new RelayCommand(p => ThucHienDoiMatKhau(p as System.Windows.Controls.UserControl));
             TaiThongTinTaiKhoan();
+        }
+
+        private void ThucHienDoiMatKhau(System.Windows.Controls.UserControl uc)
+        {
+            if (uc == null) return;
+            var mkCu = uc.FindName("MatKhauCuBox") as System.Windows.Controls.PasswordBox;
+            var mkMoi = uc.FindName("MatKhauMoiBox") as System.Windows.Controls.PasswordBox;
+            var xacNhan = uc.FindName("XacNhanBox") as System.Windows.Controls.PasswordBox;
+
+            if (mkCu != null && mkMoi != null && xacNhan != null)
+            {
+                if (DoiMatKhau(mkCu.Password, mkMoi.Password, xacNhan.Password))
+                {
+                    mkCu.Clear();
+                    mkMoi.Clear();
+                    xacNhan.Clear();
+                }
+            }
         }
 
         private void TaiThongTinTaiKhoan()

@@ -92,7 +92,9 @@
                     <PasswordBox x:Name="XacNhanBox" Margin="0,0,0,25"/>
 
                     <Button Content="💾 XÁC NHẬN ĐỔI MẬT KHẨU" Height="45" Background="#27AE60" Foreground="White"
-                            FontSize="14" FontWeight="Bold" BorderThickness="0" Cursor="Hand" Click="DoiMatKhau_Click">
+                            FontSize="14" FontWeight="Bold" BorderThickness="0" Cursor="Hand" 
+                            Command="{Binding LenhDoiMatKhau}" 
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType=UserControl}}">
                         <Button.Template>
                             <ControlTemplate TargetType="Button">
                                 <Border Background="{TemplateBinding Background}" CornerRadius="6">

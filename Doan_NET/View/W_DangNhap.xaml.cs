@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,30 +19,9 @@ namespace Doan_NET.View
     /// </summary>
     public partial class W_DangNhap : Window
     {
-        private bool dangHienMatKhau;
-
         public W_DangNhap()
         {
             InitializeComponent();
-        }
-
-        private void TogglePasswordButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!dangHienMatKhau)
-            {
-                PasswordTextBox.Text = PasswordBox.Password;
-                PasswordTextBox.Visibility = Visibility.Visible;
-                PasswordBox.Visibility = Visibility.Collapsed;
-                TogglePasswordButton.Content = "🙈";
-                dangHienMatKhau = true;
-                return;
-            }
-
-            PasswordBox.Password = PasswordTextBox.Text;
-            PasswordBox.Visibility = Visibility.Visible;
-            PasswordTextBox.Visibility = Visibility.Collapsed;
-            TogglePasswordButton.Content = "👁";
-            dangHienMatKhau = false;
         }
     }
 }

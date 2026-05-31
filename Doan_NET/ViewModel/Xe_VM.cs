@@ -176,6 +176,7 @@ namespace Doan_NET.ViewModel
         public ICommand LenhHuyFormXe { get; }
         public ICommand LenhTimKiemXe { get; }
         public ICommand LenhBanXe { get; }
+        public ICommand LenhChonHinhAnh { get; }
 
         public Xe_VM() : this(null) { }
 
@@ -190,10 +191,25 @@ namespace Doan_NET.ViewModel
             LenhHuyFormXe = new RelayCommand(parameter => DongFormXe(parameter as Window));
             LenhTimKiemXe = new RelayCommand(_ => TaiDanhSachXe());
             LenhBanXe = new RelayCommand(_ => BanXe());
+            LenhChonHinhAnh = new RelayCommand(_ => ChonHinhAnh());
 
             CapNhatTieuDe();
             TaiDanhSachXe();
             LamMoiNhapXe();
+        }
+
+        private void ChonHinhAnh()
+        {
+            var hopThoai = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Chọn hình ảnh xe",
+                Filter = "Tệp ảnh (*.png;*.jpg;*.jpeg;*.bmp;*.gif)|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Tất cả tệp (*.*)|*.*"
+            };
+
+            if (hopThoai.ShowDialog() == true)
+            {
+                HinhAnhNhap = hopThoai.FileName;
+            }
         }
 
         private void CapNhatTieuDe()
@@ -395,95 +411,102 @@ namespace Doan_NET.ViewModel
 
             string tenHangLuu = LayTenHangLuuXe();
 
-            if (dangSuaXe && XeDangChon != null)
+            try
             {
-                using (var ctx = new QuanLyBanXeMayEntities())
+                if (dangSuaXe && XeDangChon != null)
                 {
-                    ctx.Configuration.LazyLoadingEnabled = false;
-                    string tenDongXeNhapTrim = TenDongXeNhap.Trim();
-                    string tenXeCu = XeDangChon.TenXe;
-                    var xeMoi = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
-                        x.TenXe == tenDongXeNhapTrim &&
-                        x.TenXe != tenXeCu &&
-                        x.HangXe != null &&
-                        x.HangXe.TenHang == tenHangLuu);
-
-                    if (xeMoi != null)
+                    using (var ctx = new QuanLyBanXeMayEntities())
                     {
-                        MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
+                        ctx.Configuration.LazyLoadingEnabled = false;
+                        string tenDongXeNhapTrim = TenDongXeNhap.Trim();
+                        string tenXeCu = XeDangChon.TenXe;
+                        var xeMoi = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                            x.TenXe == tenDongXeNhapTrim &&
+                            x.TenXe != tenXeCu &&
+                            x.HangXe != null &&
+                            x.HangXe.TenHang == tenHangLuu);
+
+                        if (xeMoi != null)
+                        {
+                            MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        var efXe = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                            x.MaXe == XeDangChon.MaXe &&
+                            x.HangXe != null &&
+                            x.HangXe.TenHang == tenHangLuu);
+
+                        if (efXe != null)
+                        {
+                            efXe.TenXe = TenDongXeNhap.Trim();
+                            efXe.LoaiXe = LoaiXeNhap.Trim();
+                            efXe.MauSac = MauSacNhap.Trim();
+                            efXe.NamSX = namSX;
+                            efXe.GiaBan = giaXe;
+                            efXe.HinhAnh = HinhAnhNhap.Trim();
+                            efXe.MoTa = MoTaNhap.Trim();
+                            efXe.SoLuongTon = soLuongTon;
+                            ctx.SaveChanges();
+                        }
                     }
 
-                    var efXe = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
-                        x.MaXe == XeDangChon.MaXe &&
-                        x.HangXe != null &&
-                        x.HangXe.TenHang == tenHangLuu);
-
-                    if (efXe != null)
+                    dangSuaXe = false;
+                    TaiDanhSachXe();
+                    XeDangChon = DanhSachXe.FirstOrDefault(d => d.TenXe == TenDongXeNhap.Trim());
+                    cuaSo?.Close();
+                }
+                else
+                {
+                    using (var ctx = new QuanLyBanXeMayEntities())
                     {
-                        efXe.TenXe = TenDongXeNhap.Trim();
-                        efXe.LoaiXe = LoaiXeNhap.Trim();
-                        efXe.MauSac = MauSacNhap.Trim();
-                        efXe.NamSX = namSX;
-                        efXe.GiaBan = giaXe;
-                        efXe.HinhAnh = HinhAnhNhap.Trim();
-                        efXe.MoTa = MoTaNhap.Trim();
-                        efXe.SoLuongTon = soLuongTon;
+                        ctx.Configuration.LazyLoadingEnabled = false;
+                        string tenDongXeNhapTrim2 = TenDongXeNhap.Trim();
+                        var xeTrung = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
+                            x.TenXe == tenDongXeNhapTrim2 &&
+                            x.HangXe != null &&
+                            x.HangXe.TenHang == tenHangLuu);
+
+                        if (xeTrung != null)
+                        {
+                            MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        var hang = ctx.HangXes.FirstOrDefault(h => h.TenHang == tenHangLuu);
+                        if (hang == null)
+                        {
+                            MessageBox.Show("Không tìm thấy hãng xe. Vui lòng kiểm tra lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        string maMoiXe = TaoMaXeMoi(ctx);
+                        var efXe = new Xe
+                        {
+                            MaXe = maMoiXe,
+                            TenXe = TenDongXeNhap.Trim(),
+                            LoaiXe = LoaiXeNhap.Trim(),
+                            MauSac = MauSacNhap.Trim(),
+                            NamSX = namSX,
+                            GiaBan = giaXe,
+                            HinhAnh = HinhAnhNhap.Trim(),
+                            MoTa = MoTaNhap.Trim(),
+                            MaHang = hang.MaHang,
+                            SoLuongTon = soLuongTon
+                        };
+                        ctx.Xes.Add(efXe);
                         ctx.SaveChanges();
                     }
-                }
 
-                dangSuaXe = false;
-                TaiDanhSachXe();
-                XeDangChon = DanhSachXe.FirstOrDefault(d => d.TenXe == TenDongXeNhap.Trim());
-                cuaSo?.Close();
+                    dangSuaXe = false;
+                    TaiDanhSachXe();
+                    XeDangChon = DanhSachXe.FirstOrDefault(item => item.TenXe == TenDongXeNhap.Trim());
+                    cuaSo?.Close();
+                }
             }
-            else
+            catch (Exception ex)
             {
-                using (var ctx = new QuanLyBanXeMayEntities())
-                {
-                    ctx.Configuration.LazyLoadingEnabled = false;
-                    string tenDongXeNhapTrim2 = TenDongXeNhap.Trim();
-                    var xeTrung = ctx.Xes.Include("HangXe").FirstOrDefault(x =>
-                        x.TenXe == tenDongXeNhapTrim2 &&
-                        x.HangXe != null &&
-                        x.HangXe.TenHang == tenHangLuu);
-
-                    if (xeTrung != null)
-                    {
-                        MessageBox.Show("Tên dòng xe đã tồn tại trong hãng này.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    var hang = ctx.HangXes.FirstOrDefault(h => h.TenHang == tenHangLuu);
-                    if (hang == null)
-                    {
-                        MessageBox.Show("Không tìm thấy hãng xe. Vui lòng kiểm tra lại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                        return;
-                    }
-
-                    string maMoiXe = TaoMaXeMoi(ctx);
-                    var efXe = new Xe
-                    {
-                        MaXe = maMoiXe,
-                        TenXe = TenDongXeNhap.Trim(),
-                        LoaiXe = LoaiXeNhap.Trim(),
-                        MauSac = MauSacNhap.Trim(),
-                        NamSX = namSX,
-                        GiaBan = giaXe,
-                        HinhAnh = HinhAnhNhap.Trim(),
-                        MoTa = MoTaNhap.Trim(),
-                        MaHang = hang.MaHang,
-                        SoLuongTon = soLuongTon
-                    };
-                    ctx.Xes.Add(efXe);
-                    ctx.SaveChanges();
-                }
-
-                dangSuaXe = false;
-                TaiDanhSachXe();
-                XeDangChon = DanhSachXe.FirstOrDefault(item => item.TenXe == TenDongXeNhap.Trim());
-                cuaSo?.Close();
+                MessageBox.Show("Có lỗi xảy ra khi lưu xe: " + ex.Message, "Lỗi", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -520,15 +543,23 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            using (var ctx = new QuanLyBanXeMayEntities())
+            try
             {
-                ctx.Configuration.LazyLoadingEnabled = false;
-                var ef = ctx.Xes.FirstOrDefault(x => x.MaXe == XeDangChon.MaXe);
-                if (ef != null)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    ctx.Xes.Remove(ef);
-                    ctx.SaveChanges();
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = ctx.Xes.FirstOrDefault(x => x.MaXe == XeDangChon.MaXe);
+                    if (ef != null)
+                    {
+                        ctx.Xes.Remove(ef);
+                        ctx.SaveChanges();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể xóa xe này (có thể do xe đã được sử dụng trong hóa đơn).\nLỗi: " + ex.Message, "Lỗi xóa", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             XeDangChon = null;

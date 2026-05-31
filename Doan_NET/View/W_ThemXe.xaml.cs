@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,20 +22,6 @@ namespace Doan_NET.View
         public W_ThemXe()
         {
             InitializeComponent();
-        }
-
-        private void ChonHinhAnh_Click(object sender, RoutedEventArgs e)
-        {
-            var hopThoai = new Microsoft.Win32.OpenFileDialog
-            {
-                Title = "Chọn hình ảnh xe",
-                Filter = "Tệp ảnh (*.png;*.jpg;*.jpeg;*.bmp;*.gif)|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Tất cả tệp (*.*)|*.*"
-            };
-
-            if (hopThoai.ShowDialog() == true)
-            {
-                HinhAnhTextBox.Text = hopThoai.FileName;
-            }
         }
     }
 }

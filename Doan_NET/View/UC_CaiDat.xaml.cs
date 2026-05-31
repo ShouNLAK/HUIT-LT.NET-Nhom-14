@@ -13,22 +13,5 @@ namespace Doan_NET.View
         {
             InitializeComponent();
         }
-
-        private void DoiMatKhau_Click(object sender, RoutedEventArgs e)
-        {
-            var vm = DataContext as CaiDat_VM;
-            if (vm == null)
-            {
-                return;
-            }
-
-            bool ok = vm.DoiMatKhau(MatKhauCuBox.Password, MatKhauMoiBox.Password, XacNhanBox.Password);
-            if (ok)
-            {
-                MatKhauCuBox.Clear();
-                MatKhauMoiBox.Clear();
-                XacNhanBox.Clear();
-            }
-        }
     }
 }

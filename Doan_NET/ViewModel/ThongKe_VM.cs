@@ -104,13 +104,14 @@ namespace Doan_NET.ViewModel
 
             TongDoanhThu = danhSachHoaDon.Sum(item => item.ThanhTien ?? 0);
             SoHoaDonMoi = danhSachHoaDon
-                .Select(item => item.MaHD ?? string.Empty)
+                .Where(item => item.MaHD != null)
+                .Select(item => item.MaHD)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count();
 
             SoKhachHangPhucVu = danhSachHoaDon
-                .Select(item => item.MaKH ?? string.Empty)
-                .Where(item => !string.IsNullOrWhiteSpace(item))
+                .Where(item => !string.IsNullOrWhiteSpace(item.MaKH))
+                .Select(item => item.MaKH)
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Count();
 

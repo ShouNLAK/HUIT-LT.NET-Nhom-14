@@ -19,25 +19,25 @@
 
         <Border Grid.Row="1" Background="White" CornerRadius="6" Padding="12" Margin="0,0,0,12">
             <StackPanel>
-                <TextBlock x:Name="KhachTextBlock" FontWeight="Bold" FontSize="14"/>
-                <TextBlock x:Name="SdtTextBlock" FontSize="12" Foreground="#555"/>
-                <TextBlock x:Name="DiaChiTextBlock" FontSize="12" Foreground="#555" TextWrapping="Wrap"/>
+                <TextBlock x:Name="KhachTextBlock" Text="{Binding KhachHangTieuDe}" FontWeight="Bold" FontSize="14"/>
+                <TextBlock x:Name="SdtTextBlock" Text="{Binding SdtTieuDe}" FontSize="12" Foreground="#555"/>
+                <TextBlock x:Name="DiaChiTextBlock" Text="{Binding DiaChiTieuDe}" FontSize="12" Foreground="#555" TextWrapping="Wrap"/>
             </StackPanel>
         </Border>
 
         <Border Grid.Row="2" Background="White" CornerRadius="6" Padding="12" Margin="0,0,0,12">
             <DockPanel>
                 <TextBlock DockPanel.Dock="Top" Text="Sản phẩm:" FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
-                <TextBlock DockPanel.Dock="Bottom" x:Name="TongTienTextBlock" FontSize="14" FontWeight="Bold" Foreground="#E74C3C" Margin="0,8,0,0"/>
+                <TextBlock DockPanel.Dock="Bottom" x:Name="TongTienTextBlock" Text="{Binding TongTienMoTa}" FontSize="14" FontWeight="Bold" Foreground="#E74C3C" Margin="0,8,0,0"/>
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <TextBlock x:Name="MatHangTextBlock" FontSize="13" Foreground="#34495E" TextWrapping="Wrap"/>
+                    <TextBlock x:Name="MatHangTextBlock" Text="{Binding MatHangMoTa}" FontSize="13" Foreground="#34495E" TextWrapping="Wrap"/>
                 </ScrollViewer>
             </DockPanel>
         </Border>
 
         <StackPanel Grid.Row="3" Margin="0,0,0,12">
             <TextBlock Text="Nhân viên phụ trách (đang làm việc):" FontSize="11" Foreground="Gray" Margin="0,0,0,4"/>
-            <ComboBox x:Name="NhanVienComboBox" DisplayMemberPath="HoTen" Height="32"/>
+            <ComboBox x:Name="NhanVienComboBox" ItemsSource="{Binding DanhSachNhanVien}" SelectedItem="{Binding NhanVienChon, Mode=TwoWay}" DisplayMemberPath="HoTen" Height="32"/>
         </StackPanel>
 
         <Grid Grid.Row="4">
@@ -47,10 +47,10 @@
             </Grid.ColumnDefinitions>
             <Button Grid.Column="0" Content="Hủy" Height="42" Margin="0,0,10,0"
                     Background="#95A5A6" Foreground="White" FontWeight="Bold" BorderThickness="0" Cursor="Hand"
-                    Click="Huy_Click"/>
+                    Command="{Binding LenhHuy}"/>
             <Button Grid.Column="1" Content="XÁC NHẬN ĐƠN" Height="42"
                     Background="#27AE60" Foreground="White" FontWeight="Bold" FontSize="14" BorderThickness="0" Cursor="Hand"
-                    Click="XacNhan_Click"/>
+                    Command="{Binding LenhXacNhan}"/>
         </Grid>
     </Grid>
 </Window>

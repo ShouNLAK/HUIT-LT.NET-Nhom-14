@@ -95,6 +95,7 @@ namespace Doan_NET.ViewModel
         public ICommand LenhLuuHangXe { get; }
         public ICommand LenhHuyFormHangXe { get; }
         public ICommand LenhXuatKho { get; }
+        public ICommand LenhChonLogo { get; }
 
         public HangXe_VM()
         {
@@ -108,9 +109,24 @@ namespace Doan_NET.ViewModel
             LenhLuuHangXe = new RelayCommand(parameter => LuuHangXe(parameter as Window));
             LenhHuyFormHangXe = new RelayCommand(parameter => DongFormHangXe(parameter as Window));
             LenhXuatKho = new RelayCommand(_ => { W_ReportXuatKho frm = new W_ReportXuatKho(); frm.Show(); });
+            LenhChonLogo = new RelayCommand(_ => ChonLogo());
 
             TaiDanhSachHangXe();
             LamMoiNhapHangXe();
+        }
+
+        private void ChonLogo()
+        {
+            var hopThoai = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = "Chọn logo hãng xe",
+                Filter = "Tệp ảnh (*.png;*.jpg;*.jpeg;*.bmp;*.gif)|*.png;*.jpg;*.jpeg;*.bmp;*.gif|Tất cả tệp (*.*)|*.*"
+            };
+
+            if (hopThoai.ShowDialog() == true)
+            {
+                LogoNhap = hopThoai.FileName;
+            }
         }
 
         private void TaiDanhSachHangXe()
