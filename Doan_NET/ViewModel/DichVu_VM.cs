@@ -19,6 +19,22 @@ namespace Doan_NET.ViewModel
         private readonly RelayCommand lenhMoSuaDichVu;
         private readonly RelayCommand lenhXoaDichVu;
         private bool dangSuaDichVu;
+        
+        public bool KhongPhaiSua
+        {
+            get { return !dangSuaDichVu; }
+        }
+
+        private int loaiMatHangNhap;
+        public int LoaiMatHangNhap
+        {
+            get { return loaiMatHangNhap; }
+            set
+            {
+                loaiMatHangNhap = value;
+                OnPropertyChanged();
+            }
+        }
 
         private ObservableCollection<DichVuPhuTung> danhSachDichVu;
         public ObservableCollection<DichVuPhuTung> DanhSachDichVu
@@ -164,6 +180,7 @@ namespace Doan_NET.ViewModel
         private void MoManHinhThemSuaDichVu()
         {
             dangSuaDichVu = false;
+            OnPropertyChanged(nameof(KhongPhaiSua));
             LamMoiNhapDichVu();
             var cuaSoThemSuaDichVu = new W_ThemSuaDVxaml();
             cuaSoThemSuaDichVu.DataContext = this;
@@ -178,10 +195,12 @@ namespace Doan_NET.ViewModel
             }
 
             dangSuaDichVu = true;
+            OnPropertyChanged(nameof(KhongPhaiSua));
             MaPTNhap = DichVuDangChon.MaPT;
             TenNhap = DichVuDangChon.Ten;
             GiaNhap = (DichVuDangChon.Gia ?? 0).ToString();
             TonKhoNhap = (DichVuDangChon.TonKho ?? 0).ToString();
+            LoaiMatHangNhap = (MaPTNhap != null && MaPTNhap.StartsWith("PT", StringComparison.OrdinalIgnoreCase)) ? 1 : 0;
 
             var cuaSoThemSuaDichVu = new W_ThemSuaDVxaml();
             cuaSoThemSuaDichVu.DataContext = this;
@@ -225,18 +244,6 @@ namespace Doan_NET.ViewModel
             gia = 0;
             tonKho = 0;
 
-            if (string.IsNullOrWhiteSpace(MaPTNhap))
-            {
-                MessageBox.Show("Mã dịch vụ/phụ tùng không được để trống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
-            if (!KiemTraMaDichVu(MaPTNhap))
-            {
-                MessageBox.Show("Mã phải theo định dạng DVxxx hoặc PTxxx (ví dụ: DV001, PT010).", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-
             if (string.IsNullOrWhiteSpace(TenNhap))
             {
                 MessageBox.Show("Tên dịch vụ/phụ tùng không được để trống.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -259,14 +266,6 @@ namespace Doan_NET.ViewModel
             {
                 MessageBox.Show("Tồn kho không hợp lệ.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;
-            }
-
-            string ma = MaPTNhap.Trim().ToUpper();
-            if (ma.StartsWith("DV") && tonKho != 0)
-            {
-                MessageBox.Show("Dịch vụ không quản lý tồn kho. Hệ thống sẽ đặt tồn kho = 0.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Information);
-                tonKho = 0;
-                TonKhoNhap = "0";
             }
 
             return true;
@@ -311,6 +310,38 @@ namespace Doan_NET.ViewModel
             return true;
         }
 
+        private string TaoMaMoi(string tienTo)
+        {
+            using (var ctx = new QuanLyBanXeMayEntities())
+            {
+                ctx.Configuration.LazyLoadingEnabled = false;
+                var ds = ctx.DichVuPhuTungs
+                    .Where(d => d.MaPT.StartsWith(tienTo))
+                    .Select(d => d.MaPT)
+                    .ToList();
+                
+                var numbers = ds.Select(m => {
+                    int num;
+                    if (int.TryParse(m.Substring(tienTo.Length), out num)) return num;
+                    return 0;
+                }).Where(n => n > 0).OrderBy(n => n).ToList();
+
+                int nextNum = 1;
+                foreach (int n in numbers)
+                {
+                    if (n == nextNum)
+                    {
+                        nextNum++;
+                    }
+                    else if (n > nextNum)
+                    {
+                        break;
+                    }
+                }
+                return tienTo + nextNum.ToString("D3");
+            }
+        }
+
         private void LuuDichVu(Window cuaSo)
         {
             int gia;
@@ -320,17 +351,18 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            DichVuPhuTung trungMa;
+            DichVuPhuTung trungTen;
             using (var ctx = new QuanLyBanXeMayEntities())
             {
                 ctx.Configuration.LazyLoadingEnabled = false;
-                trungMa = ctx.DichVuPhuTungs.FirstOrDefault(item =>
-                    item.MaPT == MaPTNhap.Trim().ToUpper());
+                string tenLower = TenNhap.Trim().ToLower();
+                trungTen = ctx.DichVuPhuTungs.ToList().FirstOrDefault(item =>
+                    item.Ten != null && item.Ten.Trim().ToLower() == tenLower);
             }
 
-            if (trungMa != null && (DichVuDangChon == null || trungMa.MaPT != DichVuDangChon.MaPT))
+            if (trungTen != null && (DichVuDangChon == null || trungTen.MaPT != DichVuDangChon.MaPT))
             {
-                MessageBox.Show("Mã dịch vụ/phụ tùng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Tên dịch vụ/phụ tùng đã tồn tại.", "Thông báo", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
@@ -355,12 +387,15 @@ namespace Doan_NET.ViewModel
             }
             else
             {
+                string tienTo = LoaiMatHangNhap == 0 ? "DV" : "PT";
+                string maMoi = TaoMaMoi(tienTo);
+
                 using (var ctx = new QuanLyBanXeMayEntities())
                 {
                     ctx.Configuration.LazyLoadingEnabled = false;
                     var ef = new DichVuPhuTung
                     {
-                        MaPT = MaPTNhap.Trim().ToUpper(),
+                        MaPT = maMoi,
                         Ten = TenNhap.Trim(),
                         Gia = gia,
                         TonKho = tonKho
@@ -370,7 +405,7 @@ namespace Doan_NET.ViewModel
                 }
 
                 TaiDanhSachDichVu();
-                DichVuDangChon = DanhSachDichVu.FirstOrDefault(d => d.MaPT == MaPTNhap.Trim().ToUpper());
+                DichVuDangChon = DanhSachDichVu.FirstOrDefault(d => d.MaPT == maMoi);
             }
 
             dangSuaDichVu = false;
@@ -391,15 +426,23 @@ namespace Doan_NET.ViewModel
                 return;
             }
 
-            using (var ctx = new QuanLyBanXeMayEntities())
+            try
             {
-                ctx.Configuration.LazyLoadingEnabled = false;
-                var ef = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == DichVuDangChon.MaPT);
-                if (ef != null)
+                using (var ctx = new QuanLyBanXeMayEntities())
                 {
-                    ctx.DichVuPhuTungs.Remove(ef);
-                    ctx.SaveChanges();
+                    ctx.Configuration.LazyLoadingEnabled = false;
+                    var ef = ctx.DichVuPhuTungs.FirstOrDefault(d => d.MaPT == DichVuDangChon.MaPT);
+                    if (ef != null)
+                    {
+                        ctx.DichVuPhuTungs.Remove(ef);
+                        ctx.SaveChanges();
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Không thể xóa mặt hàng này vì đã có dữ liệu liên quan (ví dụ: hóa đơn cũ).\nChi tiết lỗi: " + ex.Message, "Lỗi xóa dữ liệu", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
             }
 
             DichVuDangChon = null;
@@ -420,6 +463,7 @@ namespace Doan_NET.ViewModel
             TenNhap = string.Empty;
             GiaNhap = "0";
             TonKhoNhap = "0";
+            LoaiMatHangNhap = 0;
         }
 
         private void ThemVaoGio(DichVuPhuTung dichVu)
